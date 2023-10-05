@@ -1,0 +1,21 @@
+{
+	"modListVersion": 2,
+	"modList": [{
+		"modid": "${modId}",
+		"name": "${modName}",
+		"description": "MCPatcher ported to forge 1.7.10.Adding a variety of graphical enhancements to the game such as connected textures, random mob skins, and custom skyboxes",
+		"version": "${modVersion}",
+		"mcversion": "${minecraftVersion}",
+		"url": "TODO",
+		"updateUrl": "",
+		"authorList": ["Paul Rupe","Mist475"],
+		"credits": "",
+		"logoFile": "",
+		"screenshots": [],
+		"parent": "",
+		"requiredMods": [],
+		"dependencies": [],
+		"dependants": [],
+		"useDependencyInformation": true
+	}]
+}
