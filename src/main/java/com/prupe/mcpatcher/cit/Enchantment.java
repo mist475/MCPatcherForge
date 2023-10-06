@@ -10,7 +10,6 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import com.prupe.mcpatcher.mal.resource.BlendMethod;
-import com.prupe.mcpatcher.mal.resource.GLAPI;
 import com.prupe.mcpatcher.mal.resource.PropertiesFile;
 import com.prupe.mcpatcher.mal.resource.TexturePackAPI;
 import com.prupe.mcpatcher.mal.tile.IconAPI;
@@ -36,37 +35,37 @@ final class Enchantment extends OverrideBase {
 
     static void beginOuter2D() {
         GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GLAPI.glAlphaFunc(GL11.GL_GREATER, 0.01f);
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.01f);
         GL11.glEnable(GL11.GL_BLEND);
-        GLAPI.glDepthFunc(GL11.GL_EQUAL);
-        GLAPI.glDepthMask(false);
+        GL11.glDepthFunc(GL11.GL_EQUAL);
+        GL11.glDepthMask(false);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glMatrixMode(GL11.GL_TEXTURE);
     }
 
     static void endOuter2D() {
-        GLAPI.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         GL11.glDisable(GL11.GL_BLEND);
-        GLAPI.glDepthFunc(GL11.GL_LEQUAL);
-        GLAPI.glDepthMask(true);
+        GL11.glDepthFunc(GL11.GL_LEQUAL);
+        GL11.glDepthMask(true);
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
     }
 
     static void beginOuter3D() {
         GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GLAPI.glAlphaFunc(GL11.GL_GREATER, 0.01f);
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.01f);
         GL11.glEnable(GL11.GL_BLEND);
-        GLAPI.glDepthFunc(GL11.GL_EQUAL);
+        GL11.glDepthFunc(GL11.GL_EQUAL);
         lightingWasEnabled = GL11.glGetBoolean(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glMatrixMode(GL11.GL_TEXTURE);
     }
 
     static void endOuter3D() {
-        GLAPI.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         GL11.glDisable(GL11.GL_BLEND);
-        GLAPI.glDepthFunc(GL11.GL_LEQUAL);
+        GL11.glDepthFunc(GL11.GL_LEQUAL);
         if (lightingWasEnabled) {
             GL11.glEnable(GL11.GL_LIGHTING);
         }
@@ -163,8 +162,8 @@ final class Enchantment extends OverrideBase {
 
     void beginArmor(float intensity) {
         GL11.glEnable(GL11.GL_BLEND);
-        GLAPI.glDepthFunc(GL11.GL_EQUAL);
-        GLAPI.glDepthMask(false);
+        GL11.glDepthFunc(GL11.GL_EQUAL);
+        GL11.glDepthMask(false);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glMatrixMode(GL11.GL_TEXTURE);
         begin(intensity);
@@ -176,10 +175,10 @@ final class Enchantment extends OverrideBase {
     }
 
     void endArmor() {
-        GLAPI.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         GL11.glDisable(GL11.GL_BLEND);
-        GLAPI.glDepthFunc(GL11.GL_LEQUAL);
-        GLAPI.glDepthMask(true);
+        GL11.glDepthFunc(GL11.GL_LEQUAL);
+        GL11.glDepthMask(true);
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glMatrixMode(GL11.GL_TEXTURE);
         end();

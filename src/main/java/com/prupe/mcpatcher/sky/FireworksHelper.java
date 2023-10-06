@@ -42,7 +42,7 @@ public class FireworksHelper {
         if (enable && layer == EXTRA_LAYER && blendMethod != null) {
             blendMethod.applyBlending();
         } else if (setDefault) {
-            GLAPI.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GLAPI.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         }
     }
 

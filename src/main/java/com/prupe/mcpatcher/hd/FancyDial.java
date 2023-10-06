@@ -637,15 +637,15 @@ public class FancyDial {
             }
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GLAPI.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_ALPHA_TEST);
-            GLAPI.glAlphaFunc(GL11.GL_GREATER, 0.01f);
+            GL11.glAlphaFunc(GL11.GL_GREATER, 0.01f);
             if (useGL13) {
                 GL11.glDisable(GL13.GL_MULTISAMPLE);
             }
 
-            GLAPI.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
             GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -673,7 +673,7 @@ public class FancyDial {
                 GL13.glActiveTexture(GL13.GL_TEXTURE0);
             }
             GL11.glEnable(GL11.GL_BLEND);
-            GLAPI.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GLAPI.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
             EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0);
         }

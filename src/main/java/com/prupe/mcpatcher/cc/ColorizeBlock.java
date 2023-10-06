@@ -11,6 +11,8 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 
+import org.lwjgl.opengl.GL11;
+
 import com.prupe.mcpatcher.Config;
 import com.prupe.mcpatcher.MCLogger;
 import com.prupe.mcpatcher.MCPatcherUtils;
@@ -22,7 +24,6 @@ import com.prupe.mcpatcher.mal.biome.IColorMap;
 import com.prupe.mcpatcher.mal.block.BlockAPI;
 import com.prupe.mcpatcher.mal.block.BlockStateMatcher;
 import com.prupe.mcpatcher.mal.block.RenderBlocksUtils;
-import com.prupe.mcpatcher.mal.resource.GLAPI;
 import com.prupe.mcpatcher.mal.resource.PropertiesFile;
 import com.prupe.mcpatcher.mal.resource.ResourceList;
 import com.prupe.mcpatcher.mal.resource.TexturePackAPI;
@@ -405,7 +406,7 @@ public class ColorizeBlock {
                 waterColor = new float[3];
                 ColorUtils.intToFloat3(waterColorMap.getColorMultiplier(), waterColor);
             }
-            GLAPI.glColor4f(waterColor[0], waterColor[1], waterColor[2], 1.0f);
+            GL11.glColor4f(waterColor[0], waterColor[1], waterColor[2], 1.0f);
         }
     }
 
