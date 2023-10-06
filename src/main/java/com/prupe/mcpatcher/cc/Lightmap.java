@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -13,8 +14,6 @@ import com.prupe.mcpatcher.MCLogger;
 import com.prupe.mcpatcher.MCPatcherUtils;
 import com.prupe.mcpatcher.mal.biome.ColorUtils;
 import com.prupe.mcpatcher.mal.resource.TexturePackAPI;
-
-import mist475.mcpatcherforge.mixins.interfaces.EntityRendererExpansion;
 
 public final class Lightmap {
 
@@ -85,11 +84,19 @@ public final class Lightmap {
         }
     }
 
+    private float getNightVisionStrength(EntityRenderer renderer, float n) {
+
+        if (Minecraft.getMinecraft().thePlayer.isPotionActive(Potion.nightVision)) {
+            return renderer.getNightVisionBrightness(Minecraft.getMinecraft().thePlayer, n);
+        }
+        return 0.0f;
+    }
+
     private boolean compute(EntityRenderer renderer, World world, int[] mapRGB, float partialTick) {
         float sun = ColorUtils.clamp(
             world.lastLightningBolt > 0 ? 1.0f : 7.0f / 6.0f * (world.getCelestialAngle(1.0f) - 0.2f)) * (width - 1);
         float torch = ColorUtils.clamp(renderer.torchFlickerX + 0.5f) * (width - 1);
-        float nightVisionStrength = ((EntityRendererExpansion) renderer).getNightVisionStrength(partialTick);
+        float nightVisionStrength = getNightVisionStrength(renderer, partialTick);
         float gamma = ColorUtils.clamp(Minecraft.getMinecraft().gameSettings.gammaSetting);
         for (int i = 0; i < LIGHTMAP_SIZE; i++) {
             interpolate(origMap, i * width, sun, sunrgb, 3 * i);

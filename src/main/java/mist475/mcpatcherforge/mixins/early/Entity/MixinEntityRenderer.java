@@ -25,10 +25,8 @@ import com.prupe.mcpatcher.cc.Colorizer;
 import com.prupe.mcpatcher.cc.Lightmap;
 import com.prupe.mcpatcher.renderpass.RenderPass;
 
-import mist475.mcpatcherforge.mixins.interfaces.EntityRendererExpansion;
-
 @Mixin(EntityRenderer.class)
-public abstract class MixinEntityRenderer implements EntityRendererExpansion {
+public abstract class MixinEntityRenderer {
 
     @Shadow
     private Minecraft mc;
@@ -232,13 +230,5 @@ public abstract class MixinEntityRenderer implements EntityRendererExpansion {
             this.fogColorGreen = Colorizer.setColor[1];
             this.fogColorBlue = Colorizer.setColor[2];
         }
-    }
-
-    // TODO: refactor so this can be removed as it's not really necessary
-    public float getNightVisionStrength(final float n) {
-        if (this.mc.thePlayer.isPotionActive(Potion.nightVision)) {
-            return this.getNightVisionBrightness(this.mc.thePlayer, n);
-        }
-        return 0.0f;
     }
 }
