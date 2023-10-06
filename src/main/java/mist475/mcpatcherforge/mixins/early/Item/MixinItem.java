@@ -5,27 +5,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import com.prupe.mcpatcher.cit.CITUtils;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @Mixin(Item.class)
 public abstract class MixinItem {
 
     @Shadow
-    public abstract IIcon getIconFromDamage(int p_77617_1_);
+    public abstract IIcon getIconFromDamage(int meta);
 
-    /**
-     * @author Mist475 (adapted from Paul Rupe)
-     * @reason was too tired, will be Redirect
-     */
-    @SideOnly(Side.CLIENT)
-    @Overwrite
-    public IIcon getIconIndex(ItemStack p_77650_1_) {
-        return CITUtils.getIcon(this.getIconFromDamage(p_77650_1_.getItemDamage()), p_77650_1_, 0);
+    @Redirect(
+        method = "getIconIndex(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/util/IIcon;",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;getIconFromDamage(I)Lnet/minecraft/util/IIcon;"))
+    private IIcon modifyGetIconIndex(Item item, int meta, ItemStack itemStack) {
+        return CITUtils.getIcon(this.getIconFromDamage(meta), itemStack, 0);
     }
 }
