@@ -329,11 +329,7 @@ abstract class TileOverride implements ITileOverride {
         if (MCPatcherUtils.isNullOrEmpty(matchTiles)) {
             return null;
         } else {
-            Set<String> m = new HashSet<>();
-            for (String s : matchTiles) {
-                m.add(BlockAPI.expandTileName(s));
-            }
-            return m;
+            return new HashSet<>(matchTiles);
         }
     }
 

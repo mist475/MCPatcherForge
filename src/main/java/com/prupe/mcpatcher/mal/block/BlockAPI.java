@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,8 +20,6 @@ import cpw.mods.fml.common.registry.FMLControlledNamespacedRegistry;
 import cpw.mods.fml.common.registry.GameData;
 
 public class BlockAPI {
-
-    private static final BlockAPI instance = new BlockAPI(GameData.getBlockRegistry());
 
     BlockAPI(FMLControlledNamespacedRegistry<Block> registry) {
         File outputFile = new File("blocks17.txt");
@@ -67,13 +64,13 @@ public class BlockAPI {
     }
 
     public static String getBlockName(Block block) {
-        return block == null ? "(null)" : instance.getBlockName_Impl(block);
+        return block == null ? "(null)" : block.getUnlocalizedName();
     }
 
     public static List<Block> getAllBlocks() {
         List<Block> blocks = new ArrayList<>();
-        for (Iterator<Block> i = instance.iterator_Impl(); i.hasNext();) {
-            Block block = i.next();
+        for (Block block : GameData.getBlockRegistry()
+            .typeSafeIterable()) {
             if (block != null && !blocks.contains(block)) {
                 blocks.add(block);
             }
@@ -82,23 +79,23 @@ public class BlockAPI {
     }
 
     public static Block getBlockAt(IBlockAccess blockAccess, int i, int j, int k) {
-        return instance.getBlockAt_Impl(blockAccess, i, j, k);
+        return blockAccess.getBlock(i, j, k);
     }
 
     public static int getMetadataAt(IBlockAccess blockAccess, int i, int j, int k) {
-        return instance.getMetadataAt_Impl(blockAccess, i, j, k);
+        return blockAccess.getBlockMetadata(i, j, k);
     }
 
     public static IIcon getBlockIcon(Block block, IBlockAccess blockAccess, int i, int j, int k, int face) {
-        return instance.getBlockIcon_Impl(block, blockAccess, i, j, k, face);
+        return block.getIcon(blockAccess, i, j, k, face);
     }
 
     public static boolean shouldSideBeRendered(Block block, IBlockAccess blockAccess, int i, int j, int k, int face) {
-        return instance.shouldSideBeRendered_Impl(block, blockAccess, i, j, k, face);
+        return block.shouldSideBeRendered(blockAccess, i, j, k, face);
     }
 
     public static int getBlockLightValue(Block block) {
-        return instance.getBlockLightValue_Impl(block);
+        return block.getLightValue();
     }
 
     public static BlockStateMatcher createMatcher(PropertiesFile source, String matchString) {
@@ -153,42 +150,5 @@ public class BlockAPI {
             block,
             metadata.toString()
                 .trim());
-    }
-
-    public static String expandTileName(String tileName) {
-        return instance.expandTileName_Impl(tileName);
-    }
-
-    protected Block getBlockAt_Impl(IBlockAccess blockAccess, int i, int j, int k) {
-        return blockAccess.getBlock(i, j, k);
-    }
-
-    protected int getMetadataAt_Impl(IBlockAccess blockAccess, int i, int j, int k) {
-        return blockAccess.getBlockMetadata(i, j, k);
-    }
-
-    protected IIcon getBlockIcon_Impl(Block block, IBlockAccess blockAccess, int i, int j, int k, int face) {
-        return block.getIcon(blockAccess, i, j, k, face);
-    }
-
-    protected boolean shouldSideBeRendered_Impl(Block block, IBlockAccess blockAccess, int i, int j, int k, int face) {
-        return block.shouldSideBeRendered(blockAccess, i, j, k, face);
-    }
-
-    protected Iterator<Block> iterator_Impl() {
-        return GameData.getBlockRegistry()
-            .iterator();
-    }
-
-    protected String getBlockName_Impl(Block block) {
-        return block.getUnlocalizedName();
-    }
-
-    protected int getBlockLightValue_Impl(Block block) {
-        return block.getLightValue();
-    }
-
-    protected String expandTileName_Impl(String tileName) {
-        return tileName;
     }
 }

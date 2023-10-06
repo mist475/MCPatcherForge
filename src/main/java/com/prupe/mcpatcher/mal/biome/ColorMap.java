@@ -408,7 +408,7 @@ abstract public class ColorMap implements IColorMap {
 
         @Override
         final public boolean isHeightDependent() {
-            return BiomeAPI.isColorHeightDependent;
+            return true;
         }
 
         @Override
@@ -542,7 +542,7 @@ abstract public class ColorMap implements IColorMap {
 
         @Override
         public boolean isHeightDependent() {
-            return BiomeAPI.isColorHeightDependent;
+            return true;
         }
 
         @Override

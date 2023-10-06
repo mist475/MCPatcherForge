@@ -13,10 +13,8 @@ import com.prupe.mcpatcher.mal.resource.PropertiesFile;
 public class BiomeAPI {
 
     private static final MCLogger logger = MCLogger.getLogger(MCPatcherUtils.CUSTOM_COLORS);
-    private static final BiomeAPI instance = new BiomeAPI();
 
     public static final int WORLD_MAX_HEIGHT = 255;
-    public static final boolean isColorHeightDependent = instance.isColorHeightDependent();
 
     private static boolean biomesLogged;
     private static BiomeGenBase lastBiome;
@@ -91,33 +89,25 @@ public class BiomeAPI {
         if (lastBiome == null || i != lastI || k != lastK) {
             lastI = i;
             lastK = k;
-            lastBiome = instance.getBiomeGenAt_Impl(blockAccess, i, j, k);
+            lastBiome = blockAccess.getBiomeGenForCoords(i, k);
         }
         return lastBiome;
     }
 
     public static float getTemperature(BiomeGenBase biome, int i, int j, int k) {
-        return instance.getTemperaturef_Impl(biome, i, j, k);
-    }
-
-    public static float getTemperature(IBlockAccess blockAccess, int i, int j, int k) {
-        return getTemperature(getBiomeGenAt(blockAccess, i, j, k), i, j, k);
+        return biome.getFloatTemperature(i, j, k);
     }
 
     public static float getRainfall(BiomeGenBase biome, int i, int j, int k) {
         return biome.getFloatRainfall();
     }
 
-    public static float getRainfall(IBlockAccess blockAccess, int i, int j, int k) {
-        return getRainfall(getBiomeGenAt(blockAccess, i, j, k), i, j, k);
-    }
-
     public static int getGrassColor(BiomeGenBase biome, int i, int j, int k) {
-        return instance.getGrassColor_Impl(biome, i, j, k);
+        return biome.getBiomeGrassColor(i, j, k);
     }
 
     public static int getFoliageColor(BiomeGenBase biome, int i, int j, int k) {
-        return instance.getFoliageColor_Impl(biome, i, j, k);
+        return biome.getBiomeFoliageColor(i, j, k);
     }
 
     public static int getWaterColorMultiplier(BiomeGenBase biome) {
@@ -143,25 +133,5 @@ public class BiomeAPI {
                 }
             }
         }
-    }
-
-    protected BiomeGenBase getBiomeGenAt_Impl(IBlockAccess blockAccess, int i, int j, int k) {
-        return blockAccess.getBiomeGenForCoords(i, k);
-    }
-
-    protected float getTemperaturef_Impl(BiomeGenBase biome, int i, int j, int k) {
-        return biome.getFloatTemperature(i, j, k);
-    }
-
-    protected int getGrassColor_Impl(BiomeGenBase biome, int i, int j, int k) {
-        return biome.getBiomeGrassColor(i, j, k);
-    }
-
-    protected int getFoliageColor_Impl(BiomeGenBase biome, int i, int j, int k) {
-        return biome.getBiomeFoliageColor(i, j, k);
-    }
-
-    protected boolean isColorHeightDependent() {
-        return true;
     }
 }
