@@ -1559,243 +1559,290 @@ public abstract class MixinRenderBlocks {
 
     /**
      * @author Mist475 (adapted from Paul Rupe)
-     * @reason Significant deviation from Vanilla
+     * @reason Will be changes soon :tm:
      */
     @SuppressWarnings("DuplicatedCode")
     @Overwrite
-    public boolean renderBlockLiquid(Block block, int x, int y, int z) {
-        Tessellator tessellator = Tessellator.instance;
-        int d = block.colorMultiplier(this.blockAccess, x, y, z);
-        float n = (d >> 16 & 0xFF) / 255.0f;
-        float n2 = (d >> 8 & 0xFF) / 255.0f;
-        float n3 = (d & 0xFF) / 255.0f;
-        boolean shouldSideBeRendered = RenderPass.shouldSideBeRendered(block, this.blockAccess, x, y + 1, z, 1);
-        boolean shouldSideBeRendered2 = RenderPass.shouldSideBeRendered(block, this.blockAccess, x, y - 1, z, 0);
-        boolean[] array = { RenderPass.shouldSideBeRendered(block, this.blockAccess, x, y, z - 1, 2),
-            RenderPass.shouldSideBeRendered(block, this.blockAccess, x, y, z + 1, 3),
-            RenderPass.shouldSideBeRendered(block, this.blockAccess, x - 1, y, z, 4),
-            RenderPass.shouldSideBeRendered(block, this.blockAccess, x + 1, y, z, 5) };
-        if (!shouldSideBeRendered && !shouldSideBeRendered2 && !array[0] && !array[1] && !array[2] && !array[3]) {
+    public boolean renderBlockLiquid(final Block block, final int p_147721_2_, final int p_147721_3_,
+        final int p_147721_4_) {
+        final Tessellator tessellator = Tessellator.instance;
+        final int firstInt = block.colorMultiplier(this.blockAccess, p_147721_2_, p_147721_3_, p_147721_4_);
+        final float firstFloat = (firstInt >> 16 & 0xFF) / 255.0f;
+        final float secondFloat = (firstInt >> 8 & 0xFF) / 255.0f;
+        final float thirdFloat = (firstInt & 0xFF) / 255.0f;
+        final boolean shouldSideBeRendered = RenderPass
+            .shouldSideBeRendered(block, this.blockAccess, p_147721_2_, p_147721_3_ + 1, p_147721_4_, 1);
+        final boolean shouldSideBeRendered2 = RenderPass
+            .shouldSideBeRendered(block, this.blockAccess, p_147721_2_, p_147721_3_ - 1, p_147721_4_, 0);
+        final boolean[] firstBoolArray = {
+            RenderPass.shouldSideBeRendered(block, this.blockAccess, p_147721_2_, p_147721_3_, p_147721_4_ - 1, 2),
+            RenderPass.shouldSideBeRendered(block, this.blockAccess, p_147721_2_, p_147721_3_, p_147721_4_ + 1, 3),
+            RenderPass.shouldSideBeRendered(block, this.blockAccess, p_147721_2_ - 1, p_147721_3_, p_147721_4_, 4),
+            RenderPass.shouldSideBeRendered(block, this.blockAccess, p_147721_2_ + 1, p_147721_3_, p_147721_4_, 5) };
+        if (!shouldSideBeRendered && !shouldSideBeRendered2
+            && !firstBoolArray[0]
+            && !firstBoolArray[1]
+            && !firstBoolArray[2]
+            && !firstBoolArray[3]) {
             return false;
         }
         boolean b = false;
-        float n4 = 0.5f;
-        float n5 = 1.0f;
-        float n6 = 0.8f;
-        float n7 = 0.6f;
-        double l = 0.0;
-        double m = 1.0;
-        Material o = block.getMaterial();
-        int e = this.blockAccess.getBlockMetadata(x, y, z);
-        double n8 = this.getLiquidHeight(x, y, z, o);
-        double n9 = this.getLiquidHeight(x, y, z + 1, o);
-        double n10 = this.getLiquidHeight(x + 1, y, z + 1, o);
-        double n11 = this.getLiquidHeight(x + 1, y, z, o);
-        double n12 = 0.0010000000474974513;
+        final float fourthFloat = 0.5f;
+        final float fifthFloat = 1.0f;
+        final float sixthFloat = 0.8f;
+        final float seventhFloat = 0.6f;
+        final double firstDouble = 0.0;
+        final double secondDouble = 1.0;
+        final Material o = block.getMaterial();
+        final int secondInt = this.blockAccess.getBlockMetadata(p_147721_2_, p_147721_3_, p_147721_4_);
+        double thirdDouble = this.getLiquidHeight(p_147721_2_, p_147721_3_, p_147721_4_, o);
+        double fourthDouble = this.getLiquidHeight(p_147721_2_, p_147721_3_, p_147721_4_ + 1, o);
+        double fifthDouble = this.getLiquidHeight(p_147721_2_ + 1, p_147721_3_, p_147721_4_ + 1, o);
+        double sixthDouble = this.getLiquidHeight(p_147721_2_ + 1, p_147721_3_, p_147721_4_, o);
+        final double seventhDouble = 0.0010000000474974513;
         if (this.renderAllFaces || shouldSideBeRendered) {
-            IIcon rf = (this.blockAccess == null) ? this.getBlockIconFromSideAndMetadata(block, 1, e)
-                : this.getBlockIcon(block, this.blockAccess, x, y, z, 1);
-            float n13 = (float) BlockLiquid.getFlowDirection(this.blockAccess, x, y, z, o);
-            if (n13 > -999.0f) {
-                rf = ((this.blockAccess == null) ? this.getBlockIconFromSideAndMetadata(block, 2, e)
-                    : this.getBlockIcon(block, this.blockAccess, x, y, z, 2));
+            b = true;
+            IIcon icon1 = (this.blockAccess == null) ? this.getBlockIconFromSideAndMetadata(block, 1, secondInt)
+                : this.getBlockIcon(block, this.blockAccess, p_147721_2_, p_147721_3_, p_147721_4_, 1);
+            final float flowDirection = (float) BlockLiquid
+                .getFlowDirection(this.blockAccess, p_147721_2_, p_147721_3_, p_147721_4_, o);
+            if (flowDirection > -999.0f) {
+                icon1 = ((this.blockAccess == null) ? this.getBlockIconFromSideAndMetadata(block, 2, secondInt)
+                    : this.getBlockIcon(block, this.blockAccess, p_147721_2_, p_147721_3_, p_147721_4_, 2));
             }
-            n8 -= n12;
-            n9 -= n12;
-            n10 -= n12;
-            n11 -= n12;
-            double n14;
-            double n15;
-            double n16;
-            double n17;
-            double n18;
-            double n19;
-            double n20;
-            double n21;
-            if (n13 < -999.0f) {
-                n14 = rf.getInterpolatedU(0.0);
-                n15 = rf.getInterpolatedV(0.0);
-                n16 = n14;
-                n17 = rf.getInterpolatedV(16.0);
-                n18 = rf.getInterpolatedU(16.0);
-                n19 = n17;
-                n20 = n18;
-                n21 = n15;
+            thirdDouble -= seventhDouble;
+            fourthDouble -= seventhDouble;
+            fifthDouble -= seventhDouble;
+            sixthDouble -= seventhDouble;
+            double double8;
+            double double9;
+            double double10;
+            double double11;
+            double double12;
+            double double13;
+            double double14;
+            double double15;
+            if (flowDirection < -999.0f) {
+                double8 = icon1.getInterpolatedU(0.0);
+                double9 = icon1.getInterpolatedV(0.0);
+                double10 = double8;
+                double11 = icon1.getInterpolatedV(16.0);
+                double12 = icon1.getInterpolatedU(16.0);
+                double13 = double11;
+                double14 = double12;
+                double15 = double9;
             } else {
-                float n22 = MathHelper.sin(n13) * 0.25f;
-                float n23 = MathHelper.cos(n13) * 0.25f;
-                n14 = rf.getInterpolatedU(8.0f + (-n23 - n22) * 16.0f);
-                n15 = rf.getInterpolatedV(8.0f + (-n23 + n22) * 16.0f);
-                n16 = rf.getInterpolatedU(8.0f + (-n23 + n22) * 16.0f);
-                n17 = rf.getInterpolatedV(8.0f + (n23 + n22) * 16.0f);
-                n18 = rf.getInterpolatedU(8.0f + (n23 + n22) * 16.0f);
-                n19 = rf.getInterpolatedV(8.0f + (n23 - n22) * 16.0f);
-                n20 = rf.getInterpolatedU(8.0f + (n23 - n22) * 16.0f);
-                n21 = rf.getInterpolatedV(8.0f + (-n23 - n22) * 16.0f);
+                final float float8 = MathHelper.sin(flowDirection) * 0.25f;
+                final float float9 = MathHelper.cos(flowDirection) * 0.25f;
+                double8 = icon1.getInterpolatedU(8.0f + (-float9 - float8) * 16.0f);
+                double9 = icon1.getInterpolatedV(8.0f + (-float9 + float8) * 16.0f);
+                double10 = icon1.getInterpolatedU(8.0f + (-float9 + float8) * 16.0f);
+                double11 = icon1.getInterpolatedV(8.0f + (float9 + float8) * 16.0f);
+                double12 = icon1.getInterpolatedU(8.0f + (float9 + float8) * 16.0f);
+                double13 = icon1.getInterpolatedV(8.0f + (float9 - float8) * 16.0f);
+                double14 = icon1.getInterpolatedU(8.0f + (float9 - float8) * 16.0f);
+                double15 = icon1.getInterpolatedV(8.0f + (-float9 - float8) * 16.0f);
             }
-            tessellator.setBrightness(block.getMixedBrightnessForBlock(this.blockAccess, x, y, z));
-            if (!(ColorizeBlock.isSmooth = ColorizeBlock
-                .setupBlockSmoothing((RenderBlocks) (Object) this, block, this.blockAccess, x, y, z, 1 + 6))) {
-                tessellator.setColorOpaque_F(n5 * n, n5 * n2, n5 * n3);
+            tessellator.setBrightness(
+                block.getMixedBrightnessForBlock(this.blockAccess, p_147721_2_, p_147721_3_, p_147721_4_));
+            if (!(ColorizeBlock.isSmooth = ColorizeBlock.setupBlockSmoothing(
+                (RenderBlocks) (Object) this,
+                block,
+                this.blockAccess,
+                p_147721_2_,
+                p_147721_3_,
+                p_147721_4_,
+                1 + 6))) {
+                tessellator
+                    .setColorOpaque_F(fifthFloat * firstFloat, fifthFloat * secondFloat, fifthFloat * thirdFloat);
             }
             if (ColorizeBlock.isSmooth) {
                 tessellator.setColorOpaque_F(this.colorRedTopLeft, this.colorGreenTopLeft, this.colorBlueTopLeft);
-                tessellator.addVertexWithUV(x, y + n8, z, n14, n15);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 0, p_147721_3_ + thirdDouble, p_147721_4_ + 0, double8, double9);
                 tessellator
                     .setColorOpaque_F(this.colorRedBottomLeft, this.colorGreenBottomLeft, this.colorBlueBottomLeft);
-                tessellator.addVertexWithUV(x, y + n9, z + 1, n16, n17);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 0, p_147721_3_ + fourthDouble, p_147721_4_ + 1, double10, double11);
                 tessellator
                     .setColorOpaque_F(this.colorRedBottomRight, this.colorGreenBottomRight, this.colorBlueBottomRight);
-                tessellator.addVertexWithUV(x + 1, y + n10, z + 1, n18, n19);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 1, p_147721_3_ + fifthDouble, p_147721_4_ + 1, double12, double13);
                 tessellator.setColorOpaque_F(this.colorRedTopRight, this.colorGreenTopRight, this.colorBlueTopRight);
-                tessellator.addVertexWithUV(x + 1, y + n11, z, n20, n21);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 1, p_147721_3_ + sixthDouble, p_147721_4_ + 0, double14, double15);
                 tessellator.setColorOpaque_F(this.colorRedTopLeft, this.colorGreenTopLeft, this.colorBlueTopLeft);
-                tessellator.addVertexWithUV(x, y + n8, z, n14, n15);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 0, p_147721_3_ + thirdDouble, p_147721_4_ + 0, double8, double9);
                 tessellator.setColorOpaque_F(this.colorRedTopRight, this.colorGreenTopRight, this.colorBlueTopRight);
-                tessellator.addVertexWithUV(x + 1, y + n11, z, n20, n21);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 1, p_147721_3_ + sixthDouble, p_147721_4_ + 0, double14, double15);
                 tessellator
                     .setColorOpaque_F(this.colorRedBottomRight, this.colorGreenBottomRight, this.colorBlueBottomRight);
-                tessellator.addVertexWithUV(x + 1, y + n10, z + 1, n18, n19);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 1, p_147721_3_ + fifthDouble, p_147721_4_ + 1, double12, double13);
                 tessellator
                     .setColorOpaque_F(this.colorRedBottomLeft, this.colorGreenBottomLeft, this.colorBlueBottomLeft);
-                tessellator.addVertexWithUV(x, y + n9, z + 1, n16, n17);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 0, p_147721_3_ + fourthDouble, p_147721_4_ + 1, double10, double11);
             } else {
-                tessellator.addVertexWithUV(x, y + n8, z, n14, n15);
-                tessellator.addVertexWithUV(x, y + n9, z + 1, n16, n17);
-                tessellator.addVertexWithUV(x + 1, y + n10, z + 1, n18, n19);
-                tessellator.addVertexWithUV(x + 1, y + n11, z, n20, n21);
-                tessellator.addVertexWithUV(x, y + n8, z, n14, n15);
-                tessellator.addVertexWithUV(x + 1, y + n11, z, n20, n21);
-                tessellator.addVertexWithUV(x + 1, y + n10, z + 1, n18, n19);
-                tessellator.addVertexWithUV(x, y + n9, z + 1, n16, n17);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 0, p_147721_3_ + thirdDouble, p_147721_4_ + 0, double8, double9);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 0, p_147721_3_ + fourthDouble, p_147721_4_ + 1, double10, double11);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 1, p_147721_3_ + fifthDouble, p_147721_4_ + 1, double12, double13);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 1, p_147721_3_ + sixthDouble, p_147721_4_ + 0, double14, double15);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 0, p_147721_3_ + thirdDouble, p_147721_4_ + 0, double8, double9);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 1, p_147721_3_ + sixthDouble, p_147721_4_ + 0, double14, double15);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 1, p_147721_3_ + fifthDouble, p_147721_4_ + 1, double12, double13);
+                tessellator
+                    .addVertexWithUV(p_147721_2_ + 0, p_147721_3_ + fourthDouble, p_147721_4_ + 1, double10, double11);
             }
         }
         if (this.renderAllFaces || shouldSideBeRendered2) {
-            tessellator.setBrightness(block.getMixedBrightnessForBlock(this.blockAccess, x, y - 1, z));
-            if (!(ColorizeBlock.isSmooth = ColorizeBlock
-                .setupBlockSmoothing((RenderBlocks) (Object) this, block, this.blockAccess, x, y, z, 6))) {
-                tessellator.setColorOpaque_F(n4 * n, n4 * n2, n4 * n3);
+            tessellator.setBrightness(
+                block.getMixedBrightnessForBlock(this.blockAccess, p_147721_2_, p_147721_3_ - 1, p_147721_4_));
+            if (!(ColorizeBlock.isSmooth = ColorizeBlock.setupBlockSmoothing(
+                (RenderBlocks) (Object) this,
+                block,
+                this.blockAccess,
+                p_147721_2_,
+                p_147721_3_,
+                p_147721_4_,
+                0 + 6))) {
+                tessellator
+                    .setColorOpaque_F(fourthFloat * firstFloat, fourthFloat * secondFloat, fourthFloat * thirdFloat);
             }
             if (ColorizeBlock.isSmooth) {
                 this.enableAO = true;
             }
-            double n25 = y + n12;
-            IIcon rf2 = (this.blockAccess == null) ? this.getBlockIconFromSide(block, 0)
-                : this.getBlockIcon(block, this.blockAccess, x, y, z, 0);
+            final IIcon icon2 = (this.blockAccess == null) ? this.getBlockIconFromSide(block, 0)
+                : this.getBlockIcon(block, this.blockAccess, p_147721_2_, p_147721_3_, p_147721_4_, 0);
             this.enableAO = false;
-            this.renderFaceYNeg(block, x, n25, z, rf2);
+            this.renderFaceYNeg(block, p_147721_2_, p_147721_3_ + seventhDouble, p_147721_4_, icon2);
+            b = true;
         }
-        for (int n27 = 0; n27 < 4; ++n27) {
-            int n28 = x;
-            int n29 = z;
-            if (n27 == 0) {
-                --n29;
+        for (int counter1 = 0; counter1 < 4; ++counter1) {
+            int int3 = p_147721_2_;
+            int int4 = p_147721_4_;
+            if (counter1 == 0) {
+                --int4;
             }
-            if (n27 == 1) {
-                ++n29;
+            if (counter1 == 1) {
+                ++int4;
             }
-            if (n27 == 2) {
-                --n28;
+            if (counter1 == 2) {
+                --int3;
             }
-            if (n27 == 3) {
-                ++n28;
+            if (counter1 == 3) {
+                ++int3;
             }
-            IIcon rf3 = (this.blockAccess == null) ? this.getBlockIconFromSideAndMetadata(block, n27 + 2, e)
-                : this.getBlockIcon(block, this.blockAccess, x, y, z, n27 + 2);
-            if (this.renderAllFaces || array[n27]) {
-                double n30;
-                double n31;
-                double n32;
-                double n33;
-                double n34;
-                double n35;
-                if (n27 == 0) {
-                    n30 = n8;
-                    n31 = n11;
-                    n32 = x;
-                    n33 = x + 1;
-                    n34 = z + n12;
-                    n35 = z + n12;
-                } else if (n27 == 1) {
-                    n30 = n10;
-                    n31 = n9;
-                    n32 = x + 1;
-                    n33 = x;
-                    n34 = z + 1 - n12;
-                    n35 = z + 1 - n12;
-                } else if (n27 == 2) {
-                    n30 = n9;
-                    n31 = n8;
-                    n32 = x + n12;
-                    n33 = x + n12;
-                    n34 = z + 1;
-                    n35 = z;
+            final IIcon icon3 = (this.blockAccess == null)
+                ? this.getBlockIconFromSideAndMetadata(block, counter1 + 2, secondInt)
+                : this.getBlockIcon(block, this.blockAccess, p_147721_2_, p_147721_3_, p_147721_4_, counter1 + 2);
+            if (this.renderAllFaces || firstBoolArray[counter1]) {
+                double double16;
+                double double17;
+                double double18;
+                double double19;
+                double double20;
+                double double21;
+                if (counter1 == 0) {
+                    double16 = thirdDouble;
+                    double17 = sixthDouble;
+                    double18 = p_147721_2_;
+                    double19 = p_147721_2_ + 1;
+                    double20 = p_147721_4_ + seventhDouble;
+                    double21 = p_147721_4_ + seventhDouble;
+                } else if (counter1 == 1) {
+                    double16 = fifthDouble;
+                    double17 = fourthDouble;
+                    double18 = p_147721_2_ + 1;
+                    double19 = p_147721_2_;
+                    double20 = p_147721_4_ + 1 - seventhDouble;
+                    double21 = p_147721_4_ + 1 - seventhDouble;
+                } else if (counter1 == 2) {
+                    double16 = fourthDouble;
+                    double17 = thirdDouble;
+                    double18 = p_147721_2_ + seventhDouble;
+                    double19 = p_147721_2_ + seventhDouble;
+                    double20 = p_147721_4_ + 1;
+                    double21 = p_147721_4_;
                 } else {
-                    n30 = n11;
-                    n31 = n10;
-                    n32 = x + 1 - n12;
-                    n33 = x + 1 - n12;
-                    n34 = z;
-                    n35 = z + 1;
+                    double16 = sixthDouble;
+                    double17 = fifthDouble;
+                    double18 = p_147721_2_ + 1 - seventhDouble;
+                    double19 = p_147721_2_ + 1 - seventhDouble;
+                    double20 = p_147721_4_;
+                    double21 = p_147721_4_ + 1;
                 }
-                float a2 = rf3.getInterpolatedU(0.0);
-                float a3 = rf3.getInterpolatedU(8.0);
-                float b2 = rf3.getInterpolatedV((1.0 - n30) * 16.0 * 0.5);
-                float b3 = rf3.getInterpolatedV((1.0 - n31) * 16.0 * 0.5);
-                float b4 = rf3.getInterpolatedV(8.0);
-                tessellator.setBrightness(block.getMixedBrightnessForBlock(this.blockAccess, n28, y, n29));
-                float n36 = ((n27 < 2) ? n6 : n7);
+                b = true;
+                final float float10 = icon3.getInterpolatedU(0.0);
+                final float float11 = icon3.getInterpolatedU(8.0);
+                final float float12 = icon3.getInterpolatedV((1.0 - double16) * 16.0 * 0.5);
+                final float float13 = icon3.getInterpolatedV((1.0 - double17) * 16.0 * 0.5);
+                final float float14 = icon3.getInterpolatedV(8.0);
+                tessellator.setBrightness(block.getMixedBrightnessForBlock(this.blockAccess, int3, p_147721_3_, int4));
+                final float float15 = 1.0f * ((counter1 < 2) ? sixthFloat : seventhFloat);
                 if (!(ColorizeBlock.isSmooth = ColorizeBlock.setupBlockSmoothing(
                     (RenderBlocks) (Object) this,
                     block,
                     this.blockAccess,
-                    x,
-                    y,
-                    z,
-                    n27 + 2 + 6))) {
-                    tessellator.setColorOpaque_F(n5 * n36 * n, n5 * n36 * n2, n5 * n36 * n3);
+                    p_147721_2_,
+                    p_147721_3_,
+                    p_147721_4_,
+                    counter1 + 2 + 6))) {
+                    tessellator.setColorOpaque_F(
+                        fifthFloat * float15 * firstFloat,
+                        fifthFloat * float15 * secondFloat,
+                        fifthFloat * float15 * thirdFloat);
                 }
                 if (ColorizeBlock.isSmooth) {
                     tessellator.setColorOpaque_F(this.colorRedTopLeft, this.colorGreenTopLeft, this.colorBlueTopLeft);
-                    tessellator.addVertexWithUV(n32, y + n30, n34, a2, b2);
+                    tessellator.addVertexWithUV(double18, p_147721_3_ + double16, double20, float10, float12);
                     tessellator
                         .setColorOpaque_F(this.colorRedBottomLeft, this.colorGreenBottomLeft, this.colorBlueBottomLeft);
-                    tessellator.addVertexWithUV(n33, y + n31, n35, a3, b3);
+                    tessellator.addVertexWithUV(double19, p_147721_3_ + double17, double21, float11, float13);
                     tessellator.setColorOpaque_F(
                         this.colorRedBottomRight,
                         this.colorGreenBottomRight,
                         this.colorBlueBottomRight);
-                    tessellator.addVertexWithUV(n33, y, n35, a3, b4);
+                    tessellator.addVertexWithUV(double19, p_147721_3_ + 0, double21, float11, float14);
                     tessellator
                         .setColorOpaque_F(this.colorRedTopRight, this.colorGreenTopRight, this.colorBlueTopRight);
-                    tessellator.addVertexWithUV(n32, y, n34, a2, b4);
+                    tessellator.addVertexWithUV(double18, p_147721_3_ + 0, double20, float10, float14);
                     tessellator
                         .setColorOpaque_F(this.colorRedTopRight, this.colorGreenTopRight, this.colorBlueTopRight);
-                    tessellator.addVertexWithUV(n32, y, n34, a2, b4);
+                    tessellator.addVertexWithUV(double18, p_147721_3_ + 0, double20, float10, float14);
                     tessellator.setColorOpaque_F(
                         this.colorRedBottomRight,
                         this.colorGreenBottomRight,
                         this.colorBlueBottomRight);
-                    tessellator.addVertexWithUV(n33, y, n35, a3, b4);
+                    tessellator.addVertexWithUV(double19, p_147721_3_ + 0, double21, float11, float14);
                     tessellator
                         .setColorOpaque_F(this.colorRedBottomLeft, this.colorGreenBottomLeft, this.colorBlueBottomLeft);
-                    tessellator.addVertexWithUV(n33, y + n31, n35, a3, b3);
+                    tessellator.addVertexWithUV(double19, p_147721_3_ + double17, double21, float11, float13);
                     tessellator.setColorOpaque_F(this.colorRedTopLeft, this.colorGreenTopLeft, this.colorBlueTopLeft);
-                    tessellator.addVertexWithUV(n32, y + n30, n34, a2, b2);
+                    tessellator.addVertexWithUV(double18, p_147721_3_ + double16, double20, float10, float12);
                 } else {
-                    tessellator.addVertexWithUV(n32, y + n30, n34, a2, b2);
-                    tessellator.addVertexWithUV(n33, y + n31, n35, a3, b3);
-                    tessellator.addVertexWithUV(n33, y, n35, a3, b4);
-                    tessellator.addVertexWithUV(n32, y, n34, a2, b4);
-                    tessellator.addVertexWithUV(n32, y, n34, a2, b4);
-                    tessellator.addVertexWithUV(n33, y, n35, a3, b4);
-                    tessellator.addVertexWithUV(n33, y + n31, n35, a3, b3);
-                    tessellator.addVertexWithUV(n32, y + n30, n34, a2, b2);
+                    tessellator.addVertexWithUV(double18, p_147721_3_ + double16, double20, float10, float12);
+                    tessellator.addVertexWithUV(double19, p_147721_3_ + double17, double21, float11, float13);
+                    tessellator.addVertexWithUV(double19, p_147721_3_ + 0, double21, float11, float14);
+                    tessellator.addVertexWithUV(double18, p_147721_3_ + 0, double20, float10, float14);
+                    tessellator.addVertexWithUV(double18, p_147721_3_ + 0, double20, float10, float14);
+                    tessellator.addVertexWithUV(double19, p_147721_3_ + 0, double21, float11, float14);
+                    tessellator.addVertexWithUV(double19, p_147721_3_ + double17, double21, float11, float13);
+                    tessellator.addVertexWithUV(double18, p_147721_3_ + double16, double20, float10, float12);
                 }
             }
         }
-        this.renderMinY = l;
-        this.renderMaxX = m;
+        this.renderMinY = firstDouble;
+        this.renderMaxY = secondDouble;
         return b;
     }
 
