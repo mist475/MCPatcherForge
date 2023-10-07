@@ -6,7 +6,6 @@ import java.util.Map;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
-import com.prupe.mcpatcher.mal.item.ItemAPI;
 import com.prupe.mcpatcher.mal.resource.PropertiesFile;
 import com.prupe.mcpatcher.mal.tile.TileLoader;
 
@@ -82,6 +81,6 @@ final class ItemOverride extends OverrideBase {
                 name = name.substring(0, name.length() - 4);
             }
         }
-        return ItemAPI.expandTileName(name);
+        return name;
     }
 }

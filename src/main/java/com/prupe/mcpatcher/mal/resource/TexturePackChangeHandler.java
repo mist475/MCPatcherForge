@@ -45,10 +45,6 @@ abstract public class TexturePackChangeHandler implements Comparable<TexturePack
 
     public void afterChange2() {}
 
-    protected void setUpdateNeeded(boolean updateNeeded) {
-        this.updateNeeded = updateNeeded;
-    }
-
     @Override
     public int compareTo(TexturePackChangeHandler that) {
         return this.order - that.order;
@@ -56,14 +52,12 @@ abstract public class TexturePackChangeHandler implements Comparable<TexturePack
 
     public static void register(TexturePackChangeHandler handler) {
         if (handler != null) {
-            if (TexturePackAPI.isInitialized()) {
-                try {
-                    logger.info("initializing %s...", handler.name);
-                    handler.initialize();
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                    logger.severe("%s initialization failed", handler.name);
-                }
+            try {
+                logger.info("initializing %s...", handler.name);
+                handler.initialize();
+            } catch (Throwable e) {
+                e.printStackTrace();
+                logger.severe("%s initialization failed", handler.name);
             }
             handlers.add(handler);
             logger.fine("registered texture pack handler %s, priority %d", handler.name, handler.order);

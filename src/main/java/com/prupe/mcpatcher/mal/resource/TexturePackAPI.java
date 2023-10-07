@@ -39,48 +39,57 @@ public class TexturePackAPI {
 
     public static final String DEFAULT_NAMESPACE = "minecraft";
 
-    private static final TexturePackAPI instance = new TexturePackAPI();
-
     public static final String MCPATCHER_SUBDIR = "mcpatcher/";
     public static final ResourceLocation ITEMS_PNG = new ResourceLocation("textures/atlas/items.png");
-    public static final ResourceLocation BLOCKS_PNG = new ResourceLocation("textures/atlas/blocks.png");
 
     private static final String ASSETS = "assets/";
 
-    public static boolean isInitialized() {
-        return instance != null && instance.isInitialized_Impl();
-    }
-
-    public static void scheduleTexturePackRefresh() {
-        Minecraft.getMinecraft()
-            .scheduleResourcesRefresh();
-    }
-
     public static List<IResourcePack> getResourcePacks(String namespace) {
-        List<IResourcePack> list = new ArrayList<>();
-        instance.getResourcePacks_Impl(namespace, list);
-        return list;
+        List<IResourcePack> resourcePacks = new ArrayList<>();
+        IResourceManager resourceManager = getResourceManager();
+        if (resourceManager instanceof SimpleReloadableResourceManager) {
+            Set<Map.Entry<String, FallbackResourceManager>> entrySet = ((SimpleReloadableResourceManager) resourceManager).domainResourceManagers
+                .entrySet();
+            for (Map.Entry<String, FallbackResourceManager> entry : entrySet) {
+                if (namespace == null || namespace.equals(entry.getKey())) {
+                    List<IResourcePack> packs = entry.getValue().resourcePacks;
+                    if (packs != null) {
+                        resourcePacks.removeAll(packs);
+                        resourcePacks.addAll(packs);
+                    }
+                }
+            }
+        }
+        return resourcePacks;
     }
 
     public static Set<String> getNamespaces() {
-        Set<String> set = new HashSet<>();
-        set.add(DEFAULT_NAMESPACE);
-        instance.getNamespaces_Impl(set);
-        return set;
+        Set<String> namespaces = new HashSet<>();
+        namespaces.add(DEFAULT_NAMESPACE);
+        IResourceManager resourceManager = getResourceManager();
+        if (resourceManager instanceof SimpleReloadableResourceManager simpleReloadableResourceManager) {
+            namespaces.addAll(simpleReloadableResourceManager.domainResourceManagers.keySet());
+        }
+        return namespaces;
     }
 
     public static boolean isDefaultTexturePack() {
-        return instance.isDefaultResourcePack_Impl();
+        return getResourcePacks(DEFAULT_NAMESPACE).size() <= 1;
     }
 
     public static InputStream getInputStream(ResourceLocation resource) {
         try {
-            if (resource instanceof ResourceLocationWithSource) {
+            if (resource instanceof ResourceLocationWithSource resourceLocationWithSource) {
                 try {
-                    return instance.getInputStream_Impl(((ResourceLocationWithSource) resource).getSource(), resource);
+                    return resourceLocationWithSource.getSource()
+                        .getInputStream(resource);
                 } catch (IOException e) {}
             }
-            return resource == null ? null : instance.getInputStream_Impl(resource);
+            return resource == null ? null
+                : Minecraft.getMinecraft()
+                    .getResourceManager()
+                    .getResource(resource)
+                    .getInputStream();
         } catch (IOException e) {
             return null;
         }
@@ -106,7 +115,7 @@ public class TexturePackAPI {
         InputStream jar = null;
         InputStream pack = null;
         try {
-            String path = instance.getFullPath_Impl(resource);
+            String path = ASSETS + resource.getResourceDomain() + "/" + resource.getResourcePath();
             pack = getInputStream(resource);
             if (pack == null) {
                 return false;
@@ -193,106 +202,10 @@ public class TexturePackAPI {
     }
 
     public static ResourceLocation parsePath(String path) {
-        return MCPatcherUtils.isNullOrEmpty(path) ? null
-            : instance.parsePath_Impl(path.replace(File.separatorChar, '/'));
-    }
-
-    public static ResourceLocation parseResourceLocation(String path) {
-        return parseResourceLocation(new ResourceLocation(DEFAULT_NAMESPACE, "a"), path);
-    }
-
-    public static ResourceLocation parseResourceLocation(ResourceLocation baseResource, String path) {
-        return MCPatcherUtils.isNullOrEmpty(path) ? null : instance.parseResourceLocation_Impl(baseResource, path);
-    }
-
-    public static ResourceLocation newMCPatcherResourceLocation(String v1Path, String v2Path) {
-        return new ResourceLocation(MCPATCHER_SUBDIR + v2Path.replaceFirst("^/+", ""));
-    }
-
-    public static ResourceLocation newMCPatcherResourceLocation(String path) {
-        return newMCPatcherResourceLocation(path, path);
-    }
-
-    public static int getTextureIfLoaded(ResourceLocation resource) {
-        return resource == null ? -1 : instance.getTextureIfLoaded_Impl(resource);
-    }
-
-    public static boolean isTextureLoaded(ResourceLocation resource) {
-        return getTextureIfLoaded(resource) >= 0;
-    }
-
-    public static ITextureObject getTextureObject(ResourceLocation resource) {
-        return Minecraft.getMinecraft()
-            .getTextureManager()
-            .getTexture(resource);
-    }
-
-    public static void bindTexture(ResourceLocation resource) {
-        if (resource != null) {
-            instance.bindTexture_Impl(resource);
+        if (MCPatcherUtils.isNullOrEmpty(path)) {
+            return null;
         }
-    }
-
-    public static void unloadTexture(ResourceLocation resource) {
-        if (resource != null) {
-            instance.unloadTexture_Impl(resource);
-        }
-    }
-
-    public static void flushUnusedTextures() {
-        instance.flushUnusedTextures_Impl();
-    };
-
-    private IResourceManager getResourceManager() {
-        return Minecraft.getMinecraft()
-            .getResourceManager();
-    }
-
-    protected boolean isInitialized_Impl() {
-        return getResourceManager() != null;
-    }
-
-    protected void getResourcePacks_Impl(String namespace, List<IResourcePack> resourcePacks) {
-        IResourceManager resourceManager = getResourceManager();
-        if (resourceManager instanceof SimpleReloadableResourceManager) {
-            Set<Map.Entry<String, FallbackResourceManager>> entrySet = ((SimpleReloadableResourceManager) resourceManager).domainResourceManagers
-                .entrySet();
-            for (Map.Entry<String, FallbackResourceManager> entry : entrySet) {
-                if (namespace == null || namespace.equals(entry.getKey())) {
-                    List<IResourcePack> packs = entry.getValue().resourcePacks;
-                    if (packs != null) {
-                        resourcePacks.removeAll(packs);
-                        resourcePacks.addAll(packs);
-                    }
-                }
-            }
-        }
-    }
-
-    protected void getNamespaces_Impl(Set<String> namespaces) {
-        IResourceManager resourceManager = getResourceManager();
-        if (resourceManager instanceof SimpleReloadableResourceManager) {
-            namespaces.addAll(((SimpleReloadableResourceManager) resourceManager).domainResourceManagers.keySet());
-        }
-    }
-
-    protected InputStream getInputStream_Impl(ResourceLocation resource) throws IOException {
-        return Minecraft.getMinecraft()
-            .getResourceManager()
-            .getResource(resource)
-            .getInputStream();
-    }
-
-    protected InputStream getInputStream_Impl(IResourcePack resourcePack, ResourceLocation resource)
-        throws IOException {
-        return resourcePack.getInputStream(resource);
-    }
-
-    protected String getFullPath_Impl(ResourceLocation resource) {
-        return ASSETS + resource.getResourceDomain() + "/" + resource.getResourcePath();
-    }
-
-    protected ResourceLocation parsePath_Impl(String path) {
+        path = path.replace(File.separatorChar, '/');
         if (path.startsWith(ASSETS)) {
             path = path.substring(ASSETS.length());
             int slash = path.indexOf('/');
@@ -303,7 +216,10 @@ public class TexturePackAPI {
         return null;
     }
 
-    protected ResourceLocation parseResourceLocation_Impl(ResourceLocation baseResource, String path) {
+    public static ResourceLocation parseResourceLocation(ResourceLocation baseResource, String path) {
+        if (MCPatcherUtils.isNullOrEmpty(path)) {
+            return null;
+        }
         boolean absolute = false;
         if (path.startsWith("%blur%")) {
             path = path.substring(6);
@@ -357,37 +273,58 @@ public class TexturePackAPI {
         return resource;
     }
 
-    protected boolean isDefaultResourcePack_Impl() {
-        return getResourcePacks(DEFAULT_NAMESPACE).size() <= 1;
+    public static ResourceLocation newMCPatcherResourceLocation(String v1Path, String v2Path) {
+        return new ResourceLocation(MCPATCHER_SUBDIR + v2Path.replaceFirst("^/+", ""));
     }
 
-    protected int getTextureIfLoaded_Impl(ResourceLocation resource) {
+    public static ResourceLocation newMCPatcherResourceLocation(String path) {
+        return newMCPatcherResourceLocation(path, path);
+    }
+
+    public static int getTextureIfLoaded(ResourceLocation resource) {
+        if (resource == null) {
+            return -1;
+        }
         ITextureObject texture = Minecraft.getMinecraft()
             .getTextureManager()
             .getTexture(resource);
         return texture instanceof AbstractTexture ? texture.getGlTextureId() : -1;
     }
 
-    protected void bindTexture_Impl(ResourceLocation resource) {
-        Minecraft.getMinecraft()
-            .getTextureManager()
-            .bindTexture(resource);
+    public static boolean isTextureLoaded(ResourceLocation resource) {
+        return getTextureIfLoaded(resource) >= 0;
     }
 
-    protected void unloadTexture_Impl(ResourceLocation resource) {
-        TextureManager textureManager = Minecraft.getMinecraft()
-            .getTextureManager();
-        ITextureObject texture = textureManager.getTexture(resource);
-        if (texture != null && !(texture instanceof TextureMap) && !(texture instanceof DynamicTexture)) {
-            if (texture instanceof AbstractTexture) {
-                ((AbstractTextureExpansion) texture).unloadGLTexture();
-            }
-            logger.finer("unloading texture %s", resource);
-            textureManager.mapTextureObjects.remove(resource);
+    public static ITextureObject getTextureObject(ResourceLocation resource) {
+        return Minecraft.getMinecraft()
+            .getTextureManager()
+            .getTexture(resource);
+    }
+
+    public static void bindTexture(ResourceLocation resource) {
+        if (resource != null) {
+            Minecraft.getMinecraft()
+                .getTextureManager()
+                .bindTexture(resource);
         }
     }
 
-    protected void flushUnusedTextures_Impl() {
+    public static void unloadTexture(ResourceLocation resource) {
+        if (resource != null) {
+            TextureManager textureManager = Minecraft.getMinecraft()
+                .getTextureManager();
+            ITextureObject texture = textureManager.getTexture(resource);
+            if (texture != null && !(texture instanceof TextureMap) && !(texture instanceof DynamicTexture)) {
+                if (texture instanceof AbstractTexture) {
+                    ((AbstractTextureExpansion) texture).unloadGLTexture();
+                }
+                logger.finer("unloading texture %s", resource);
+                textureManager.mapTextureObjects.remove(resource);
+            }
+        }
+    }
+
+    public static void flushUnusedTextures() {
         TextureManager textureManager = Minecraft.getMinecraft()
             .getTextureManager();
         if (textureManager != null) {
@@ -405,5 +342,10 @@ public class TexturePackAPI {
                 unloadTexture(resource);
             }
         }
+    };
+
+    private static IResourceManager getResourceManager() {
+        return Minecraft.getMinecraft()
+            .getResourceManager();
     }
 }

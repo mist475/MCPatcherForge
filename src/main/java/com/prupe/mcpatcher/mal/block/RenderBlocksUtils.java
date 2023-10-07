@@ -30,9 +30,6 @@ public class RenderBlocksUtils {
     public static int layerIndex;
     public static IIcon blankIcon;
 
-    private static int grassFace;
-    private static IIcon grassIcon;
-
     public static void setupColorMultiplier(Block block, IBlockAccess blockAccess, int i, int j, int k,
         boolean haveOverrideTexture, float r, float g, float b) {
         if (haveOverrideTexture || !RenderPassAPI.instance.useColorMultiplierThisPass(block)) {
@@ -125,10 +122,6 @@ public class RenderBlocksUtils {
         }
     }
 
-    public static boolean useColorMultiplier(boolean useTint, int face) {
-        return useTint || (layerIndex++ == 0 && useColorMultiplier1(face));
-    }
-
     public static float getColorMultiplierRed(int face) {
         return nonAOMultipliers[getFaceIndex(face)][0];
     }
@@ -180,29 +173,6 @@ public class RenderBlocksUtils {
             return null;
         }
         return isSnow ? BlockAPI.getBlockIcon(snowBlock, blockAccess, i, j, k, face) : topIcon;
-    }
-
-    public static IIcon getGrassIconBTW(IIcon origIcon, int face) {
-        grassFace = face;
-        if (blankIcon != null && colorMultiplierType[face] == COLOR) {
-            grassIcon = origIcon;
-            return blankIcon;
-        } else {
-            grassIcon = null;
-            return origIcon;
-        }
-    }
-
-    public static IIcon getGrassOverlayIconBTW(IIcon origIcon) {
-        if (grassIcon != null) {
-            IIcon t = grassIcon;
-            grassIcon = null;
-            return t;
-        } else if (blankIcon != null && colorMultiplierType[grassFace] == NONCOLOR) {
-            return blankIcon;
-        } else {
-            return origIcon;
-        }
     }
 
     private static boolean isSnowCovered(IBlockAccess blockAccess, int i, int j, int k) {
