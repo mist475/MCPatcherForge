@@ -26,7 +26,6 @@ import com.prupe.mcpatcher.mal.resource.PropertiesFile;
 import com.prupe.mcpatcher.mal.resource.ResourceList;
 import com.prupe.mcpatcher.mal.resource.TexturePackAPI;
 import com.prupe.mcpatcher.mal.resource.TexturePackChangeHandler;
-import com.prupe.mcpatcher.mal.tile.IconAPI;
 import com.prupe.mcpatcher.mal.tile.TileLoader;
 
 import mist475.mcpatcherforge.mixins.interfaces.NBTTagListExpansion;
@@ -261,8 +260,8 @@ public class CITUtils {
         if (lastIcon == null) {
             width = height = 256;
         } else {
-            width = IconAPI.getIconWidth(lastIcon);
-            height = IconAPI.getIconHeight(lastIcon);
+            width = lastIcon.getIconWidth();
+            height = lastIcon.getIconHeight();
         }
         Enchantment.beginOuter3D();
         for (int i = 0; i < matches.size(); i++) {

@@ -12,7 +12,6 @@ import org.lwjgl.opengl.GL11;
 import com.prupe.mcpatcher.mal.resource.BlendMethod;
 import com.prupe.mcpatcher.mal.resource.PropertiesFile;
 import com.prupe.mcpatcher.mal.resource.TexturePackAPI;
-import com.prupe.mcpatcher.mal.tile.IconAPI;
 
 final class Enchantment extends OverrideBase {
 
@@ -145,7 +144,7 @@ final class Enchantment extends OverrideBase {
     boolean bindTexture(IIcon icon) {
         ResourceLocation texture;
         if (alternateTextures != null && icon != null) {
-            texture = alternateTextures.get(IconAPI.getIconName(icon));
+            texture = alternateTextures.get(icon.getIconName());
             if (texture == null) {
                 texture = textureName;
             }

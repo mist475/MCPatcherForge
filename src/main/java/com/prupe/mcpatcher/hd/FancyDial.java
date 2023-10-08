@@ -36,7 +36,6 @@ import com.prupe.mcpatcher.mal.resource.BlendMethod;
 import com.prupe.mcpatcher.mal.resource.GLAPI;
 import com.prupe.mcpatcher.mal.resource.PropertiesFile;
 import com.prupe.mcpatcher.mal.resource.TexturePackAPI;
-import com.prupe.mcpatcher.mal.tile.IconAPI;
 import com.prupe.mcpatcher.mal.util.InputHandler;
 
 public class FancyDial {
@@ -108,7 +107,7 @@ public class FancyDial {
         if (!fboSupported) {
             return;
         }
-        String name = IconAPI.getIconName(icon)
+        String name = icon.getIconName()
             .replaceFirst("^minecraft:items/", "");
         if ("compass".equals(name)) {
             if (!enableCompass) {
@@ -133,7 +132,7 @@ public class FancyDial {
 
     public static boolean update(TextureAtlasSprite icon, boolean itemFrameRenderer) {
         if (!initialized) {
-            logger.finer("deferring %s update until initialization finishes", IconAPI.getIconName(icon));
+            logger.finer("deferring %s update until initialization finishes", icon.getIconName());
             return false;
         }
         if (!active) {
@@ -141,7 +140,7 @@ public class FancyDial {
         }
         int oldFB = GL11.glGetInteger(EXTFramebufferObject.GL_FRAMEBUFFER_BINDING_EXT);
         if (oldFB != 0 && warnCount < 10) {
-            logger.finer("rendering %s while non-default framebuffer %d is active", IconAPI.getIconName(icon), oldFB);
+            logger.finer("rendering %s while non-default framebuffer %d is active", icon.getIconName(), oldFB);
             warnCount++;
         }
         int oldTexture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
@@ -229,11 +228,11 @@ public class FancyDial {
 
     private FancyDial(TextureAtlasSprite icon, PropertiesFile properties) {
         this.icon = icon;
-        name = IconAPI.getIconName(icon);
-        x0 = IconAPI.getIconX0(icon);
-        y0 = IconAPI.getIconY0(icon);
-        width = IconAPI.getIconWidth(icon);
-        height = IconAPI.getIconHeight(icon);
+        name = icon.getIconName();
+        x0 = icon.getOriginX();
+        y0 = icon.getOriginY();
+        width = icon.getIconWidth();
+        height = icon.getIconHeight();
         scratchBuffer = ByteBuffer.allocateDirect(4 * width * height);
 
         int itemsTexture = TexturePackAPI.getTextureIfLoaded(TexturePackAPI.ITEMS_PNG);

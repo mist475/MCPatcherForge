@@ -22,7 +22,6 @@ import com.prupe.mcpatcher.mal.resource.PropertiesFile;
 import com.prupe.mcpatcher.mal.resource.ResourceList;
 import com.prupe.mcpatcher.mal.resource.TexturePackAPI;
 import com.prupe.mcpatcher.mal.resource.TexturePackChangeHandler;
-import com.prupe.mcpatcher.mal.tile.IconAPI;
 
 public class CustomAnimation implements Comparable<CustomAnimation> {
 
@@ -78,9 +77,7 @@ public class CustomAnimation implements Comparable<CustomAnimation> {
                         }
                     }
                 }
-                if (IconAPI.needRegisterTileAnimations()) {
-                    FancyDial.registerAnimations();
-                }
+                FancyDial.registerAnimations();
             }
         });
     }

@@ -12,7 +12,6 @@ import net.minecraft.util.IIcon;
 import com.prupe.mcpatcher.Config;
 import com.prupe.mcpatcher.MCPatcherUtils;
 import com.prupe.mcpatcher.mal.block.BlockStateMatcher;
-import com.prupe.mcpatcher.mal.tile.IconAPI;
 
 abstract public class TileOverrideIterator implements Iterator<ITileOverride> {
 
@@ -51,7 +50,7 @@ abstract public class TileOverrideIterator implements Iterator<ITileOverride> {
 
     private void resetForNextPass() {
         blockOverrides = null;
-        tileOverrides = allTileOverrides.get(IconAPI.getIconName(currentIcon));
+        tileOverrides = allTileOverrides.get(currentIcon.getIconName());
         blockPos = 0;
         iconPos = 0;
         foundNext = false;
@@ -111,7 +110,7 @@ abstract public class TileOverrideIterator implements Iterator<ITileOverride> {
         renderBlockState.setFilter(null);
         currentIcon = origIcon;
         blockOverrides = allBlockOverrides.get(renderBlockState.getBlock());
-        tileOverrides = allTileOverrides.get(IconAPI.getIconName(origIcon));
+        tileOverrides = allTileOverrides.get(origIcon.getIconName());
         blockPos = 0;
         iconPos = 0;
         foundNext = false;
