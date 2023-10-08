@@ -8,8 +8,6 @@ public class Config {
 
     private static final Config instance = new Config();
 
-    public static final String MCPATCHER_PROPERTIES = "mcpatcher.properties";
-
     LinkedHashMap<String, String> logging = new LinkedHashMap<>();
     LinkedHashMap<String, LinkedHashMap<String, String>> profile = new LinkedHashMap<>();
 

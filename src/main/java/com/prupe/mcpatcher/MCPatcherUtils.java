@@ -3,7 +3,6 @@ package com.prupe.mcpatcher;
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -19,18 +18,14 @@ import net.minecraft.launchwrapper.Launch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import mist475.mcpatcherforge.Tags;
-
 /**
- * Collection of static methods available to mods at runtime. This class is always injected into
- * the output minecraft jar.
+ * Collection of static methods available to mods at runtime.
  */
 public class MCPatcherUtils {
 
     private static File minecraftDir;
     private static File gameDir;
     private static String minecraftVersion;
-    private static Properties patcherProperties;
 
     public static final String EXTENDED_HD = "Extended HD";
     public static final String HD_FONT = "HD Font";
@@ -366,22 +361,5 @@ public class MCPatcherUtils {
             a[i] = tmpList.get(i);
         }
         return a;
-    }
-
-    static Properties getPatcherProperties() {
-        if (patcherProperties == null) {
-            patcherProperties = new Properties();
-            InputStream input = null;
-            try {
-                input = new FileInputStream(
-                    Launch.minecraftHome + File.separator + Tags.MODID + File.separator + Config.MCPATCHER_PROPERTIES);
-                readProperties(input, patcherProperties);
-            } catch (IOException e) {
-                System.out.printf("ERROR: could not read /%s\n", Config.MCPATCHER_PROPERTIES);
-            } finally {
-                close(input);
-            }
-        }
-        return patcherProperties;
     }
 }
