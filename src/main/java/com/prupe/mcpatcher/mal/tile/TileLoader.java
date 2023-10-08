@@ -3,7 +3,6 @@ package com.prupe.mcpatcher.mal.tile;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,7 +37,6 @@ public class TileLoader {
 
     private static final TexturePackChangeHandler changeHandler;
     private static boolean changeHandlerCalled;
-    private static boolean useFullPath;
 
     private static final long MAX_TILESHEET_SIZE;
 
@@ -129,7 +127,6 @@ public class TileLoader {
         if (name.endsWith(".png")) {
             path = name.replaceFirst("^/", "")
                 .replaceFirst("\\.[^.]+$", "") + ext;
-            useFullPath = true;
         } else {
             path = basePath;
             if (!basePath.endsWith("/")) {
@@ -137,25 +134,10 @@ public class TileLoader {
             }
             path += name;
             path += ext;
-            useFullPath = false;
         }
         path = prefix + path;
         logger.finer("getOverridePath(%s, %s, %s, %s) -> %s", prefix, basePath, name, ext, path);
         return path;
-    }
-
-    public static String getOverrideBasename(Object o, String path) {
-        if (useFullPath) {
-            useFullPath = false;
-            return "/" + path;
-        } else {
-            File file = new File(path);
-            return file.getName()
-                .substring(
-                    0,
-                    file.getName()
-                        .lastIndexOf('.'));
-        }
     }
 
     public static boolean isSpecialTexture(TextureMap map, String texture, String special) {
@@ -191,14 +173,6 @@ public class TileLoader {
     }
 
     public static void init() {}
-
-    public static ResourceLocation getBlocksAtlas() {
-        return TextureMap.locationBlocksTexture;
-    }
-
-    public static ResourceLocation getItemsAtlas() {
-        return TextureMap.locationItemsTexture;
-    }
 
     public TileLoader(String mapName, MCLogger logger) {
         this.mapName = mapName;
