@@ -3,7 +3,6 @@ package com.prupe.mcpatcher.mal.resource;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -18,8 +17,6 @@ final public class PropertiesFile {
     private final ResourceLocation resource;
     private final String prefix;
     private final Properties properties;
-
-    private int warningCount;
     private int errorCount;
 
     public static PropertiesFile get(ResourceLocation resource) {
@@ -84,10 +81,6 @@ final public class PropertiesFile {
         return MCPatcherUtils.getDoubleProperty(properties, key, defaultValue);
     }
 
-    public int[] getIntList(String key, int minValue, int maxValue) {
-        return getIntList(key, minValue, maxValue, null);
-    }
-
     public int[] getIntList(String key, int minValue, int maxValue, String defaultValue) {
         String value = getString(key, defaultValue);
         if (value == null) {
@@ -105,14 +98,6 @@ final public class PropertiesFile {
         properties.setProperty(key, value);
     }
 
-    public boolean isLoggable(Level level) {
-        return logger.isLoggable(level);
-    }
-
-    public void finest(String format, Object... params) {
-        logger.finest(prefix + format, params);
-    }
-
     public void finer(String format, Object... params) {
         logger.finer(prefix + format, params);
     }
@@ -121,27 +106,18 @@ final public class PropertiesFile {
         logger.fine(prefix + format, params);
     }
 
-    public void info(String format, Object... params) {
-        logger.info(prefix + format, params);
-    }
-
     public void config(String format, Object... params) {
         logger.config(format, params);
     }
 
     public void warning(String format, Object... params) {
         logger.warning(prefix + format, params);
-        warningCount++;
     }
 
     public boolean error(String format, Object... params) {
         logger.error(prefix + format, params);
         errorCount++;
         return false;
-    }
-
-    public int getWarningCount() {
-        return warningCount;
     }
 
     public int getErrorCount() {
