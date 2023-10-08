@@ -227,9 +227,9 @@ public abstract class MixinRenderBlocks {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/RenderBlocks;getBlockIconFromSideAndMetadata(Lnet/minecraft/block/Block;II)Lnet/minecraft/util/IIcon;"))
     private IIcon modifyRenderBlockMinecartTrack(RenderBlocks instance, Block block, int side, int meta,
-                                                 BlockRailBase specializedBlock, int x, int y, int z) {
+        BlockRailBase specializedBlock, int x, int y, int z) {
         return (this.blockAccess == null) ? this.getBlockIconFromSideAndMetadata(block, side, meta)
-                                          : this.getBlockIcon(block, this.blockAccess, x, y, z, side);
+            : this.getBlockIcon(block, this.blockAccess, x, y, z, side);
     }
 
     @Redirect(
@@ -242,9 +242,9 @@ public abstract class MixinRenderBlocks {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/RenderBlocks;getBlockIconFromSide(Lnet/minecraft/block/Block;I)Lnet/minecraft/util/IIcon;"))
     private IIcon redirectGetBlockIconFromSide(RenderBlocks instance, Block block, int side, Block specializedBlock,
-                                               int x, int y, int z) {
+        int x, int y, int z) {
         return (this.blockAccess == null) ? this.getBlockIconFromSide(block, side)
-                                          : this.getBlockIcon(block, this.blockAccess, x, y, z, side);
+            : this.getBlockIcon(block, this.blockAccess, x, y, z, side);
     }
 
     @Redirect(
