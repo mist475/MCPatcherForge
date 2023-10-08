@@ -52,15 +52,6 @@ public abstract class MixinRenderBlocksRenderBlockLiquid {
     @Shadow
     public float colorBlueTopRight;
 
-    @Shadow
-    public abstract IIcon getBlockIcon(Block block, IBlockAccess access, int x, int y, int z, int side);
-
-    @Shadow
-    public abstract IIcon getBlockIconFromSideAndMetadata(Block block, int side, int meta);
-
-    @Shadow
-    public abstract IIcon getBlockIconFromSide(Block block, int side);
-
     @Unique
     private void mcpatcherforge_actual_public$colorAndVertex(Tessellator tessellator, float red, float green,
         float blue, double x, double y, double z, double u, double v) {
@@ -77,30 +68,6 @@ public abstract class MixinRenderBlocksRenderBlockLiquid {
             target = "Lnet/minecraft/block/Block;shouldSideBeRendered(Lnet/minecraft/world/IBlockAccess;IIII)Z"))
     private boolean modifyRenderBlockLiquid1(Block block, IBlockAccess worldIn, int x, int y, int z, int side) {
         return RenderPass.shouldSideBeRendered(block, worldIn, x, y, z, side);
-    }
-
-    // Redirect calls to this.getBlockIcon when possible
-
-    @Redirect(
-        method = "renderBlockLiquid(Lnet/minecraft/block/Block;III)Z",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/RenderBlocks;getBlockIconFromSideAndMetadata(Lnet/minecraft/block/Block;II)Lnet/minecraft/util/IIcon;"))
-    private IIcon modifyRenderBlockLiquid2(RenderBlocks instance, Block block, int side, int meta,
-        Block specializedBlock, int x, int y, int z) {
-        return (this.blockAccess == null) ? this.getBlockIconFromSideAndMetadata(block, side, meta)
-            : this.getBlockIcon(block, this.blockAccess, x, y, z, side);
-    }
-
-    @Redirect(
-        method = "renderBlockLiquid(Lnet/minecraft/block/Block;III)Z",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/RenderBlocks;getBlockIconFromSide(Lnet/minecraft/block/Block;I)Lnet/minecraft/util/IIcon;"))
-    private IIcon modifyRenderBlockLiquid3(RenderBlocks instance, Block block, int side, Block specializedBlock, int x,
-        int y, int z) {
-        return (this.blockAccess == null) ? this.getBlockIconFromSide(block, side)
-            : this.getBlockIcon(block, this.blockAccess, x, y, z, side);
     }
 
     // Handle smoothing
