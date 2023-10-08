@@ -71,7 +71,7 @@ public class RenderPass {
                     return pass > MAX_BASE_RENDER_PASS;
                 }
                 if (pass < 0) {
-                    pass = RenderPassMap.instance.getDefaultRenderPass(block);
+                    pass = RenderPassMap.getDefaultRenderPass(block);
                 }
                 return pass != currentRenderPass;
             }
@@ -106,7 +106,7 @@ public class RenderPass {
                 backfaceCulling[RenderPassAPI.BACKFACE_RENDER_PASS] = false;
 
                 for (Block block : BlockAPI.getAllBlocks()) {
-                    baseRenderPass.put(block, RenderPassMap.instance.getDefaultRenderPass(block));
+                    baseRenderPass.put(block, RenderPassMap.getDefaultRenderPass(block));
                 }
             }
 
@@ -131,7 +131,7 @@ public class RenderPass {
                     enableColormap = properties.getBoolean("enableColormap.overlay", false);
                     backfaceCulling[RenderPassAPI.OVERLAY_RENDER_PASS] = properties
                         .getBoolean("backfaceCulling.overlay", true);
-                    backfaceCulling[RenderPassAPI.CUTOUT_RENDER_PASS] = backfaceCulling[RenderPassMap.instance
+                    backfaceCulling[RenderPassAPI.CUTOUT_RENDER_PASS] = backfaceCulling[RenderPassMap
                         .getCutoutRenderPass()] = properties.getBoolean("backfaceCulling.cutout", true);
                     backfaceCulling[RenderPassAPI.CUTOUT_MIPPED_RENDER_PASS] = properties
                         .getBoolean("backfaceCulling.cutout_mipped", backfaceCulling[RenderPassAPI.CUTOUT_RENDER_PASS]);
@@ -209,7 +209,7 @@ public class RenderPass {
     }
 
     public static void start(int pass) {
-        currentRenderPass = RenderPassMap.instance.vanillaToMCPatcher(pass);
+        currentRenderPass = RenderPassMap.vanillaToMCPatcher(pass);
         CTMUtils.setBlankResource();
     }
 
