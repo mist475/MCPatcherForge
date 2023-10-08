@@ -30,16 +30,4 @@ public class ColorUtils {
             return 0.0f;
         } else return Math.min(f, 1.0f);
     }
-
-    public static double clamp(double d) {
-        if (d < 0.0) {
-            return 0.0;
-        } else return Math.min(d, 1.0);
-    }
-
-    public static void clamp(float[] f) {
-        for (int i = 0; i < f.length; i++) {
-            f[i] = clamp(f[i]);
-        }
-    }
 }
