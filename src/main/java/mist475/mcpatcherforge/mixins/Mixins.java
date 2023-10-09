@@ -62,8 +62,6 @@ public enum Mixins {
 
             // Multiple mixins per class = classname as package
             "client.renderer.RenderBlocks.MixinRenderBlocks",
-            "client.renderer.RenderBlocks.MixinRenderBlocksRenderBlockLiquid",
-
             "client.renderer.texture.MixinAbstractTexture",
             "client.renderer.texture.MixinTextureAtlasSprite",
             "client.renderer.texture.MixinTextureClock",
