@@ -60,8 +60,6 @@ public enum Mixins {
             "client.renderer.entity.MixinRenderWolf",
             "client.renderer.entity.MixinRenderXPOrb",
 
-            // Multiple mixins per class = classname as package
-            "client.renderer.RenderBlocks.MixinRenderBlocks",
             "client.renderer.texture.MixinAbstractTexture",
             "client.renderer.texture.MixinTextureAtlasSprite",
             "client.renderer.texture.MixinTextureClock",
@@ -73,6 +71,7 @@ public enum Mixins {
 
             "client.renderer.MixinEntityRenderer",
             "client.renderer.MixinItemRenderer",
+            "client.renderer.MixinRenderBlocks",
             "client.renderer.MixinRenderGlobal",
             "client.renderer.MixinWorldRenderer",
 

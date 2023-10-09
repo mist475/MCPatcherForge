@@ -1,4 +1,4 @@
-package mist475.mcpatcherforge.mixins.early.client.renderer.RenderBlocks;
+package mist475.mcpatcherforge.mixins.early.client.renderer;
 
 import static net.minecraftforge.common.util.ForgeDirection.EAST;
 import static net.minecraftforge.common.util.ForgeDirection.NORTH;
@@ -19,6 +19,7 @@ import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.BlockRedstoneDiode;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockStainedGlassPane;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -223,6 +224,9 @@ public abstract class MixinRenderBlocks {
     @Shadow
     public abstract IIcon getIconSafe(IIcon texture);
 
+    @Shadow
+    public abstract float getLiquidHeight(int p_147729_1_, int p_147729_2_, int p_147729_3_, Material p_147729_4_);
+
     @Redirect(
         method = "renderBlockMinecartTrack(Lnet/minecraft/block/BlockRailBase;III)Z",
         at = @At(
@@ -238,8 +242,8 @@ public abstract class MixinRenderBlocks {
         method = { "renderBlockVine(Lnet/minecraft/block/Block;III)Z",
             "renderBlockLilyPad(Lnet/minecraft/block/Block;III)Z", "renderBlockLadder(Lnet/minecraft/block/Block;III)Z",
             "renderBlockTripWireSource(Lnet/minecraft/block/Block;III)Z",
-            "renderBlockLever(Lnet/minecraft/block/Block;III)Z", "renderBlockTripWire(Lnet/minecraft/block/Block;III)Z",
-             },
+            "renderBlockLever(Lnet/minecraft/block/Block;III)Z",
+            "renderBlockTripWire(Lnet/minecraft/block/Block;III)Z", },
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/RenderBlocks;getBlockIconFromSide(Lnet/minecraft/block/Block;I)Lnet/minecraft/util/IIcon;"))
@@ -671,28 +675,6 @@ public abstract class MixinRenderBlocks {
         }
 
         return true;
-    }
-
-    @Redirect(
-        method = "renderBlockLadder(Lnet/minecraft/block/Block;III)Z",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/RenderBlocks;getBlockIconFromSide(Lnet/minecraft/block/Block;I)Lnet/minecraft/util/IIcon;"))
-    private IIcon modifyRenderBlockLadder(RenderBlocks instance, Block block, int side, Block specializedBlock, int x,
-        int y, int z) {
-        return (this.blockAccess == null) ? this.getBlockIconFromSide(block, side)
-            : this.getBlockIcon(block, this.blockAccess, x, y, z, side);
-    }
-
-    @Redirect(
-        method = "renderBlockVine(Lnet/minecraft/block/Block;III)Z",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/RenderBlocks;getBlockIconFromSide(Lnet/minecraft/block/Block;I)Lnet/minecraft/util/IIcon;"))
-    private IIcon modifyRenderBlockVine(RenderBlocks instance, Block block, int side, Block specializedBlock, int x,
-        int y, int z) {
-        return (this.blockAccess == null) ? this.getBlockIconFromSide(block, side)
-            : this.getBlockIcon(block, this.blockAccess, x, y, z, side);
     }
 
     /**
@@ -1524,17 +1506,6 @@ public abstract class MixinRenderBlocks {
             -1);
     }
 
-    @Redirect(
-        method = "renderBlockLilyPad(Lnet/minecraft/block/Block;III)Z",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/RenderBlocks;getBlockIconFromSide(Lnet/minecraft/block/Block;I)Lnet/minecraft/util/IIcon;"))
-    private IIcon modifyRenderBlockLilyPad(RenderBlocks instance, Block block, int side, Block specializedBlock, int x,
-        int y, int z) {
-        return (this.blockAccess == null) ? this.getBlockIconFromSide(block, side)
-            : this.getBlockIcon(block, this.blockAccess, x, y, z, side);
-    }
-
     /**
      * @author Mist475 (adapted from Paul Rupe)
      * @reason Will be changes soon :tm:
@@ -1823,6 +1794,7 @@ public abstract class MixinRenderBlocks {
         this.renderMaxY = secondDouble;
         return b;
     }
+
     // If I was able to access ordinal number the duplication wouldn't be necessary
     @WrapWithCondition(
         method = "renderBlockSandFalling(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;IIII)V",
