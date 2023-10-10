@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -74,8 +73,7 @@ public class TileLoader {
                         loader.subLogger.warning(
                             "could not load all %s tiles (%d remaining): %s",
                             loader.mapName,
-                            loader.tilesToRegister.size(),
-                            Arrays.toString(loader.tilesToRegister.toArray()));
+                            loader.tilesToRegister.size());
                         loader.tilesToRegister.clear();
                     }
                 }
