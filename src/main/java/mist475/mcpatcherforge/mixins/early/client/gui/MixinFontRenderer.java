@@ -1,7 +1,6 @@
 package mist475.mcpatcherforge.mixins.early.client.gui;
 
 import java.awt.image.BufferedImage;
-import java.util.Random;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ResourceLocation;
@@ -35,10 +34,6 @@ public abstract class MixinFontRenderer implements FontRendererExpansion {
 
     @Shadow
     protected int[] charWidth;
-    @Shadow
-    public Random fontRandom;
-    @Shadow
-    private int[] colorCode;
     @Mutable
     @Shadow
     @Final
@@ -50,26 +45,6 @@ public abstract class MixinFontRenderer implements FontRendererExpansion {
     protected float posY;
     @Shadow
     private boolean unicodeFlag;
-    @Shadow
-    private float red;
-    @Shadow
-    private float blue;
-    @Shadow
-    private float green;
-    @Shadow
-    private float alpha;
-    @Shadow
-    private int textColor;
-    @Shadow
-    private boolean randomStyle;
-    @Shadow
-    private boolean boldStyle;
-    @Shadow
-    private boolean italicStyle;
-    @Shadow
-    private boolean underlineStyle;
-    @Shadow
-    private boolean strikethroughStyle;
 
     @Shadow
     protected abstract float renderUnicodeChar(char p_78277_1_, boolean p_78277_2_);
@@ -79,9 +54,6 @@ public abstract class MixinFontRenderer implements FontRendererExpansion {
 
     @Shadow(remap = false)
     protected abstract void setColor(float r, float g, float b, float a);
-
-    @Shadow(remap = false)
-    protected abstract void doDraw(float f);
 
     @Unique
     private float[] mcpatcher_forge$charWidthf;
@@ -93,6 +65,13 @@ public abstract class MixinFontRenderer implements FontRendererExpansion {
     private boolean mcpatcher_forge$isHD;
     @Unique
     private float mcpatcher_forge$fontAdj;
+
+    /**
+     * for custom text colors the index is required when drawing
+     * unfortunately capturing locals doesn't work with modifyVariable
+     */
+    @Unique
+    private int mcpatcher_forge$renderStringAtPosIndex;
 
     public float[] getCharWidthf() {
         return mcpatcher_forge$charWidthf;
@@ -198,115 +177,22 @@ public abstract class MixinFontRenderer implements FontRendererExpansion {
         cir.setReturnValue(FontUtils.getUnicodePage(unicodePageLocations[p_111271_1_]));
     }
 
-    /**
-     * @author Mist475 (adapted from Paul Rupe)
-     * @reason Was too tired, will be a redirect at some point
-     *         TODO: Turn into redirect
-     */
-    @SuppressWarnings("UnnecessaryUnicodeEscape")
-    @Overwrite
-    private void renderStringAtPos(String p_78255_1_, boolean p_78255_2_) {
-        for (int i = 0; i < p_78255_1_.length(); ++i) {
-            char c0 = p_78255_1_.charAt(i);
-            int j;
-            int k;
+    @Inject(
+        method = "renderStringAtPos(Ljava/lang/String;Z)V",
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/FontRenderer;colorCode:[I"))
+    private void modifyRenderStringAtPos1(String string, boolean bool, CallbackInfo ci, int i, char c0, int j) {
+        this.mcpatcher_forge$renderStringAtPosIndex = j;
+    }
 
-            if (c0 == 167 && i + 1 < p_78255_1_.length()) {
-                j = "0123456789abcdefklmnor".indexOf(
-                    p_78255_1_.toLowerCase()
-                        .charAt(i + 1));
-
-                if (j < 16) {
-                    this.randomStyle = false;
-                    this.boldStyle = false;
-                    this.strikethroughStyle = false;
-                    this.underlineStyle = false;
-                    this.italicStyle = false;
-
-                    if (j < 0) {
-                        j = 15;
-                    }
-
-                    if (p_78255_2_) {
-                        j += 16;
-                    }
-
-                    k = ColorizeWorld.colorizeText(this.colorCode[j], j); // patch
-                    this.textColor = k;
-                    setColor(
-                        (float) (k >> 16) / 255.0F,
-                        (float) (k >> 8 & 255) / 255.0F,
-                        (float) (k & 255) / 255.0F,
-                        this.alpha);
-                } else if (j == 16) {
-                    this.randomStyle = true;
-                } else if (j == 17) {
-                    this.boldStyle = true;
-                } else if (j == 18) {
-                    this.strikethroughStyle = true;
-                } else if (j == 19) {
-                    this.underlineStyle = true;
-                } else if (j == 20) {
-                    this.italicStyle = true;
-                } else if (j == 21) {
-                    this.randomStyle = false;
-                    this.boldStyle = false;
-                    this.strikethroughStyle = false;
-                    this.underlineStyle = false;
-                    this.italicStyle = false;
-                    setColor(this.red, this.blue, this.green, this.alpha);
-                }
-
-                ++i;
-            } else {
-                j = "\u00c0\u00c1\u00c2\u00c8\u00ca\u00cb\u00cd\u00d3\u00d4\u00d5\u00da\u00df\u00e3\u00f5\u011f\u0130\u0131\u0152\u0153\u015e\u015f\u0174\u0175\u017e\u0207\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8\u00a3\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1\u00aa\u00ba\u00bf\u00ae\u00ac\u00bd\u00bc\u00a1\u00ab\u00bb\u2591\u2592\u2593\u2502\u2524\u2561\u2562\u2556\u2555\u2563\u2551\u2557\u255d\u255c\u255b\u2510\u2514\u2534\u252c\u251c\u2500\u253c\u255e\u255f\u255a\u2554\u2569\u2566\u2560\u2550\u256c\u2567\u2568\u2564\u2565\u2559\u2558\u2552\u2553\u256b\u256a\u2518\u250c\u2588\u2584\u258c\u2590\u2580\u03b1\u03b2\u0393\u03c0\u03a3\u03c3\u03bc\u03c4\u03a6\u0398\u03a9\u03b4\u221e\u2205\u2208\u2229\u2261\u00b1\u2265\u2264\u2320\u2321\u00f7\u2248\u00b0\u2219\u00b7\u221a\u207f\u00b2\u25a0\u0000"
-                    .indexOf(c0);
-
-                if (this.randomStyle && j != -1) {
-                    do {
-                        k = this.fontRandom.nextInt(this.charWidth.length);
-                    } while (this.charWidth[j] != this.charWidth[k]);
-
-                    j = k;
-                }
-
-                float f1 = this.unicodeFlag ? 0.5F : 1.0F;
-                boolean flag1 = (c0 == 0 || j == -1 || this.unicodeFlag) && p_78255_2_;
-
-                if (flag1) {
-                    this.posX -= f1;
-                    this.posY -= f1;
-                }
-
-                float f = this.renderCharAtPos(j, c0, this.italicStyle);
-
-                if (flag1) {
-                    this.posX += f1;
-                    this.posY += f1;
-                }
-
-                if (this.boldStyle) {
-                    this.posX += f1;
-
-                    if (flag1) {
-                        this.posX -= f1;
-                        this.posY -= f1;
-                    }
-
-                    this.renderCharAtPos(j, c0, this.italicStyle);
-                    this.posX -= f1;
-
-                    if (flag1) {
-                        this.posX += f1;
-                        this.posY += f1;
-                    }
-
-                    ++f;
-                }
-
-                doDraw(f);
-            }
-        }
+    // IDEA plugin really struggles with this for some reason
+    @SuppressWarnings("InvalidInjectorMethodSignature")
+    @ModifyVariable(
+        method = "renderStringAtPos(Ljava/lang/String;Z)V",
+        at = @At(value = "STORE", ordinal = 0),
+        ordinal = 2)
+    private int modifyRenderStringAtPos2(int color) {
+        return ColorizeWorld.colorizeText(color, this.mcpatcher_forge$renderStringAtPosIndex);
     }
 
     @ModifyVariable(method = "renderString(Ljava/lang/String;IIIZ)I", at = @At("HEAD"), ordinal = 2, argsOnly = true)
