@@ -53,8 +53,8 @@ public abstract class MixinMinecraft {
     @Inject(
         method = "startGame()V",
         at = @At(
-            value = "NEW",
-            target = "(Lnet/minecraft/client/resources/data/IMetadataSerializer;)Lnet/minecraft/client/resources/SimpleReloadableResourceManager;"))
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/resources/IReloadableResourceManager;registerReloadListener(Lnet/minecraft/client/resources/IResourceManagerReloadListener;)V"))
     private void modifyStartGame1(CallbackInfo ci) {
         TileLoader.init();
         CTMUtils.reset();
