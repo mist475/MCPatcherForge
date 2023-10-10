@@ -5,28 +5,20 @@ import java.util.List;
 
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ReportedException;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import org.lwjgl.opengl.GL11;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.prupe.mcpatcher.sky.FireworksHelper;
 
@@ -35,14 +27,10 @@ import com.prupe.mcpatcher.sky.FireworksHelper;
 public abstract class MixinEffectRenderer {
 
     @Shadow
-    @Final
-    private static ResourceLocation particleTextures;
-
-    @Shadow
     private List[] fxLayers;
 
-    @Shadow
-    private TextureManager renderer;
+    @Unique
+    private int mcpatcher_forge$renderParticlesIndex;
 
     @Inject(
         method = "<init>(Lnet/minecraft/world/World;Lnet/minecraft/client/renderer/texture/TextureManager;)V",
@@ -61,92 +49,40 @@ public abstract class MixinEffectRenderer {
         return FireworksHelper.getFXLayer(instance);
     }
 
-    @ModifyConstant(method = "updateEffects()V", constant = @Constant(intValue = 4))
-    private int modifyListSize1(int constant) {
+    @ModifyConstant(
+        method = { "updateEffects()V", "clearEffects(Lnet/minecraft/world/World;)V" },
+        constant = @Constant(intValue = 4))
+    private int modifyListSize(int constant) {
         return 5;
     }
 
-    @ModifyConstant(method = "clearEffects(Lnet/minecraft/world/World;)V", constant = @Constant(intValue = 4))
-    private int modifyListSize2(int constant) {
+    @ModifyConstant(method = "renderParticles(Lnet/minecraft/entity/Entity;F)V", constant = @Constant(intValue = 3))
+    private int modifyRenderParticles1(int constant) {
         return 5;
     }
 
-    /**
-     * @author Mist475 (adapted from Paul Rupe)
-     * @reason was too tired to do this neatly
-     */
-    @Overwrite
-    public void renderParticles(Entity p_78874_1_, float p_78874_2_) {
-        float f1 = ActiveRenderInfo.rotationX;
-        float f2 = ActiveRenderInfo.rotationZ;
-        float f3 = ActiveRenderInfo.rotationYZ;
-        float f4 = ActiveRenderInfo.rotationXY;
-        float f5 = ActiveRenderInfo.rotationXZ;
-        EntityFX.interpPosX = p_78874_1_.lastTickPosX
-            + (p_78874_1_.posX - p_78874_1_.lastTickPosX) * (double) p_78874_2_;
-        EntityFX.interpPosY = p_78874_1_.lastTickPosY
-            + (p_78874_1_.posY - p_78874_1_.lastTickPosY) * (double) p_78874_2_;
-        EntityFX.interpPosZ = p_78874_1_.lastTickPosZ
-            + (p_78874_1_.posZ - p_78874_1_.lastTickPosZ) * (double) p_78874_2_;
+    @Inject(
+        method = "renderParticles(Lnet/minecraft/entity/Entity;F)V",
+        at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"),
+        locals = LocalCapture.CAPTURE_FAILHARD)
+    private void modifyRenderParticles2(Entity player, float partialTickTime, CallbackInfo ci, float f1, float f2,
+        float f3, float f4, float f5, int k, int i) {
+        this.mcpatcher_forge$renderParticlesIndex = i;
+    }
 
-        for (int k = 0; k < 5; ++k) // patch 1: 3-> 5
-        {
-            final int i = k;
-            // patch 2: Wrap isEmpty with skipThisLayer
-            if (!FireworksHelper.skipThisLayer(this.fxLayers[i].isEmpty(), i)) {
-                switch (i) {
-                    case 0:
-                    default:
-                        this.renderer.bindTexture(particleTextures);
-                        break;
-                    case 1:
-                        this.renderer.bindTexture(TextureMap.locationBlocksTexture);
-                        break;
-                    case 2:
-                        this.renderer.bindTexture(TextureMap.locationItemsTexture);
-                }
+    @Redirect(
+        method = "renderParticles(Lnet/minecraft/entity/Entity;F)V",
+        at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
+    private boolean modifyRenderParticles3(List layer) {
+        return FireworksHelper.skipThisLayer(
+            this.fxLayers[mcpatcher_forge$renderParticlesIndex].isEmpty(),
+            this.mcpatcher_forge$renderParticlesIndex);
+    }
 
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                GL11.glDepthMask(false);
-                GL11.glEnable(GL11.GL_BLEND);
-                FireworksHelper.setParticleBlendMethod(i, 0, true); // Patch 3 Blend -> this
-                GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
-                Tessellator tessellator = Tessellator.instance;
-                tessellator.startDrawingQuads();
-
-                for (int j = 0; j < this.fxLayers[i].size(); ++j) {
-                    final EntityFX entityfx = (EntityFX) this.fxLayers[i].get(j);
-                    if (entityfx == null) continue;
-                    tessellator.setBrightness(entityfx.getBrightnessForRender(p_78874_2_));
-
-                    try {
-                        entityfx.renderParticle(tessellator, p_78874_2_, f1, f5, f2, f3, f4);
-                    } catch (Throwable throwable) {
-                        CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Rendering Particle");
-                        CrashReportCategory crashreportcategory = crashreport.makeCategory("Particle being rendered");
-                        crashreportcategory.addCrashSectionCallable("Particle", entityfx::toString);
-                        crashreportcategory.addCrashSectionCallable("Particle Type", () -> {
-                            if (i == 0) {
-                                return "MISC_TEXTURE";
-                            } else if (i == 1) {
-                                return "TERRAIN_TEXTURE";
-                            } else if (i == 2) {
-                                return "ITEM_TEXTURE";
-                            } else if (i == 3) {
-                                return "ENTITY_PARTICLE_TEXTURE";
-                            } else {
-                                return "Unknown - " + i;
-                            }
-                        });
-                        throw new ReportedException(crashreport);
-                    }
-                }
-
-                tessellator.draw();
-                GL11.glDisable(GL11.GL_BLEND);
-                GL11.glDepthMask(true);
-                GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
-            }
-        }
+    @Redirect(
+        method = "renderParticles(Lnet/minecraft/entity/Entity;F)V",
+        at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glBlendFunc(II)V", remap = false))
+    private void modifyRenderParticles4(int sfactor, int dfactor) {
+        FireworksHelper.setParticleBlendMethod(this.mcpatcher_forge$renderParticlesIndex, 0, true);
     }
 }
