@@ -1,18 +1,14 @@
 package mist475.mcpatcherforge.mixins.early.client.renderer;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.potion.Potion;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -34,137 +30,34 @@ public abstract class MixinEntityRenderer {
     @Shadow
     @Final
     private DynamicTexture lightmapTexture;
+
     @Shadow
     @Final
     private int[] lightmapColors;
-    @Shadow
-    private float bossColorModifier;
-    @Shadow
-    private float bossColorModifierPrev;
 
     @Shadow
     private boolean lightmapUpdateNeeded;
-    @Shadow
-    public float torchFlickerX;
 
     @Shadow
     float fogColorRed;
+
     @Shadow
     float fogColorGreen;
+
     @Shadow
     float fogColorBlue;
 
     @Shadow
-    public abstract float getNightVisionBrightness(EntityPlayer player, float p_82830_2_);
-
-    @Shadow
     protected abstract void renderRainSnow(float p_78474_1_);
 
-    /**
-     * @author Mist475 (adapted from Paul Rupe)
-     * @reason Was tired when I wrote this, will be an inject once I've checked the code again
-     */
-    @Overwrite
-    private void updateLightmap(float partialTick) {
-        final WorldClient f = this.mc.theWorld;
-        // patch 1 start
-        if (Lightmap.computeLightmap((EntityRenderer) (Object) this, f, this.lightmapColors, partialTick)) {
+    @Inject(method = "updateLightmap(F)V", at = @At("HEAD"), cancellable = true)
+    private void modifyUpdateLightMap(float partialTick, CallbackInfo ci) {
+        if (Lightmap
+            .computeLightmap((EntityRenderer) (Object) this, this.mc.theWorld, this.lightmapColors, partialTick)) {
             this.lightmapTexture.updateDynamicTexture();
             this.lightmapUpdateNeeded = false;
-            return;
+            ci.cancel();
         }
-        // patch 1 end
-        if (f == null) {
-            return;
-        }
-        for (int i = 0; i < 256; ++i) {
-            float n = f.provider.lightBrightnessTable[i / 16] * (f.getSunBrightness(1.0f) * 0.95f + 0.05f);
-            final float n2 = f.provider.lightBrightnessTable[i % 16] * (this.torchFlickerX * 0.1f + 1.5f);
-            if (f.lastLightningBolt > 0) {
-                n = f.provider.lightBrightnessTable[i / 16];
-            }
-            final float n3 = n * (f.getSunBrightness(1.0f) * 0.65f + 0.35f);
-            final float n4 = n * (f.getSunBrightness(1.0f) * 0.65f + 0.35f);
-            final float n5 = n;
-            final float n7 = n2 * ((n2 * 0.6f + 0.4f) * 0.6f + 0.4f);
-            final float n8 = n2 * (n2 * n2 * 0.6f + 0.4f);
-            final float n9 = n3 + n2;
-            final float n10 = n4 + n7;
-            final float n11 = n5 + n8;
-            float n12 = n9 * 0.96f + 0.03f;
-            float n13 = n10 * 0.96f + 0.03f;
-            float n14 = n11 * 0.96f + 0.03f;
-            if (this.bossColorModifier > 0.0f) {
-                final float n15 = this.bossColorModifierPrev
-                    + (this.bossColorModifier - this.bossColorModifierPrev) * partialTick;
-                n12 = n12 * (1.0f - n15) + n12 * 0.7f * n15;
-                n13 = n13 * (1.0f - n15) + n13 * 0.6f * n15;
-                n14 = n14 * (1.0f - n15) + n14 * 0.6f * n15;
-            }
-            if (f.provider.dimensionId == 1) {
-                n12 = 0.22f + n2 * 0.75f;
-                n13 = 0.28f + n7 * 0.75f;
-                n14 = 0.25f + n8 * 0.75f;
-            }
-            if (this.mc.thePlayer.isPotionActive(Potion.nightVision)) {
-                final float a = this.getNightVisionBrightness(this.mc.thePlayer, partialTick);
-                float n16 = 1.0f / n12;
-                if (n16 > 1.0f / n13) {
-                    n16 = 1.0f / n13;
-                }
-                if (n16 > 1.0f / n14) {
-                    n16 = 1.0f / n14;
-                }
-                n12 = n12 * (1.0f - a) + n12 * n16 * a;
-                n13 = n13 * (1.0f - a) + n13 * n16 * a;
-                n14 = n14 * (1.0f - a) + n14 * n16 * a;
-            }
-            if (n12 > 1.0f) {
-                n12 = 1.0f;
-            }
-            if (n13 > 1.0f) {
-                n13 = 1.0f;
-            }
-            if (n14 > 1.0f) {
-                n14 = 1.0f;
-            }
-            final float ag = this.mc.gameSettings.gammaSetting;
-            final float n17 = 1.0f - n12;
-            final float n18 = 1.0f - n13;
-            final float n19 = 1.0f - n14;
-            final float n20 = 1.0f - n17 * n17 * n17 * n17;
-            final float n21 = 1.0f - n18 * n18 * n18 * n18;
-            final float n22 = 1.0f - n19 * n19 * n19 * n19;
-            final float n23 = n12 * (1.0f - ag) + n20 * ag;
-            final float n24 = n13 * (1.0f - ag) + n21 * ag;
-            final float n25 = n14 * (1.0f - ag) + n22 * ag;
-            float n26 = n23 * 0.96f + 0.03f;
-            float n27 = n24 * 0.96f + 0.03f;
-            float n28 = n25 * 0.96f + 0.03f;
-            if (n26 > 1.0f) {
-                n26 = 1.0f;
-            }
-            if (n27 > 1.0f) {
-                n27 = 1.0f;
-            }
-            if (n28 > 1.0f) {
-                n28 = 1.0f;
-            }
-            if (n26 < 0.0f) {
-                n26 = 0.0f;
-            }
-            if (n27 < 0.0f) {
-                n27 = 0.0f;
-            }
-            if (n28 < 0.0f) {
-                n28 = 0.0f;
-            }
-            this.lightmapColors[i] = (255 << 24 | (int) (n26 * 255.0f) << 16
-                | (int) (n27 * 255.0f) << 8
-                | (int) (n28 * 255.0f));
-        }
-        this.lightmapTexture.updateDynamicTexture();
-        this.lightmapUpdateNeeded = false;
     }
 
     @WrapWithCondition(
