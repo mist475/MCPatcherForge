@@ -5,15 +5,15 @@ import java.awt.image.BufferedImage;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ResourceLocation;
 
-import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -34,6 +34,7 @@ public abstract class MixinFontRenderer implements FontRendererExpansion {
 
     @Shadow
     protected int[] charWidth;
+
     @Mutable
     @Shadow
     @Final
@@ -41,13 +42,9 @@ public abstract class MixinFontRenderer implements FontRendererExpansion {
 
     @Shadow
     protected float posX;
-    @Shadow
-    protected float posY;
-    @Shadow
-    private boolean unicodeFlag;
 
     @Shadow
-    protected abstract float renderUnicodeChar(char p_78277_1_, boolean p_78277_2_);
+    protected float posY;
 
     @Shadow(remap = false)
     protected abstract void bindTexture(ResourceLocation location);
@@ -57,12 +54,16 @@ public abstract class MixinFontRenderer implements FontRendererExpansion {
 
     @Unique
     private float[] mcpatcher_forge$charWidthf;
+
     @Unique
     private ResourceLocation mcpatcher_forge$defaultFont;
+
     @Unique
     private ResourceLocation mcpatcher_forge$hdFont;
+
     @Unique
     private boolean mcpatcher_forge$isHD;
+
     @Unique
     private float mcpatcher_forge$fontAdj;
 
@@ -131,42 +132,19 @@ public abstract class MixinFontRenderer implements FontRendererExpansion {
                 .computeCharWidthsf((FontRenderer) (Object) this, locationFontTexture, bufferedimage, aint, charWidth));
     }
 
-    /**
-     * @author Mist475 (adapted from Paul Rupe)
-     * @reason I forgor
-     *         TODO: look at again
-     */
-    @SuppressWarnings({ "UnnecessaryUnicodeEscape", "UnnecessaryStringEscape" })
-    @Overwrite
-    private float renderCharAtPos(int p_78278_1_, char p_78278_2_, boolean p_78278_3_) {
-        return p_78278_2_ == ' ' ? getCharWidthf()[32]
-            : ("\u00c0\u00c1\u00c2\u00c8\u00ca\u00cb\u00cd\u00d3\u00d4\u00d5\u00da\u00df\u00e3\u00f5\u011f\u0130\u0131\u0152\u0153\u015e\u015f\u0174\u0175\u017e\u0207\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8\u00a3\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1\u00aa\u00ba\u00bf\u00ae\u00ac\u00bd\u00bc\u00a1\u00ab\u00bb\u2591\u2592\u2593\u2502\u2524\u2561\u2562\u2556\u2555\u2563\u2551\u2557\u255d\u255c\u255b\u2510\u2514\u2534\u252c\u251c\u2500\u253c\u255e\u255f\u255a\u2554\u2569\u2566\u2560\u2550\u256c\u2567\u2568\u2564\u2565\u2559\u2558\u2552\u2553\u256b\u256a\u2518\u250c\u2588\u2584\u258c\u2590\u2580\u03b1\u03b2\u0393\u03c0\u03a3\u03c3\u03bc\u03c4\u03a6\u0398\u03a9\u03b4\u221e\u2205\u2208\u2229\u2261\u00b1\u2265\u2264\u2320\u2321\u00f7\u2248\u00b0\u2219\u00b7\u221a\u207f\u00b2\u25a0\u0000"
-                .indexOf(p_78278_2_) != -1 && !unicodeFlag ? renderDefaultChar(p_78278_1_, p_78278_3_)
-                    : renderUnicodeChar(p_78278_2_, p_78278_3_));
+    @ModifyConstant(method = "renderCharAtPos(ICZ)F", constant = @Constant(floatValue = 4.0f))
+    private float modifyRenderCharAtPos(float constant) {
+        return this.mcpatcher_forge$charWidthf[32];
     }
 
-    /**
-     * @author Mist475 (adapted from Paul Rupe)
-     * @reason Many small changes vs overwrite
-     */
-    @Overwrite
-    protected float renderDefaultChar(int p_78266_1_, boolean p_78266_2_) {
-        float f = (float) (p_78266_1_ % 16 * 8);
-        float f1 = (float) (p_78266_1_ / 16 * 8);
-        float f2 = p_78266_2_ ? 1.0F : 0.0F;
-        bindTexture(this.locationFontTexture);
-        float f3 = (float) this.charWidth[p_78266_1_] - 0.01F;
-        GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-        GL11.glTexCoord2f(f / 128.0F, f1 / 128.0F);
-        GL11.glVertex3f(this.posX + f2, this.posY, 0.0F);
-        GL11.glTexCoord2f(f / 128.0F, (f1 + 7.99F) / 128.0F);
-        GL11.glVertex3f(this.posX - f2, this.posY + 7.99F, 0.0F);
-        GL11.glTexCoord2f((f + f3 - mcpatcher_forge$fontAdj) / 128.0F, f1 / 128.0F);
-        GL11.glVertex3f(this.posX + f3 - mcpatcher_forge$fontAdj + f2, this.posY, 0.0F);
-        GL11.glTexCoord2f((f + f3 - mcpatcher_forge$fontAdj) / 128.0F, (f1 + 7.99F) / 128.0F);
-        GL11.glVertex3f(this.posX + f3 - mcpatcher_forge$fontAdj - f2, this.posY + 7.99F, 0.0F);
-        GL11.glEnd();
-        return FontUtils.getCharWidthf((FontRenderer) (Object) this, this.charWidth, p_78266_1_);
+    @ModifyConstant(method = "renderDefaultChar(IZ)F", constant = @Constant(floatValue = 1.0f))
+    private float modifyRenderDefaultChar1(float constant) {
+        return this.mcpatcher_forge$fontAdj;
+    }
+
+    @Inject(method = "renderDefaultChar(IZ)F", at = @At("RETURN"), cancellable = true)
+    private void modifyRenderDefaultChar2(int ch, boolean b, CallbackInfoReturnable<Float> cir) {
+        cir.setReturnValue(FontUtils.getCharWidthf((FontRenderer) (Object) this, this.charWidth, ch));
     }
 
     @Inject(
