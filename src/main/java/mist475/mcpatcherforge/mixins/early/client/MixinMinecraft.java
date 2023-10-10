@@ -69,9 +69,9 @@ public abstract class MixinMinecraft {
         at = @At(
             value = "INVOKE",
             target = "Lcpw/mods/fml/client/FMLClientHandler;beginMinecraftLoading(Lnet/minecraft/client/Minecraft;Ljava/util/List;Lnet/minecraft/client/resources/IReloadableResourceManager;)V",
-            remap = false))
+            remap = false,
+            shift = At.Shift.AFTER))
     private void modifyStartGame2(CallbackInfo ci) {
-        // TODO: Check with forge
         TexturePackChangeHandler.beforeChange1();
     }
 
@@ -83,7 +83,6 @@ public abstract class MixinMinecraft {
             remap = false,
             shift = At.Shift.AFTER))
     private void modifyStartGame3(CallbackInfo ci) {
-        // TODO: Check with forge
         TexturePackChangeHandler.afterChange1();
     }
 
