@@ -71,7 +71,8 @@ public enum Mixins {
 
             "client.renderer.MixinEntityRenderer",
             "client.renderer.MixinItemRenderer",
-            "client.renderer.MixinRenderBlocks",
+            "client.renderer.renderblocks.MixinRenderBlocks",
+            "client.renderer.renderblocks.MixinRenderBlocksRenderBlockLiquid",
             "client.renderer.MixinRenderGlobal",
             "client.renderer.MixinWorldRenderer",
 
