@@ -16,7 +16,6 @@ import net.minecraft.block.BlockHopper;
 import net.minecraft.block.BlockPane;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.BlockRedstoneDiode;
-import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -29,10 +28,13 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import com.prupe.mcpatcher.cc.ColorizeBlock;
@@ -223,6 +225,20 @@ public abstract class MixinRenderBlocks {
     @Shadow
     public abstract IIcon getIconSafe(IIcon texture);
 
+    // Compute values once and reuse later
+
+    @Unique
+    private boolean mcpatcherforge$computeRedstoneWireColor;
+
+    @Unique
+    private float mcpatcherforge$redstoneWireColorRed;
+
+    @Unique
+    private float mcpatcherforge$redstoneWireColorGreen;
+
+    @Unique
+    private float mcpatcherforge$redstoneWireColorBlue;
+
     @Redirect(
         method = "renderBlockMinecartTrack(Lnet/minecraft/block/BlockRailBase;III)Z",
         at = @At(
@@ -325,352 +341,84 @@ public abstract class MixinRenderBlocks {
             : this.getBlockIcon(block, this.blockAccess, x, y, z, side);
     }
 
-    /**
-     * @author Mist475 (adapted from Paul Rupe)
-     * @reason I forgor
-     */
-    @SuppressWarnings({ "DataFlowIssue", "DuplicatedCode" })
-    @Overwrite
-    public boolean renderBlockRedstoneWire(Block block, int x, int y, int z) {
-        Tessellator tessellator = Tessellator.instance;
-        int l = this.blockAccess.getBlockMetadata(x, y, z);
-        IIcon iicon = BlockRedstoneWire.getRedstoneWireIcon("cross");
-        IIcon iicon1 = BlockRedstoneWire.getRedstoneWireIcon("line");
-        IIcon iicon2 = BlockRedstoneWire.getRedstoneWireIcon("cross_overlay");
-        IIcon iicon3 = BlockRedstoneWire.getRedstoneWireIcon("line_overlay");
-        tessellator.setBrightness(block.getMixedBrightnessForBlock(this.blockAccess, x, y, z));
+    @Inject(method = "renderBlockRedstoneWire(Lnet/minecraft/block/Block;III)Z", at = @At("HEAD"))
+    private void calculateComputeRedstoneWireColor(Block p_147788_1_, int p_147788_2_, int p_147788_3_, int p_147788_4_,
+        CallbackInfoReturnable<Boolean> cir) {
+        this.mcpatcherforge$computeRedstoneWireColor = ColorizeBlock
+            .computeRedstoneWireColor(this.blockAccess.getBlockMetadata(p_147788_2_, p_147788_3_, p_147788_4_));
+        this.mcpatcherforge$redstoneWireColorRed = Math.max(Colorizer.setColor[0], 0.0f);
+        this.mcpatcherforge$redstoneWireColorGreen = Math.max(Colorizer.setColor[1], 0.0f);
+        this.mcpatcherforge$redstoneWireColorBlue = Math.max(Colorizer.setColor[2], 0.0f);
+    }
 
-        // patch start
-        float f1;
-        float f2;
-        float f3;
-        if (ColorizeBlock.computeRedstoneWireColor(l)) {
-            f1 = Colorizer.setColor[0];
-            f2 = Colorizer.setColor[1];
-            f3 = Colorizer.setColor[2];
-        } else {
-            float n7 = l / 15.0f;
-            f1 = n7 * 0.6f + 0.4f;
-            if (l == 0) {
-                f1 = 0.3f;
-            }
-            f2 = n7 * n7 * 0.7f - 0.5f;
-            f3 = n7 * n7 * 0.6f - 0.7f;
+    @ModifyArgs(
+        method = "renderBlockRedstoneWire(Lnet/minecraft/block/Block;III)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/Tessellator;setColorOpaque_F(FFF)V",
+            ordinal = 0))
+    private void modifyColorRedstoneWire1(Args args) {
+        if (this.mcpatcherforge$computeRedstoneWireColor) {
+            args.set(0, this.mcpatcherforge$redstoneWireColorRed);
+            args.set(1, this.mcpatcherforge$redstoneWireColorGreen);
+            args.set(2, this.mcpatcherforge$redstoneWireColorBlue);
         }
-        // patch end
-        if (f2 < 0.0F) {
-            f2 = 0.0F;
+    }
+
+    @ModifyArgs(
+        method = "renderBlockRedstoneWire(Lnet/minecraft/block/Block;III)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/Tessellator;setColorOpaque_F(FFF)V",
+            ordinal = 4))
+    private void modifyColorRedstoneWire2(Args args) {
+        if (this.mcpatcherforge$computeRedstoneWireColor) {
+            args.set(0, this.mcpatcherforge$redstoneWireColorRed);
+            args.set(1, this.mcpatcherforge$redstoneWireColorGreen);
+            args.set(2, this.mcpatcherforge$redstoneWireColorBlue);
         }
+    }
 
-        if (f3 < 0.0F) {
-            f3 = 0.0F;
+    @ModifyArgs(
+        method = "renderBlockRedstoneWire(Lnet/minecraft/block/Block;III)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/Tessellator;setColorOpaque_F(FFF)V",
+            ordinal = 6))
+    private void modifyColorRedstoneWire3(Args args) {
+        if (this.mcpatcherforge$computeRedstoneWireColor) {
+            args.set(0, this.mcpatcherforge$redstoneWireColorRed);
+            args.set(1, this.mcpatcherforge$redstoneWireColorGreen);
+            args.set(2, this.mcpatcherforge$redstoneWireColorBlue);
         }
+    }
 
-        tessellator.setColorOpaque_F(f1, f2, f3);
-        boolean flag = BlockRedstoneWire.isPowerProviderOrWire(this.blockAccess, x - 1, y, z, 1)
-            || !this.blockAccess.getBlock(x - 1, y, z)
-                .isBlockNormalCube() && BlockRedstoneWire.isPowerProviderOrWire(this.blockAccess, x - 1, y - 1, z, -1);
-        boolean flag1 = BlockRedstoneWire.isPowerProviderOrWire(this.blockAccess, x + 1, y, z, 3)
-            || !this.blockAccess.getBlock(x + 1, y, z)
-                .isBlockNormalCube() && BlockRedstoneWire.isPowerProviderOrWire(this.blockAccess, x + 1, y - 1, z, -1);
-        boolean flag2 = BlockRedstoneWire.isPowerProviderOrWire(this.blockAccess, x, y, z - 1, 2)
-            || !this.blockAccess.getBlock(x, y, z - 1)
-                .isBlockNormalCube() && BlockRedstoneWire.isPowerProviderOrWire(this.blockAccess, x, y - 1, z - 1, -1);
-        boolean flag3 = BlockRedstoneWire.isPowerProviderOrWire(this.blockAccess, x, y, z + 1, 0)
-            || !this.blockAccess.getBlock(x, y, z + 1)
-                .isBlockNormalCube() && BlockRedstoneWire.isPowerProviderOrWire(this.blockAccess, x, y - 1, z + 1, -1);
-
-        if (!this.blockAccess.getBlock(x, y + 1, z)
-            .isBlockNormalCube()) {
-            if (this.blockAccess.getBlock(x - 1, y, z)
-                .isBlockNormalCube()
-                && BlockRedstoneWire.isPowerProviderOrWire(this.blockAccess, x - 1, y + 1, z, -1)) {
-                flag = true;
-            }
-
-            if (this.blockAccess.getBlock(x + 1, y, z)
-                .isBlockNormalCube()
-                && BlockRedstoneWire.isPowerProviderOrWire(this.blockAccess, x + 1, y + 1, z, -1)) {
-                flag1 = true;
-            }
-
-            if (this.blockAccess.getBlock(x, y, z - 1)
-                .isBlockNormalCube()
-                && BlockRedstoneWire.isPowerProviderOrWire(this.blockAccess, x, y + 1, z - 1, -1)) {
-                flag2 = true;
-            }
-
-            if (this.blockAccess.getBlock(x, y, z + 1)
-                .isBlockNormalCube()
-                && BlockRedstoneWire.isPowerProviderOrWire(this.blockAccess, x, y + 1, z + 1, -1)) {
-                flag3 = true;
-            }
+    @ModifyArgs(
+        method = "renderBlockRedstoneWire(Lnet/minecraft/block/Block;III)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/Tessellator;setColorOpaque_F(FFF)V",
+            ordinal = 8))
+    private void modifyColorRedstoneWire4(Args args) {
+        if (this.mcpatcherforge$computeRedstoneWireColor) {
+            args.set(0, this.mcpatcherforge$redstoneWireColorRed);
+            args.set(1, this.mcpatcherforge$redstoneWireColorGreen);
+            args.set(2, this.mcpatcherforge$redstoneWireColorBlue);
         }
+    }
 
-        float f4 = (float) (x);
-        float f5 = (float) (x + 1);
-        float f6 = (float) (z);
-        float f7 = (float) (z + 1);
-        int i1 = 0;
-
-        if ((flag || flag1) && !flag2 && !flag3) {
-            i1 = 1;
+    @ModifyArgs(
+        method = "renderBlockRedstoneWire(Lnet/minecraft/block/Block;III)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/Tessellator;setColorOpaque_F(FFF)V",
+            ordinal = 10))
+    private void modifyColorRedstoneWire5(Args args) {
+        if (this.mcpatcherforge$computeRedstoneWireColor) {
+            args.set(0, this.mcpatcherforge$redstoneWireColorRed);
+            args.set(1, this.mcpatcherforge$redstoneWireColorGreen);
+            args.set(2, this.mcpatcherforge$redstoneWireColorBlue);
         }
-
-        if ((flag2 || flag3) && !flag1 && !flag) {
-            i1 = 2;
-        }
-
-        if (i1 == 0) {
-            int j1 = 0;
-            int k1 = 0;
-            int l1 = 16;
-            int i2 = 16;
-
-            if (!flag) {
-                f4 += 0.3125F;
-            }
-
-            if (!flag) {
-                j1 += 5;
-            }
-
-            if (!flag1) {
-                f5 -= 0.3125F;
-            }
-
-            if (!flag1) {
-                l1 -= 5;
-            }
-
-            if (!flag2) {
-                f6 += 0.3125F;
-            }
-
-            if (!flag2) {
-                k1 += 5;
-            }
-
-            if (!flag3) {
-                f7 -= 0.3125F;
-            }
-
-            if (!flag3) {
-                i2 -= 5;
-            }
-
-            tessellator.addVertexWithUV(
-                f5,
-                (double) y + 0.015625D,
-                f7,
-                iicon.getInterpolatedU(l1),
-                iicon.getInterpolatedV(i2));
-            tessellator.addVertexWithUV(
-                f5,
-                (double) y + 0.015625D,
-                f6,
-                iicon.getInterpolatedU(l1),
-                iicon.getInterpolatedV(k1));
-            tessellator.addVertexWithUV(
-                f4,
-                (double) y + 0.015625D,
-                f6,
-                iicon.getInterpolatedU(j1),
-                iicon.getInterpolatedV(k1));
-            tessellator.addVertexWithUV(
-                f4,
-                (double) y + 0.015625D,
-                f7,
-                iicon.getInterpolatedU(j1),
-                iicon.getInterpolatedV(i2));
-            tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
-            tessellator.addVertexWithUV(
-                f5,
-                (double) y + 0.015625D,
-                f7,
-                iicon2.getInterpolatedU(l1),
-                iicon2.getInterpolatedV(i2));
-            tessellator.addVertexWithUV(
-                f5,
-                (double) y + 0.015625D,
-                f6,
-                iicon2.getInterpolatedU(l1),
-                iicon2.getInterpolatedV(k1));
-            tessellator.addVertexWithUV(
-                f4,
-                (double) y + 0.015625D,
-                f6,
-                iicon2.getInterpolatedU(j1),
-                iicon2.getInterpolatedV(k1));
-            tessellator.addVertexWithUV(
-                f4,
-                (double) y + 0.015625D,
-                f7,
-                iicon2.getInterpolatedU(j1),
-                iicon2.getInterpolatedV(i2));
-        } else if (i1 == 1) {
-            tessellator.addVertexWithUV(f5, (double) y + 0.015625D, f7, iicon1.getMaxU(), iicon1.getMaxV());
-            tessellator.addVertexWithUV(f5, (double) y + 0.015625D, f6, iicon1.getMaxU(), iicon1.getMinV());
-            tessellator.addVertexWithUV(f4, (double) y + 0.015625D, f6, iicon1.getMinU(), iicon1.getMinV());
-            tessellator.addVertexWithUV(f4, (double) y + 0.015625D, f7, iicon1.getMinU(), iicon1.getMaxV());
-            tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
-            tessellator.addVertexWithUV(f5, (double) y + 0.015625D, f7, iicon3.getMaxU(), iicon3.getMaxV());
-            tessellator.addVertexWithUV(f5, (double) y + 0.015625D, f6, iicon3.getMaxU(), iicon3.getMinV());
-            tessellator.addVertexWithUV(f4, (double) y + 0.015625D, f6, iicon3.getMinU(), iicon3.getMinV());
-            tessellator.addVertexWithUV(f4, (double) y + 0.015625D, f7, iicon3.getMinU(), iicon3.getMaxV());
-        } else {
-            tessellator.addVertexWithUV(f5, (double) y + 0.015625D, f7, iicon1.getMaxU(), iicon1.getMaxV());
-            tessellator.addVertexWithUV(f5, (double) y + 0.015625D, f6, iicon1.getMinU(), iicon1.getMaxV());
-            tessellator.addVertexWithUV(f4, (double) y + 0.015625D, f6, iicon1.getMinU(), iicon1.getMinV());
-            tessellator.addVertexWithUV(f4, (double) y + 0.015625D, f7, iicon1.getMaxU(), iicon1.getMinV());
-            tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
-            tessellator.addVertexWithUV(f5, (double) y + 0.015625D, f7, iicon3.getMaxU(), iicon3.getMaxV());
-            tessellator.addVertexWithUV(f5, (double) y + 0.015625D, f6, iicon3.getMinU(), iicon3.getMaxV());
-            tessellator.addVertexWithUV(f4, (double) y + 0.015625D, f6, iicon3.getMinU(), iicon3.getMinV());
-            tessellator.addVertexWithUV(f4, (double) y + 0.015625D, f7, iicon3.getMaxU(), iicon3.getMinV());
-        }
-
-        if (!this.blockAccess.getBlock(x, y + 1, z)
-            .isBlockNormalCube()) {
-
-            if (this.blockAccess.getBlock(x - 1, y, z)
-                .isBlockNormalCube() && this.blockAccess.getBlock(x - 1, y + 1, z) == Blocks.redstone_wire) {
-                tessellator.setColorOpaque_F(f1, f2, f3);
-                tessellator.addVertexWithUV(
-                    (double) x + 0.015625D,
-                    (float) (y + 1) + 0.021875F,
-                    z + 1,
-                    iicon1.getMaxU(),
-                    iicon1.getMinV());
-                tessellator.addVertexWithUV((double) x + 0.015625D, y, z + 1, iicon1.getMinU(), iicon1.getMinV());
-                tessellator.addVertexWithUV((double) x + 0.015625D, y, z, iicon1.getMinU(), iicon1.getMaxV());
-                tessellator.addVertexWithUV(
-                    (double) x + 0.015625D,
-                    (float) (y + 1) + 0.021875F,
-                    z,
-                    iicon1.getMaxU(),
-                    iicon1.getMaxV());
-                tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
-                tessellator.addVertexWithUV(
-                    (double) x + 0.015625D,
-                    (float) (y + 1) + 0.021875F,
-                    z + 1,
-                    iicon3.getMaxU(),
-                    iicon3.getMinV());
-                tessellator.addVertexWithUV((double) x + 0.015625D, y, z + 1, iicon3.getMinU(), iicon3.getMinV());
-                tessellator.addVertexWithUV((double) x + 0.015625D, y, z, iicon3.getMinU(), iicon3.getMaxV());
-                tessellator.addVertexWithUV(
-                    (double) x + 0.015625D,
-                    (float) (y + 1) + 0.021875F,
-                    z,
-                    iicon3.getMaxU(),
-                    iicon3.getMaxV());
-            }
-
-            if (this.blockAccess.getBlock(x + 1, y, z)
-                .isBlockNormalCube() && this.blockAccess.getBlock(x + 1, y + 1, z) == Blocks.redstone_wire) {
-                tessellator.setColorOpaque_F(f1, f2, f3);
-                tessellator.addVertexWithUV((double) (x + 1) - 0.015625D, y, z + 1, iicon1.getMinU(), iicon1.getMaxV());
-                tessellator.addVertexWithUV(
-                    (double) (x + 1) - 0.015625D,
-                    (float) (y + 1) + 0.021875F,
-                    z + 1,
-                    iicon1.getMaxU(),
-                    iicon1.getMaxV());
-                tessellator.addVertexWithUV(
-                    (double) (x + 1) - 0.015625D,
-                    (float) (y + 1) + 0.021875F,
-                    z,
-                    iicon1.getMaxU(),
-                    iicon1.getMinV());
-                tessellator.addVertexWithUV((double) (x + 1) - 0.015625D, y, z, iicon1.getMinU(), iicon1.getMinV());
-                tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
-                tessellator.addVertexWithUV((double) (x + 1) - 0.015625D, y, z + 1, iicon3.getMinU(), iicon3.getMaxV());
-                tessellator.addVertexWithUV(
-                    (double) (x + 1) - 0.015625D,
-                    (float) (y + 1) + 0.021875F,
-                    z + 1,
-                    iicon3.getMaxU(),
-                    iicon3.getMaxV());
-                tessellator.addVertexWithUV(
-                    (double) (x + 1) - 0.015625D,
-                    (float) (y + 1) + 0.021875F,
-                    z,
-                    iicon3.getMaxU(),
-                    iicon3.getMinV());
-                tessellator.addVertexWithUV((double) (x + 1) - 0.015625D, y, z, iicon3.getMinU(), iicon3.getMinV());
-            }
-
-            if (this.blockAccess.getBlock(x, y, z - 1)
-                .isBlockNormalCube() && this.blockAccess.getBlock(x, y + 1, z - 1) == Blocks.redstone_wire) {
-                tessellator.setColorOpaque_F(f1, f2, f3);
-                tessellator.addVertexWithUV(x + 1, y, (double) z + 0.015625D, iicon1.getMinU(), iicon1.getMaxV());
-                tessellator.addVertexWithUV(
-                    x + 1,
-                    (float) (y + 1) + 0.021875F,
-                    (double) z + 0.015625D,
-                    iicon1.getMaxU(),
-                    iicon1.getMaxV());
-                tessellator.addVertexWithUV(
-                    x,
-                    (float) (y + 1) + 0.021875F,
-                    (double) z + 0.015625D,
-                    iicon1.getMaxU(),
-                    iicon1.getMinV());
-                tessellator.addVertexWithUV(x, y, (double) z + 0.015625D, iicon1.getMinU(), iicon1.getMinV());
-                tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
-                tessellator.addVertexWithUV(x + 1, y, (double) z + 0.015625D, iicon3.getMinU(), iicon3.getMaxV());
-                tessellator.addVertexWithUV(
-                    x + 1,
-                    (float) (y + 1) + 0.021875F,
-                    (double) z + 0.015625D,
-                    iicon3.getMaxU(),
-                    iicon3.getMaxV());
-                tessellator.addVertexWithUV(
-                    x,
-                    (float) (y + 1) + 0.021875F,
-                    (double) z + 0.015625D,
-                    iicon3.getMaxU(),
-                    iicon3.getMinV());
-                tessellator.addVertexWithUV(x, y, (double) z + 0.015625D, iicon3.getMinU(), iicon3.getMinV());
-            }
-
-            if (this.blockAccess.getBlock(x, y, z + 1)
-                .isBlockNormalCube() && this.blockAccess.getBlock(x, y + 1, z + 1) == Blocks.redstone_wire) {
-                tessellator.setColorOpaque_F(f1, f2, f3);
-                tessellator.addVertexWithUV(
-                    x + 1,
-                    (float) (y + 1) + 0.021875F,
-                    (double) (z + 1) - 0.015625D,
-                    iicon1.getMaxU(),
-                    iicon1.getMinV());
-                tessellator.addVertexWithUV(x + 1, y, (double) (z + 1) - 0.015625D, iicon1.getMinU(), iicon1.getMinV());
-                tessellator.addVertexWithUV(x, y, (double) (z + 1) - 0.015625D, iicon1.getMinU(), iicon1.getMaxV());
-                tessellator.addVertexWithUV(
-                    x,
-                    (float) (y + 1) + 0.021875F,
-                    (double) (z + 1) - 0.015625D,
-                    iicon1.getMaxU(),
-                    iicon1.getMaxV());
-                tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
-                tessellator.addVertexWithUV(
-                    x + 1,
-                    (float) (y + 1) + 0.021875F,
-                    (double) (z + 1) - 0.015625D,
-                    iicon3.getMaxU(),
-                    iicon3.getMinV());
-                tessellator.addVertexWithUV(x + 1, y, (double) (z + 1) - 0.015625D, iicon3.getMinU(), iicon3.getMinV());
-                tessellator.addVertexWithUV(x, y, (double) (z + 1) - 0.015625D, iicon3.getMinU(), iicon3.getMaxV());
-                tessellator.addVertexWithUV(
-                    x,
-                    (float) (y + 1) + 0.021875F,
-                    (double) (z + 1) - 0.015625D,
-                    iicon3.getMaxU(),
-                    iicon3.getMaxV());
-            }
-        }
-
-        return true;
     }
 
     /**
