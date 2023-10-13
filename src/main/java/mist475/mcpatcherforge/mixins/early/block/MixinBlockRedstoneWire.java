@@ -45,9 +45,9 @@ public abstract class MixinBlockRedstoneWire {
                 f3 = 0.0f;
             }
 
-            args.set(4, f1);
-            args.set(5, f2);
-            args.set(6, f3);
+            args.set(4, (double) f1);
+            args.set(5, (double) f2);
+            args.set(6, (double) f3);
         }
     }
 }
