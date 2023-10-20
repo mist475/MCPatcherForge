@@ -177,9 +177,9 @@ public class RenderBlocksTransformer implements IClassTransformer {
         ifStart.add(
             new FieldInsnNode(
                 Opcodes.GETFIELD,
-                "net/minecraft/client/renderer/RenderBlocks",
-                "blockAccess",
-                "Lnet/minecraft/world/IBlockAccess;"));
+                Names.renderBlocks_blockAccess.clas,
+                Names.renderBlocks_blockAccess.name,
+                Names.renderBlocks_blockAccess.desc));
         ifStart.add(new VarInsnNode(Opcodes.ILOAD, 2));
         ifStart.add(new VarInsnNode(Opcodes.ILOAD, 3));
         ifStart.add(new VarInsnNode(Opcodes.ILOAD, 4));
