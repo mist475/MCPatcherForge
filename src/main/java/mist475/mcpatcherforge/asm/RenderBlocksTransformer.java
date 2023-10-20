@@ -58,12 +58,12 @@ public class RenderBlocksTransformer implements IClassTransformer {
         AbstractInsnNode[] endIfSequence = getEndIfSequence();
 
         // code to inject
-        Pair<InsnList, InsnList> ifWrapper1 = getRenderBlocksIfWrapper1();
+        Pair<InsnList, InsnList> ifWrapper1 = getRenderBlocksIfWrapper(0, 4601, 4626);
         Pair<InsnList, InsnList> ifWrapper2 = getRenderBlocksIfWrapper2();
-        Pair<InsnList, InsnList> ifWrapper3 = getRenderBlocksIfWrapper3();
-        Pair<InsnList, InsnList> ifWrapper4 = getRenderBlocksIfWrapper4();
-        Pair<InsnList, InsnList> ifWrapper5 = getRenderBlocksIfWrapper5();
-        Pair<InsnList, InsnList> ifWrapper6 = getRenderBlocksIfWrapper6();
+        Pair<InsnList, InsnList> ifWrapper3 = getRenderBlocksIfWrapper(2, 4822, 4847);
+        Pair<InsnList, InsnList> ifWrapper4 = getRenderBlocksIfWrapper(3, 4956, 4981);
+        Pair<InsnList, InsnList> ifWrapper5 = getRenderBlocksIfWrapper(4, 5090, 5115);
+        Pair<InsnList, InsnList> ifWrapper6 = getRenderBlocksIfWrapper(5, 5224, 5249);
 
         for (MethodNode methodNode : classNode.methods) {
             if (isRenderStandardBlockWithAmbientOcclusion(methodNode)) {
@@ -195,7 +195,18 @@ public class RenderBlocksTransformer implements IClassTransformer {
         return classWriter.toByteArray();
     }
 
-    private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper1() {
+    // faces 1, 3-6 only differ on a single node
+    private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper(int face, int lineNumber1, int lineNumber2) {
+        int iConst = switch (face) {
+            case 0 -> Opcodes.ICONST_0;
+            case 1 -> Opcodes.ICONST_1;
+            case 2 -> Opcodes.ICONST_2;
+            case 3 -> Opcodes.ICONST_3;
+            case 4 -> Opcodes.ICONST_4;
+            case 5 -> Opcodes.ICONST_5;
+            default -> 0;
+        };
+
         final InsnList ifStart = new InsnList();
         ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
         ifStart.add(new VarInsnNode(Opcodes.ALOAD, 1));
@@ -209,7 +220,7 @@ public class RenderBlocksTransformer implements IClassTransformer {
         ifStart.add(new VarInsnNode(Opcodes.ILOAD, 2));
         ifStart.add(new VarInsnNode(Opcodes.ILOAD, 3));
         ifStart.add(new VarInsnNode(Opcodes.ILOAD, 4));
-        ifStart.add(new InsnNode(Opcodes.ICONST_0));
+        ifStart.add(new InsnNode(iConst));
         ifStart.add(new VarInsnNode(Opcodes.FLOAD, 9));
         ifStart.add(new VarInsnNode(Opcodes.FLOAD, 10));
         ifStart.add(new VarInsnNode(Opcodes.FLOAD, 11));
@@ -221,15 +232,15 @@ public class RenderBlocksTransformer implements IClassTransformer {
                 "setupBlockSmoothing",
                 "(" + Names.renderBlocks_.desc + Names.block_.desc + Names.iBlockAccess_.desc + "IIIIFFFF)Z",
                 false));
-        Label label85 = new Label();
-        ifStart.add(new JumpInsnNode(Opcodes.IFNE, new LabelNode(label85)));
-        Label label86 = new Label();
-        ifStart.add(new LabelNode(label86));
-        ifStart.add(new LineNumberNode(4601, new LabelNode(label86)));
+        Label label1 = new Label();
+        ifStart.add(new JumpInsnNode(Opcodes.IFNE, new LabelNode(label1)));
+        Label label2 = new Label();
+        ifStart.add(new LabelNode(label2));
+        ifStart.add(new LineNumberNode(lineNumber1, new LabelNode(label2)));
 
         final InsnList ifEnd = new InsnList();
-        ifEnd.add(new LabelNode(label85));
-        ifEnd.add(new LineNumberNode(4626, new LabelNode(label85)));
+        ifEnd.add(new LabelNode(label1));
+        ifEnd.add(new LineNumberNode(lineNumber2, new LabelNode(label1)));
         ifEnd.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
 
         return Pair.of(ifStart, ifEnd);
@@ -271,166 +282,6 @@ public class RenderBlocksTransformer implements IClassTransformer {
         ifEnd.add(new LabelNode(label176));
         ifEnd.add(new LineNumberNode(4730, new LabelNode(label176)));
         ifEnd.add(new FrameNode(Opcodes.F_APPEND, 1, new Object[] { Opcodes.FLOAT }, 0, null));
-
-        return Pair.of(ifStart, ifEnd);
-    }
-
-    private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper3() {
-        final InsnList ifStart = new InsnList();
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 1));
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        ifStart.add(
-            new FieldInsnNode(
-                Opcodes.GETFIELD,
-                Names.renderBlocks_blockAccess.clas,
-                Names.renderBlocks_blockAccess.name,
-                Names.renderBlocks_blockAccess.desc));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 2));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 3));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 4));
-        ifStart.add(new InsnNode(Opcodes.ICONST_2));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 9));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 10));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 11));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 12));
-        ifStart.add(
-            new MethodInsnNode(
-                Opcodes.INVOKESTATIC,
-                "com/prupe/mcpatcher/cc/ColorizeBlock",
-                "setupBlockSmoothing",
-                "(" + Names.renderBlocks_.desc + Names.block_.desc + Names.iBlockAccess_.desc + "IIIIFFFF)Z",
-                false));
-        Label label263 = new Label();
-        ifStart.add(new JumpInsnNode(Opcodes.IFNE, new LabelNode(label263)));
-        Label label264 = new Label();
-        ifStart.add(new LabelNode(label264));
-        ifStart.add(new LineNumberNode(4822, new LabelNode(label264)));
-
-        final InsnList ifEnd = new InsnList();
-        ifEnd.add(new LabelNode(label263));
-        ifEnd.add(new LineNumberNode(4847, new LabelNode(label263)));
-        ifEnd.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
-
-        return Pair.of(ifStart, ifEnd);
-    }
-
-    private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper4() {
-        final InsnList ifStart = new InsnList();
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 1));
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        ifStart.add(
-            new FieldInsnNode(
-                Opcodes.GETFIELD,
-                Names.renderBlocks_blockAccess.clas,
-                Names.renderBlocks_blockAccess.name,
-                Names.renderBlocks_blockAccess.desc));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 2));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 3));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 4));
-        ifStart.add(new InsnNode(Opcodes.ICONST_3));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 9));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 10));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 11));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 12));
-        ifStart.add(
-            new MethodInsnNode(
-                Opcodes.INVOKESTATIC,
-                "com/prupe/mcpatcher/cc/ColorizeBlock",
-                "setupBlockSmoothing",
-                "(" + Names.renderBlocks_.desc + Names.block_.desc + Names.iBlockAccess_.desc + "IIIIFFFF)Z",
-                false));
-        Label label368 = new Label();
-        ifStart.add(new JumpInsnNode(Opcodes.IFNE, new LabelNode(label368)));
-        Label label369 = new Label();
-        ifStart.add(new LabelNode(label369));
-        ifStart.add(new LineNumberNode(4956, new LabelNode(label369)));
-
-        final InsnList ifEnd = new InsnList();
-        ifEnd.add(new LabelNode(label368));
-        ifEnd.add(new LineNumberNode(4981, new LabelNode(label368)));
-        ifEnd.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
-
-        return Pair.of(ifStart, ifEnd);
-    }
-
-    private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper5() {
-        final InsnList ifStart = new InsnList();
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 1));
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        ifStart.add(
-            new FieldInsnNode(
-                Opcodes.GETFIELD,
-                Names.renderBlocks_blockAccess.clas,
-                Names.renderBlocks_blockAccess.name,
-                Names.renderBlocks_blockAccess.desc));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 2));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 3));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 4));
-        ifStart.add(new InsnNode(Opcodes.ICONST_4));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 9));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 10));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 11));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 12));
-        ifStart.add(
-            new MethodInsnNode(
-                Opcodes.INVOKESTATIC,
-                "com/prupe/mcpatcher/cc/ColorizeBlock",
-                "setupBlockSmoothing",
-                "(" + Names.renderBlocks_.desc + Names.block_.desc + Names.iBlockAccess_.desc + "IIIIFFFF)Z",
-                false));
-        Label label475 = new Label();
-        ifStart.add(new JumpInsnNode(Opcodes.IFNE, new LabelNode(label475)));
-        Label label476 = new Label();
-        ifStart.add(new LabelNode(label476));
-        ifStart.add(new LineNumberNode(5090, new LabelNode(label476)));
-
-        final InsnList ifEnd = new InsnList();
-        ifEnd.add(new LabelNode(label475));
-        ifEnd.add(new LineNumberNode(5115, new LabelNode(label475)));
-        ifEnd.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
-
-        return Pair.of(ifStart, ifEnd);
-    }
-
-    private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper6() {
-        final InsnList ifStart = new InsnList();
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 1));
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        ifStart.add(
-            new FieldInsnNode(
-                Opcodes.GETFIELD,
-                Names.renderBlocks_blockAccess.clas,
-                Names.renderBlocks_blockAccess.name,
-                Names.renderBlocks_blockAccess.desc));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 2));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 3));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 4));
-        ifStart.add(new InsnNode(Opcodes.ICONST_5));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 9));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 10));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 11));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 12));
-        ifStart.add(
-            new MethodInsnNode(
-                Opcodes.INVOKESTATIC,
-                "com/prupe/mcpatcher/cc/ColorizeBlock",
-                "setupBlockSmoothing",
-                "(" + Names.renderBlocks_.desc + Names.block_.desc + Names.iBlockAccess_.desc + "IIIIFFFF)Z",
-                false));
-        Label label580 = new Label();
-        ifStart.add(new JumpInsnNode(Opcodes.IFNE, new LabelNode(label580)));
-        Label label581 = new Label();
-        ifStart.add(new LabelNode(label581));
-        ifStart.add(new LineNumberNode(5224, new LabelNode(label581)));
-
-        final InsnList ifEnd = new InsnList();
-        ifEnd.add(new LabelNode(label580));
-        ifEnd.add(new LineNumberNode(5249, new LabelNode(label580)));
-        ifEnd.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
 
         return Pair.of(ifStart, ifEnd);
     }
