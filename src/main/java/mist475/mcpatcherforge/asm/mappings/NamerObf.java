@@ -13,8 +13,6 @@ public class NamerObf extends Namer {
 
         Names.renderBlocks_colorBlueTopRight = f(Names.renderBlocks_, "aB", "F");
         Names.renderBlocks_blockAccess = f(Names.renderBlocks_, "a", Names.iBlockAccess_.desc);
-        Names.renderBlocks_aoBrightnessXYZNNN = f(Names.renderBlocks_, "S", "I");
-        Names.renderBlocks_aoBrightnessYZNN = f(Names.renderBlocks_, "V", "I");
 
         Names.renderBlocks_renderStandardBlockWithAmbientOcclusion = m(
             Names.renderBlocks_,

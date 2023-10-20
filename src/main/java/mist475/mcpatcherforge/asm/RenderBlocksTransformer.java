@@ -47,18 +47,20 @@ public class RenderBlocksTransformer implements IClassTransformer {
 
         // counters
 
-        // this sequence occurs more than once
+        int ifStartsHandled = 0;
         int ifEndsHandled = 0;
         boolean secondWrappedIfHandled = false;
 
         // search sequences
-        AbstractInsnNode[] ifSequence1 = getStartIfSequence();
+
+        AbstractInsnNode ifSequence1 = new VarInsnNode(Opcodes.ILOAD, 13);
         AbstractInsnNode[] ifSequence2 = getStartIfSequence2();
         AbstractInsnNode[] endIfSequence = getEndIfSequence();
 
         // code to inject
         Pair<InsnList, InsnList> ifWrapper1 = getRenderBlocksIfWrapper1();
         Pair<InsnList, InsnList> ifWrapper2 = getRenderBlocksIfWrapper2();
+        Pair<InsnList, InsnList> ifWrapper3 = getRenderBlocksIfWrapper3();
 
         for (MethodNode methodNode : classNode.methods) {
             if (isRenderStandardBlockWithAmbientOcclusion(methodNode)) {
@@ -67,20 +69,21 @@ public class RenderBlocksTransformer implements IClassTransformer {
 
                     // start if-statements
 
-                    if (matchesNodeSequence(node, ifSequence1)) {
-                        methodNode.instructions.insert(
-                            node.getNext()
-                                .getNext()
-                                .getNext()
-                                .getNext()
-                                .getNext(),
-                            ifWrapper1.getLeft());
+                    if (ifStartsHandled == 0 && matchesNodeSequence(node, ifSequence1)) {
+                        methodNode.instructions.insertBefore(node, ifWrapper1.getLeft());
+                        ifStartsHandled++;
                         continue;
                     }
 
                     if (!secondWrappedIfHandled && matchesNodeSequence(node, ifSequence2)) {
                         methodNode.instructions.insertBefore(node, ifWrapper2.getLeft());
                         secondWrappedIfHandled = true;
+                        continue;
+                    }
+
+                    if (ifStartsHandled == 1 && matchesNodeSequence(node, ifSequence1)) {
+                        methodNode.instructions.insertBefore(node, ifWrapper3.getLeft());
+                        ifStartsHandled++;
                         continue;
                     }
 
@@ -108,6 +111,19 @@ public class RenderBlocksTransformer implements IClassTransformer {
                             node.getNext()
                                 .getNext(),
                             ifWrapper2.getRight());
+                        ifEndsHandled++;
+                        continue;
+                    }
+
+                    if (ifEndsHandled == 2 && matchesNodeSequence(node, endIfSequence)) {
+                        methodNode.instructions.remove(
+                            node.getNext()
+                                .getNext()
+                                .getNext());
+                        methodNode.instructions.insert(
+                            node.getNext()
+                                .getNext(),
+                            ifWrapper3.getRight());
                         ifEndsHandled++;
                         continue;
                     }
@@ -159,24 +175,6 @@ public class RenderBlocksTransformer implements IClassTransformer {
         return Pair.of(ifStart, ifEnd);
     }
 
-    private static AbstractInsnNode[] getStartIfSequence() {
-
-        FieldInsnNode searchNode1 = new FieldInsnNode(
-            Opcodes.GETFIELD,
-            Names.renderBlocks_aoBrightnessXYZNNN.clas,
-            Names.renderBlocks_aoBrightnessXYZNNN.name,
-            Names.renderBlocks_aoBrightnessXYZNNN.desc);
-        VarInsnNode searchNode2 = new VarInsnNode(Opcodes.ALOAD, 0);
-        FieldInsnNode searchNode3 = new FieldInsnNode(
-            Opcodes.GETFIELD,
-            Names.renderBlocks_aoBrightnessYZNN.clas,
-            Names.renderBlocks_aoBrightnessYZNN.name,
-            Names.renderBlocks_aoBrightnessYZNN.desc);
-        VarInsnNode searchNode4 = new VarInsnNode(Opcodes.ILOAD, 20);
-
-        return new AbstractInsnNode[] { searchNode1, searchNode2, searchNode3, searchNode4 };
-    }
-
     private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper2() {
         final InsnList ifStart = new InsnList();
         ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
@@ -213,6 +211,46 @@ public class RenderBlocksTransformer implements IClassTransformer {
         ifEnd.add(new LabelNode(label176));
         ifEnd.add(new LineNumberNode(4730, new LabelNode(label176)));
         ifEnd.add(new FrameNode(Opcodes.F_APPEND, 1, new Object[] { Opcodes.FLOAT }, 0, null));
+
+        return Pair.of(ifStart, ifEnd);
+    }
+
+    private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper3() {
+        final InsnList ifStart = new InsnList();
+        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 1));
+        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        ifStart.add(
+            new FieldInsnNode(
+                Opcodes.GETFIELD,
+                Names.renderBlocks_blockAccess.clas,
+                Names.renderBlocks_blockAccess.name,
+                Names.renderBlocks_blockAccess.desc));
+        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 2));
+        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 3));
+        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 4));
+        ifStart.add(new InsnNode(Opcodes.ICONST_2));
+        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 9));
+        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 10));
+        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 11));
+        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 12));
+        ifStart.add(
+            new MethodInsnNode(
+                Opcodes.INVOKESTATIC,
+                "com/prupe/mcpatcher/cc/ColorizeBlock",
+                "setupBlockSmoothing",
+                "(" + Names.renderBlocks_.desc + Names.block_.desc + Names.iBlockAccess_.desc + "IIIIFFFF)Z",
+                false));
+        Label label263 = new Label();
+        ifStart.add(new JumpInsnNode(Opcodes.IFNE, new LabelNode(label263)));
+        Label label264 = new Label();
+        ifStart.add(new LabelNode(label264));
+        ifStart.add(new LineNumberNode(4822, new LabelNode(label264)));
+
+        final InsnList ifEnd = new InsnList();
+        ifEnd.add(new LabelNode(label263));
+        ifEnd.add(new LineNumberNode(4847, new LabelNode(label263)));
+        ifEnd.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
 
         return Pair.of(ifStart, ifEnd);
     }

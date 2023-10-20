@@ -80,10 +80,6 @@ public class Names {
 
     public static Fiel renderBlocks_blockAccess;
 
-    public static Fiel renderBlocks_aoBrightnessXYZNNN;
-
-    public static Fiel renderBlocks_aoBrightnessYZNN;
-
     public static Meth renderBlocks_renderStandardBlockWithAmbientOcclusion;
 
     public static boolean equals(String clas1, String name1, String desc1, String clas2, String name2, String desc2) {

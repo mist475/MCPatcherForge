@@ -13,8 +13,6 @@ public class NamerSrg extends Namer {
 
         Names.renderBlocks_colorBlueTopRight = f(Names.renderBlocks_, "field_147833_aA", "F");
         Names.renderBlocks_blockAccess = f(Names.renderBlocks_, "field_147845_a", Names.iBlockAccess_.desc);
-        Names.renderBlocks_aoBrightnessXYZNNN = f(Names.renderBlocks_, "field_147832_R", "I");
-        Names.renderBlocks_aoBrightnessYZNN = f(Names.renderBlocks_, "field_147825_U", "I");
 
         Names.renderBlocks_renderStandardBlockWithAmbientOcclusion = m(
             Names.renderBlocks_,
