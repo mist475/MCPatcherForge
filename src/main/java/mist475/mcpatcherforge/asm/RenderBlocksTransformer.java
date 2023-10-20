@@ -45,33 +45,46 @@ public class RenderBlocksTransformer implements IClassTransformer {
         final ClassNode classNode = new ClassNode();
         classReader.accept(classNode, 0);
 
-        AbstractInsnNode[] endIfSequence = getEndIfSequence();
+        // counters
 
-        Pair<InsnList, InsnList> firstIfWrapper = getFirstRenderBlocksIfWrapper();
-        AbstractInsnNode[] firstIfSequences = getFirstRenderBlocksSequences();
         // this sequence occurs more than once
         int ifEndsHandled = 0;
-
-        Pair<InsnList, InsnList> secondIfWrapper = getSecondRenderBlocksIfWrapper();
-        AbstractInsnNode[] secondIfSequences = getSecondRenderBlocksSequences();
-
         boolean secondWrappedIfHandled = false;
+
+        // search sequences
+        AbstractInsnNode[] ifSequence1 = getStartIfSequence();
+        AbstractInsnNode[] ifSequence2 = getStartIfSequence2();
+        AbstractInsnNode[] endIfSequence = getEndIfSequence();
+
+        // code to inject
+        Pair<InsnList, InsnList> ifWrapper1 = getRenderBlocksIfWrapper1();
+        Pair<InsnList, InsnList> ifWrapper2 = getRenderBlocksIfWrapper2();
 
         for (MethodNode methodNode : classNode.methods) {
             if (isRenderStandardBlockWithAmbientOcclusion(methodNode)) {
                 logger.debug("found renderStandardBlockWithAmbientOcclusion");
                 for (AbstractInsnNode node : methodNode.instructions.toArray()) {
 
-                    if (matchesNodeSequence(node, firstIfSequences)) {
+                    // start if-statements
+
+                    if (matchesNodeSequence(node, ifSequence1)) {
                         methodNode.instructions.insert(
                             node.getNext()
                                 .getNext()
                                 .getNext()
                                 .getNext()
                                 .getNext(),
-                            firstIfWrapper.getLeft());
+                            ifWrapper1.getLeft());
                         continue;
                     }
+
+                    if (!secondWrappedIfHandled && matchesNodeSequence(node, ifSequence2)) {
+                        methodNode.instructions.insertBefore(node, ifWrapper2.getLeft());
+                        secondWrappedIfHandled = true;
+                        continue;
+                    }
+
+                    // end if-statements
 
                     if (ifEndsHandled == 0 && matchesNodeSequence(node, endIfSequence)) {
                         methodNode.instructions.remove(
@@ -81,14 +94,8 @@ public class RenderBlocksTransformer implements IClassTransformer {
                         methodNode.instructions.insert(
                             node.getNext()
                                 .getNext(),
-                            firstIfWrapper.getRight());
+                            ifWrapper1.getRight());
                         ifEndsHandled++;
-                        continue;
-                    }
-
-                    if (!secondWrappedIfHandled && matchesNodeSequence(node, secondIfSequences)) {
-                        methodNode.instructions.insertBefore(node, secondIfWrapper.getLeft());
-                        secondWrappedIfHandled = true;
                         continue;
                     }
 
@@ -100,7 +107,7 @@ public class RenderBlocksTransformer implements IClassTransformer {
                         methodNode.instructions.insert(
                             node.getNext()
                                 .getNext(),
-                            secondIfWrapper.getRight());
+                            ifWrapper2.getRight());
                         ifEndsHandled++;
                         continue;
                     }
@@ -112,7 +119,7 @@ public class RenderBlocksTransformer implements IClassTransformer {
         return classWriter.toByteArray();
     }
 
-    private static Pair<InsnList, InsnList> getFirstRenderBlocksIfWrapper() {
+    private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper1() {
         final InsnList ifStart = new InsnList();
         ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
         ifStart.add(new VarInsnNode(Opcodes.ALOAD, 1));
@@ -152,7 +159,7 @@ public class RenderBlocksTransformer implements IClassTransformer {
         return Pair.of(ifStart, ifEnd);
     }
 
-    private static AbstractInsnNode[] getFirstRenderBlocksSequences() {
+    private static AbstractInsnNode[] getStartIfSequence() {
 
         FieldInsnNode searchNode1 = new FieldInsnNode(
             Opcodes.GETFIELD,
@@ -170,7 +177,7 @@ public class RenderBlocksTransformer implements IClassTransformer {
         return new AbstractInsnNode[] { searchNode1, searchNode2, searchNode3, searchNode4 };
     }
 
-    private static Pair<InsnList, InsnList> getSecondRenderBlocksIfWrapper() {
+    private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper2() {
         final InsnList ifStart = new InsnList();
         ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
         ifStart.add(new VarInsnNode(Opcodes.ALOAD, 1));
@@ -210,7 +217,7 @@ public class RenderBlocksTransformer implements IClassTransformer {
         return Pair.of(ifStart, ifEnd);
     }
 
-    private static AbstractInsnNode[] getSecondRenderBlocksSequences() {
+    private static AbstractInsnNode[] getStartIfSequence2() {
         VarInsnNode searchNode1 = new VarInsnNode(Opcodes.ALOAD, 0);
         VarInsnNode searchNode2 = new VarInsnNode(Opcodes.ALOAD, 0);
         VarInsnNode searchNode3 = new VarInsnNode(Opcodes.ALOAD, 0);
