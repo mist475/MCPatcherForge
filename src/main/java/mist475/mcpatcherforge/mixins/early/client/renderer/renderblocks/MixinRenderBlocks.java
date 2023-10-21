@@ -30,8 +30,11 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
@@ -266,11 +269,12 @@ public abstract class MixinRenderBlocks {
     }
 
     @Redirect(
-        method = "renderBlockBed(Lnet/minecraft/block/Block;III)Z",
+        method = { "renderBlockBed(Lnet/minecraft/block/Block;III)Z",
+            "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z" },
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/block/Block;shouldSideBeRendered(Lnet/minecraft/world/IBlockAccess;IIII)Z"))
-    private boolean modifyRenderBlockBed(Block block, IBlockAccess worldIn, int x, int y, int z, int side) {
+    private boolean redirectShouldSideBeRendered(Block block, IBlockAccess worldIn, int x, int y, int z, int side) {
         return RenderPass.shouldSideBeRendered(block, worldIn, x, y, z, side);
     }
 
@@ -1344,6 +1348,133 @@ public abstract class MixinRenderBlocks {
         }
         RenderBlocksUtils
             .setupColorMultiplier(block, this.blockAccess, x, y, z, this.hasOverrideBlockTexture(), f, f1, f2);
+    }
+
+    @ModifyConstant(
+        method = "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z",
+        constant = { @Constant(floatValue = 0.5F), @Constant(floatValue = 0.6F), @Constant(floatValue = 0.8F) })
+    private float redirectAOBaseMultiplier(float constant) {
+        return RenderPass.getAOBaseMultiplier(constant);
+    }
+
+    // If it was possible to retrieve ordinal number I wouldn't have to copy ...
+
+    @Redirect(
+        method = "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/block/BlockGrass;getIconSideOverlay()Lnet/minecraft/util/IIcon;",
+            ordinal = 0))
+    private IIcon redirectBlockGrassGetIconSideOverlay1(Block block, int x, int y, int z, float red, float green,
+        float blue) {
+        return CTMUtils.getBlockIcon(
+            BlockGrass.getIconSideOverlay(),
+            (RenderBlocks) (Object) this,
+            block,
+            this.blockAccess,
+            x,
+            y,
+            z,
+            2);
+    }
+
+    @Redirect(
+        method = "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/block/BlockGrass;getIconSideOverlay()Lnet/minecraft/util/IIcon;",
+            ordinal = 1))
+    private IIcon redirectBlockGrassGetIconSideOverlay2(Block block, int x, int y, int z, float red, float green,
+        float blue) {
+        return CTMUtils.getBlockIcon(
+            BlockGrass.getIconSideOverlay(),
+            (RenderBlocks) (Object) this,
+            block,
+            this.blockAccess,
+            x,
+            y,
+            z,
+            3);
+    }
+
+    @Redirect(
+        method = "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/block/BlockGrass;getIconSideOverlay()Lnet/minecraft/util/IIcon;",
+            ordinal = 2))
+    private IIcon redirectBlockGrassGetIconSideOverlay3(Block block, int x, int y, int z, float red, float green,
+        float blue) {
+        return CTMUtils.getBlockIcon(
+            BlockGrass.getIconSideOverlay(),
+            (RenderBlocks) (Object) this,
+            block,
+            this.blockAccess,
+            x,
+            y,
+            z,
+            4);
+    }
+
+    @Redirect(
+        method = "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/block/BlockGrass;getIconSideOverlay()Lnet/minecraft/util/IIcon;",
+            ordinal = 3))
+    private IIcon redirectBlockGrassGetIconSideOverlay4(Block block, int x, int y, int z, float red, float green,
+        float blue) {
+        return CTMUtils.getBlockIcon(
+            BlockGrass.getIconSideOverlay(),
+            (RenderBlocks) (Object) this,
+            block,
+            this.blockAccess,
+            x,
+            y,
+            z,
+            5);
+    }
+
+    // If only ordinal number was accessible ...
+
+    @ModifyVariable(
+        method = "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(value = "LOAD", ordinal = 0),
+        ordinal = 1)
+    private boolean redirectColorMultiplier1(boolean value) {
+        return RenderBlocksUtils.useColorMultiplier(0);
+    }
+
+    @ModifyVariable(
+        method = "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(value = "LOAD", ordinal = 1),
+        ordinal = 1)
+    private boolean redirectColorMultiplier2(boolean value) {
+        return RenderBlocksUtils.useColorMultiplier(2);
+    }
+
+    @ModifyVariable(
+        method = "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(value = "LOAD", ordinal = 2),
+        ordinal = 1)
+    private boolean redirectColorMultiplier3(boolean value) {
+        return RenderBlocksUtils.useColorMultiplier(3);
+    }
+
+    @ModifyVariable(
+        method = "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(value = "LOAD", ordinal = 3),
+        ordinal = 1)
+    private boolean redirectColorMultiplier4(boolean value) {
+        return RenderBlocksUtils.useColorMultiplier(4);
+    }
+
+    @ModifyVariable(
+        method = "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(value = "LOAD", ordinal = 4),
+        ordinal = 1)
+    private boolean redirectColorMultiplier5(boolean value) {
+        return RenderBlocksUtils.useColorMultiplier(5);
     }
 
     /**
