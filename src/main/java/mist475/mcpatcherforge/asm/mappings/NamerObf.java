@@ -10,6 +10,8 @@ public class NamerObf extends Namer {
         Names.renderBlocks_ = c("blm");
         Names.block_ = c("aji");
         Names.iBlockAccess_ = c("ahl");
+        Names.worldRenderer_ = c("blo");
+        Names.entityLivingBase_ = c("sv");
 
         Names.renderBlocks_colorBlueTopRight = f(Names.renderBlocks_, "aB", "F");
         Names.renderBlocks_blockAccess = f(Names.renderBlocks_, "a", Names.iBlockAccess_.desc);
@@ -18,5 +20,9 @@ public class NamerObf extends Namer {
             Names.renderBlocks_,
             "a",
             "(" + Names.block_.desc + "IIIFFF)Z");
+
+        Names.worldRenderer_updateRenderer = m(Names.worldRenderer_, "a", "(" + Names.entityLivingBase_.desc + ")V");
+
+        Names.block_getRenderBlockPass = m(Names.block_, "w", "()I");
     }
 }

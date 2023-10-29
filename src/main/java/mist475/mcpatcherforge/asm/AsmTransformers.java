@@ -13,8 +13,10 @@ import mist475.mcpatcherforge.core.MCPatcherForgeCore;
  */
 public enum AsmTransformers {
 
-    RENDERBLOCKS_TRANSFORMER("RenderBlocks transformer", () -> true, Side.CLIENT,
-        "mist475.mcpatcherforge.asm.RenderBlocksTransformer");
+    RENDERBLOCKS("RenderBlocks transformer", () -> true, Side.CLIENT,
+        "mist475.mcpatcherforge.asm.RenderBlocksTransformer"),
+    WORLDRENDERER("RenderBlocks transformer", () -> true, Side.CLIENT,
+        "mist475.mcpatcherforge.asm.WorldRendererTransformer");
 
     private final Supplier<Boolean> applyIf;
     private final Side side;

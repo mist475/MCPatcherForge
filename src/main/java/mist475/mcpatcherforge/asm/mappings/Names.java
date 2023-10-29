@@ -76,11 +76,19 @@ public class Names {
 
     public static Clas iBlockAccess_;
 
+    public static Clas worldRenderer_;
+
+    public static Clas entityLivingBase_;
+
     public static Fiel renderBlocks_colorBlueTopRight;
 
     public static Fiel renderBlocks_blockAccess;
 
     public static Meth renderBlocks_renderStandardBlockWithAmbientOcclusion;
+
+    public static Meth worldRenderer_updateRenderer;
+
+    public static Meth block_getRenderBlockPass;
 
     public static boolean equals(String clas1, String name1, String desc1, String clas2, String name2, String desc2) {
         return clas1.equals(clas2) && name1.equals(name2) && desc1.equals(desc2);
