@@ -1,5 +1,7 @@
 package mist475.mcpatcherforge.asm;
 
+import java.util.Objects;
+
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FrameNode;
@@ -118,8 +120,8 @@ public class ASMUtils {
             }
             case AbstractInsnNode.FRAME -> {
                 if (node1 instanceof FrameNode frameNode1 && node2 instanceof FrameNode frameNode2) {
-                    yield frameNode1.type == frameNode2.type && frameNode1.local.equals(frameNode2.local)
-                        && frameNode1.stack.equals(frameNode2.stack);
+                    yield frameNode1.type == frameNode2.type && Objects.equals(frameNode1.local, frameNode2.local)
+                        && Objects.equals(frameNode1.stack, frameNode2.stack);
                 }
                 yield false;
             }
