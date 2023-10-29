@@ -125,7 +125,7 @@ public class MCLogger {
             if (level.intValue() >= FLOOD_LEVEL && !checkFlood()) {
                 return;
             }
-            logger.log(level, String.format(format, params));
+            logger.log(level, format, params);
         }
     }
 
