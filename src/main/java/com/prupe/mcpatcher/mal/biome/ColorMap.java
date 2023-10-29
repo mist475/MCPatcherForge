@@ -450,7 +450,7 @@ abstract public class ColorMap implements IColorMap {
 
         @Override
         int getColorMultiplier(BiomeGenBase biome, int i, int j, int k) {
-            return BiomeAPI.getGrassColor(biome, i, j, k);
+            return biome.getBiomeGrassColor(i, j, k);
         }
     }
 
@@ -471,7 +471,7 @@ abstract public class ColorMap implements IColorMap {
 
         @Override
         int getColorMultiplier(BiomeGenBase biome, int i, int j, int k) {
-            return BiomeAPI.getFoliageColor(biome, i, j, k);
+            return biome.getBiomeFoliageColor(i, j, k);
         }
     }
 
@@ -557,8 +557,8 @@ abstract public class ColorMap implements IColorMap {
 
         @Override
         protected void computeXY(BiomeGenBase biome, int i, int j, int k, float[] f) {
-            float temperature = ColorUtils.clamp(BiomeAPI.getTemperature(biome, i, j, k));
-            float rainfall = ColorUtils.clamp(BiomeAPI.getRainfall(biome, i, j, k));
+            float temperature = ColorUtils.clamp(biome.getFloatTemperature(i, j, k));
+            float rainfall = ColorUtils.clamp(biome.getFloatRainfall());
             f[0] = maxX * (1.0f - temperature);
             f[1] = maxY * (1.0f - temperature * rainfall);
         }

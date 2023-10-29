@@ -94,22 +94,6 @@ public class BiomeAPI {
         return lastBiome;
     }
 
-    public static float getTemperature(BiomeGenBase biome, int i, int j, int k) {
-        return biome.getFloatTemperature(i, j, k);
-    }
-
-    public static float getRainfall(BiomeGenBase biome, int i, int j, int k) {
-        return biome.getFloatRainfall();
-    }
-
-    public static int getGrassColor(BiomeGenBase biome, int i, int j, int k) {
-        return biome.getBiomeGrassColor(i, j, k);
-    }
-
-    public static int getFoliageColor(BiomeGenBase biome, int i, int j, int k) {
-        return biome.getBiomeFoliageColor(i, j, k);
-    }
-
     public static int getWaterColorMultiplier(BiomeGenBase biome) {
         return biome == null ? 0xffffff : biome.getWaterColorMultiplier();
     }
