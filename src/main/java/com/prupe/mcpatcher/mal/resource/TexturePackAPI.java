@@ -273,12 +273,8 @@ public class TexturePackAPI {
         return resource;
     }
 
-    public static ResourceLocation newMCPatcherResourceLocation(String v1Path, String v2Path) {
-        return new ResourceLocation(MCPATCHER_SUBDIR + v2Path.replaceFirst("^/+", ""));
-    }
-
     public static ResourceLocation newMCPatcherResourceLocation(String path) {
-        return newMCPatcherResourceLocation(path, path);
+        return new ResourceLocation(MCPATCHER_SUBDIR + path.replaceFirst("^/+", ""));
     }
 
     public static int getTextureIfLoaded(ResourceLocation resource) {

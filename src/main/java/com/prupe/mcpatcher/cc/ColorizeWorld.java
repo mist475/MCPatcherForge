@@ -29,13 +29,11 @@ public class ColorizeWorld {
     private static final int fogBlendRadius = Config.getInt(MCPatcherUtils.CUSTOM_COLORS, "fogBlendRadius", 7);
 
     private static final ResourceLocation UNDERWATERCOLOR = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/underwatercolor.png", "colormap/underwater.png");
+        .newMCPatcherResourceLocation("colormap/underwater.png");
     private static final ResourceLocation UNDERLAVACOLOR = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/underlavacolor.png", "colormap/underlava.png");
-    private static final ResourceLocation FOGCOLOR0 = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/fogcolor0.png", "colormap/fog0.png");
-    private static final ResourceLocation SKYCOLOR0 = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/skycolor0.png", "colormap/sky0.png");
+        .newMCPatcherResourceLocation("colormap/underlava.png");
+    private static final ResourceLocation FOGCOLOR0 = TexturePackAPI.newMCPatcherResourceLocation("colormap/fog0.png");
+    private static final ResourceLocation SKYCOLOR0 = TexturePackAPI.newMCPatcherResourceLocation("colormap/sky0.png");
 
     private static final String TEXT_KEY = "text.";
     private static final String TEXT_CODE_KEY = TEXT_KEY + "code.";
@@ -205,13 +203,6 @@ public class ColorizeWorld {
         return switch (cloudType) {
             case CLOUDS_NONE, CLOUDS_FAST -> false;
             case CLOUDS_FANCY -> true;
-            default -> fancyGraphics;
-        };
-    }
-
-    public static int drawFancyClouds(int fancyGraphics) {
-        return switch (cloudType) {
-            case CLOUDS_NONE, CLOUDS_FAST, CLOUDS_FANCY -> cloudType;
             default -> fancyGraphics;
         };
     }

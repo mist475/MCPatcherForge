@@ -65,7 +65,7 @@ public class LineRenderer {
     }
 
     private LineRenderer(String name, double width, double a, double b, int segments) {
-        texture = TexturePackAPI.newMCPatcherResourceLocation("/misc/" + name + ".png", "line/" + name + ".png");
+        texture = TexturePackAPI.newMCPatcherResourceLocation("line/" + name + ".png");
         active = TexturePackAPI.hasResource(texture);
         PropertiesFile properties = PropertiesFile
             .getNonNull(logger, TexturePackAPI.transformResourceLocation(texture, ".png", ".properties"));

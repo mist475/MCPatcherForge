@@ -18,9 +18,7 @@ import com.prupe.mcpatcher.mal.resource.TexturePackAPI;
 public final class Lightmap {
 
     private static final MCLogger logger = MCLogger.getLogger(MCPatcherUtils.CUSTOM_COLORS);
-
-    private static final String LIGHTMAP_FORMAT1 = "/environment/lightmap%d.png";
-    private static final String LIGHTMAP_FORMAT2 = "lightmap/world%d.png";
+    private static final String LIGHTMAP_FORMAT = "lightmap/world%d.png";
     private static final int LIGHTMAP_SIZE = 16;
     private static final int HEIGHT_WITHOUT_NIGHTVISION = 2 * LIGHTMAP_SIZE;
     private static final int HEIGHT_WITH_NIGHTVISION = 4 * LIGHTMAP_SIZE;
@@ -53,9 +51,8 @@ public final class Lightmap {
         if (lightmaps.containsKey(worldType)) {
             lightmap = lightmaps.get(worldType);
         } else {
-            ResourceLocation resource = TexturePackAPI.newMCPatcherResourceLocation(
-                String.format(LIGHTMAP_FORMAT1, worldType),
-                String.format(LIGHTMAP_FORMAT2, worldType));
+            ResourceLocation resource = TexturePackAPI
+                .newMCPatcherResourceLocation(String.format(LIGHTMAP_FORMAT, worldType));
             BufferedImage image = TexturePackAPI.getImage(resource);
             if (image != null) {
                 lightmap = new Lightmap(resource, image);

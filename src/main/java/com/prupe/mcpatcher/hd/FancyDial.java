@@ -121,8 +121,7 @@ public class FancyDial {
             logger.warning("ignoring custom animation for %s not compass or clock", name);
             return;
         }
-        ResourceLocation resource = TexturePackAPI
-            .newMCPatcherResourceLocation("/misc/" + name + ".properties", "dial/" + name + ".properties");
+        ResourceLocation resource = TexturePackAPI.newMCPatcherResourceLocation("dial/" + name + ".properties");
         if (TexturePackAPI.hasResource(resource)) {
             logger.fine("found custom %s (%s)", name, resource);
             setupInfo.put(icon, resource);

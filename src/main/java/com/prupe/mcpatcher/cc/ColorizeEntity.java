@@ -14,11 +14,11 @@ import com.prupe.mcpatcher.mal.resource.TexturePackAPI;
 public class ColorizeEntity {
 
     private static final ResourceLocation LAVA_DROP_COLORS = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/lavadropcolor.png", "colormap/lavadrop.png");
+        .newMCPatcherResourceLocation("colormap/lavadrop.png");
     private static final ResourceLocation MYCELIUM_COLORS = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/myceliumparticlecolor.png", "colormap/myceliumparticle.png");
+        .newMCPatcherResourceLocation("colormap/myceliumparticle.png");
     private static final ResourceLocation XPORB_COLORS = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/xporbcolor.png", "colormap/xporb.png");
+        .newMCPatcherResourceLocation("colormap/xporb.png");
 
     static float[] waterBaseColor; // particle.water
     private static float[] lavaDropColors; // misc/lavadropcolor.png
@@ -135,15 +135,6 @@ public class ColorizeEntity {
             defaultColor = ColorizeWorld.underwaterColor.getColorMultiplier(BiomeAPI.getWorld(), i, j, k);
         }
         Colorizer.setColorF(defaultColor);
-    }
-
-    public static int getDyeColor(int rgb, int index) {
-        Integer newRGB = dyeColors[index];
-        return newRGB == null ? rgb : newRGB;
-    }
-
-    public static float[] getFleeceColor(float[] rgb, int index) {
-        return getArrayColor(fleeceColors, rgb, index);
     }
 
     public static float[] getWolfCollarColor(float[] rgb, int index) {

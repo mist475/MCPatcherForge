@@ -43,27 +43,26 @@ public class ColorizeBlock {
         .getBoolean(MCPatcherUtils.CUSTOM_COLORS, "testColorSmoothing", false);
 
     private static final ResourceLocation REDSTONE_COLORS = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/redstonecolor.png", "colormap/redstone.png");
+        .newMCPatcherResourceLocation("colormap/redstone.png");
     private static final ResourceLocation STEM_COLORS = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/stemcolor.png", "colormap/stem.png");
+        .newMCPatcherResourceLocation("colormap/stem.png");
     private static final ResourceLocation PUMPKIN_STEM_COLORS = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/pumpkinstemcolor.png", "colormap/pumpkinstem.png");
+        .newMCPatcherResourceLocation("colormap/pumpkinstem.png");
     private static final ResourceLocation MELON_STEM_COLORS = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/melonstemcolor.png", "colormap/melonstem.png");
+        .newMCPatcherResourceLocation("colormap/melonstem.png");
     private static final ResourceLocation SWAMPGRASSCOLOR = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/swampgrasscolor.png", "colormap/swampgrass.png");
+        .newMCPatcherResourceLocation("colormap/swampgrass.png");
     private static final ResourceLocation SWAMPFOLIAGECOLOR = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/swampfoliagecolor.png", "colormap/swampfoliage.png");
+        .newMCPatcherResourceLocation("colormap/swampfoliage.png");
     private static final ResourceLocation DEFAULT_GRASSCOLOR = new ResourceLocation(
         "minecraft:textures/colormap/grass.png");
     private static final ResourceLocation DEFAULT_FOLIAGECOLOR = new ResourceLocation(
         "minecraft:textures/colormap/foliage.png");
-    private static final ResourceLocation PINECOLOR = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/pinecolor.png", "colormap/pine.png");
+    private static final ResourceLocation PINECOLOR = TexturePackAPI.newMCPatcherResourceLocation("colormap/pine.png");
     private static final ResourceLocation BIRCHCOLOR = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/birchcolor.png", "colormap/birch.png");
+        .newMCPatcherResourceLocation("colormap/birch.png");
     private static final ResourceLocation WATERCOLOR = TexturePackAPI
-        .newMCPatcherResourceLocation("/misc/watercolorX.png", "colormap/water.png");
+        .newMCPatcherResourceLocation("colormap/water.png");
 
     private static final String PALETTE_BLOCK_KEY = "palette.block.";
 
