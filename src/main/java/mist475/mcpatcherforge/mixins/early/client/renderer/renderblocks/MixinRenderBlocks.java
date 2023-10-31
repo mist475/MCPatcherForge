@@ -20,7 +20,6 @@ import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -270,7 +269,8 @@ public abstract class MixinRenderBlocks {
 
     @Redirect(
         method = { "renderBlockBed(Lnet/minecraft/block/Block;III)Z",
-            "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z" },
+            "renderStandardBlockWithAmbientOcclusion(Lnet/minecraft/block/Block;IIIFFF)Z",
+            "renderStandardBlockWithColorMultiplier(Lnet/minecraft/block/Block;IIIFFF)Z" },
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/block/Block;shouldSideBeRendered(Lnet/minecraft/world/IBlockAccess;IIII)Z"))
@@ -2625,192 +2625,154 @@ public abstract class MixinRenderBlocks {
         return flag;
     }
 
-    /**
-     * @author Mist475 (adapted from Paul Rupe)
-     * @reason Significant deviation from Vanilla
-     *         TODO: look at again for compatability
-     */
-    @Overwrite
-    public boolean renderStandardBlockWithColorMultiplier(Block block, int x, int y, int z, float red, float green,
-        float blue) {
-        this.enableAO = false;
-        Tessellator tessellator = Tessellator.instance;
-        boolean flag = false;
+    @Redirect(
+        method = "renderStandardBlockWithColorMultiplier(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/Tessellator;setColorOpaque_F(FFF)V",
+            ordinal = 0))
+    private void redirectColorMultiplier1(Tessellator instance, float red, float green, float blue) {
+        Tessellator.instance.setColorOpaque_F(
+            RenderBlocksUtils.getColorMultiplierRed(0),
+            RenderBlocksUtils.getColorMultiplierGreen(0),
+            RenderBlocksUtils.getColorMultiplierBlue(0));
+    }
 
-        final float n7 = 0.8f;
-        final float n8 = 0.6f;
-        float n9 = n7;
-        float n10 = n8;
-        float n11 = n7;
-        float n12 = n8;
-        float n13 = n7;
-        float n14 = n8;
+    @Redirect(
+        method = "renderStandardBlockWithColorMultiplier(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/Tessellator;setColorOpaque_F(FFF)V",
+            ordinal = 1))
+    private void redirectColorMultiplier2(Tessellator instance, float red, float green, float blue) {
+        Tessellator.instance.setColorOpaque_F(
+            RenderBlocksUtils.getColorMultiplierRed(1),
+            RenderBlocksUtils.getColorMultiplierGreen(1),
+            RenderBlocksUtils.getColorMultiplierBlue(1));
+    }
 
-        if (block != Blocks.grass) {
+    @Redirect(
+        method = "renderStandardBlockWithColorMultiplier(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/Tessellator;setColorOpaque_F(FFF)V",
+            ordinal = 2))
+    private void redirectColorMultiplier3(Tessellator instance, float red, float green, float blue) {
+        Tessellator.instance.setColorOpaque_F(
+            RenderBlocksUtils.getColorMultiplierRed(2),
+            RenderBlocksUtils.getColorMultiplierGreen(2),
+            RenderBlocksUtils.getColorMultiplierBlue(2));
+    }
 
-            n9 *= red;
-            n10 *= red;
-            n11 *= green;
-            n12 *= green;
-            n13 *= blue;
-            n14 *= blue;
-        }
+    @Redirect(
+        method = "renderStandardBlockWithColorMultiplier(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/Tessellator;setColorOpaque_F(FFF)V",
+            ordinal = 4))
+    private void redirectColorMultiplier4(Tessellator instance, float red, float green, float blue) {
+        Tessellator.instance.setColorOpaque_F(
+            RenderBlocksUtils.getColorMultiplierRed(3),
+            RenderBlocksUtils.getColorMultiplierGreen(3),
+            RenderBlocksUtils.getColorMultiplierBlue(3));
+    }
 
-        int l = block.getMixedBrightnessForBlock(this.blockAccess, x, y, z);
-        // face 0
-        if (this.renderAllFaces || RenderPass.shouldSideBeRendered(block, this.blockAccess, x, y - 1, z, 0)) {
-            tessellator.setBrightness(
-                this.renderMinY > 0.0D ? l : block.getMixedBrightnessForBlock(this.blockAccess, x, y - 1, z));
-            tessellator.setColorOpaque_F(
-                RenderBlocksUtils.getColorMultiplierRed(0),
-                RenderBlocksUtils.getColorMultiplierGreen(0),
-                RenderBlocksUtils.getColorMultiplierBlue(0));
-            this.renderFaceYNeg(block, x, y, z, this.getBlockIcon(block, this.blockAccess, x, y, z, 0));
-            flag = true;
-        }
-        // face 1
-        if (this.renderAllFaces || RenderPass.shouldSideBeRendered(block, this.blockAccess, x, y + 1, z, 1)) {
-            tessellator.setBrightness(
-                this.renderMaxY < 1.0D ? l : block.getMixedBrightnessForBlock(this.blockAccess, x, y + 1, z));
-            tessellator.setColorOpaque_F(
-                RenderBlocksUtils.getColorMultiplierRed(1),
-                RenderBlocksUtils.getColorMultiplierGreen(1),
-                RenderBlocksUtils.getColorMultiplierBlue(1));
-            this.renderFaceYPos(block, x, y, z, this.getBlockIcon(block, this.blockAccess, x, y, z, 1));
-            flag = true;
-        }
+    @Redirect(
+        method = "renderStandardBlockWithColorMultiplier(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/Tessellator;setColorOpaque_F(FFF)V",
+            ordinal = 6))
+    private void redirectColorMultiplier5(Tessellator instance, float red, float green, float blue) {
+        Tessellator.instance.setColorOpaque_F(
+            RenderBlocksUtils.getColorMultiplierRed(4),
+            RenderBlocksUtils.getColorMultiplierGreen(4),
+            RenderBlocksUtils.getColorMultiplierBlue(4));
+    }
 
-        IIcon iicon;
-        // face 2
-        if (this.renderAllFaces || RenderPass.shouldSideBeRendered(block, this.blockAccess, x, y, z - 1, 2)) {
-            tessellator.setBrightness(
-                this.renderMinZ > 0.0D ? l : block.getMixedBrightnessForBlock(this.blockAccess, x, y, z - 1));
-            tessellator.setColorOpaque_F(
-                RenderBlocksUtils.getColorMultiplierRed(2),
-                RenderBlocksUtils.getColorMultiplierGreen(2),
-                RenderBlocksUtils.getColorMultiplierBlue(2));
-            iicon = this.getBlockIcon(block, this.blockAccess, x, y, z, 2);
-            this.renderFaceZNeg(block, x, y, z, iicon);
+    @Redirect(
+        method = "renderStandardBlockWithColorMultiplier(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/Tessellator;setColorOpaque_F(FFF)V",
+            ordinal = 8))
+    private void redirectColorMultiplier6(Tessellator instance, float red, float green, float blue) {
+        Tessellator.instance.setColorOpaque_F(
+            RenderBlocksUtils.getColorMultiplierRed(5),
+            RenderBlocksUtils.getColorMultiplierGreen(5),
+            RenderBlocksUtils.getColorMultiplierBlue(5));
+    }
 
-            if (fancyGrass && iicon.getIconName()
-                .equals("grass_side") && !this.hasOverrideBlockTexture()) {
-                tessellator.setColorOpaque_F(n9 * red, n11 * green, n13 * blue);
-                this.renderFaceZNeg(
-                    block,
-                    x,
-                    y,
-                    z,
-                    CTMUtils.getBlockIcon(
-                        BlockGrass.getIconSideOverlay(),
-                        (RenderBlocks) (Object) this,
-                        block,
-                        this.blockAccess,
-                        x,
-                        y,
-                        z,
-                        2));
-            }
+    @Redirect(
+        method = "renderStandardBlockWithColorMultiplier(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/block/BlockGrass;getIconSideOverlay()Lnet/minecraft/util/IIcon;",
+            ordinal = 0))
+    private IIcon redirectGrassSideOverLay1(Block block, int x, int y, int z, float red, float green, float blue) {
+        return CTMUtils.getBlockIcon(
+            BlockGrass.getIconSideOverlay(),
+            (RenderBlocks) (Object) this,
+            block,
+            this.blockAccess,
+            x,
+            y,
+            z,
+            2);
+    }
 
-            flag = true;
-        }
-        // face 3
-        if (this.renderAllFaces || RenderPass.shouldSideBeRendered(block, this.blockAccess, x, y, z + 1, 3)) {
-            tessellator.setBrightness(
-                this.renderMaxZ < 1.0D ? l : block.getMixedBrightnessForBlock(this.blockAccess, x, y, z + 1));
-            tessellator.setColorOpaque_F(
-                RenderBlocksUtils.getColorMultiplierRed(3),
-                RenderBlocksUtils.getColorMultiplierGreen(3),
-                RenderBlocksUtils.getColorMultiplierBlue(3));
-            iicon = this.getBlockIcon(block, this.blockAccess, x, y, z, 3);
-            this.renderFaceZPos(block, x, y, z, iicon);
+    @Redirect(
+        method = "renderStandardBlockWithColorMultiplier(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/block/BlockGrass;getIconSideOverlay()Lnet/minecraft/util/IIcon;",
+            ordinal = 1))
+    private IIcon redirectGrassSideOverLay2(Block block, int x, int y, int z, float red, float green, float blue) {
+        return CTMUtils.getBlockIcon(
+            BlockGrass.getIconSideOverlay(),
+            (RenderBlocks) (Object) this,
+            block,
+            this.blockAccess,
+            x,
+            y,
+            z,
+            3);
+    }
 
-            if (fancyGrass && iicon.getIconName()
-                .equals("grass_side") && !this.hasOverrideBlockTexture()) {
-                tessellator.setColorOpaque_F(n9 * red, n11 * green, n13 * blue);
-                this.renderFaceZPos(
-                    block,
-                    x,
-                    y,
-                    z,
-                    CTMUtils.getBlockIcon(
-                        BlockGrass.getIconSideOverlay(),
-                        (RenderBlocks) (Object) this,
-                        block,
-                        this.blockAccess,
-                        x,
-                        y,
-                        z,
-                        3));
-            }
+    @Redirect(
+        method = "renderStandardBlockWithColorMultiplier(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/block/BlockGrass;getIconSideOverlay()Lnet/minecraft/util/IIcon;",
+            ordinal = 2))
+    private IIcon redirectGrassSideOverLay3(Block block, int x, int y, int z, float red, float green, float blue) {
+        return CTMUtils.getBlockIcon(
+            BlockGrass.getIconSideOverlay(),
+            (RenderBlocks) (Object) this,
+            block,
+            this.blockAccess,
+            x,
+            y,
+            z,
+            4);
+    }
 
-            flag = true;
-        }
-        // face 4
-        if (this.renderAllFaces || RenderPass.shouldSideBeRendered(block, this.blockAccess, x - 1, y, z, 4)) {
-            tessellator.setBrightness(
-                this.renderMinX > 0.0D ? l : block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y, z));
-            tessellator.setColorOpaque_F(
-                RenderBlocksUtils.getColorMultiplierRed(4),
-                RenderBlocksUtils.getColorMultiplierGreen(4),
-                RenderBlocksUtils.getColorMultiplierBlue(4));
-            iicon = this.getBlockIcon(block, this.blockAccess, x, y, z, 4);
-            this.renderFaceXNeg(block, x, y, z, iicon);
-
-            if (fancyGrass && iicon.getIconName()
-                .equals("grass_side") && !this.hasOverrideBlockTexture()) {
-                tessellator.setColorOpaque_F(n10 * red, n12 * green, n14 * blue);
-                this.renderFaceXNeg(
-                    block,
-                    x,
-                    y,
-                    z,
-                    CTMUtils.getBlockIcon(
-                        BlockGrass.getIconSideOverlay(),
-                        (RenderBlocks) (Object) this,
-                        block,
-                        this.blockAccess,
-                        x,
-                        y,
-                        z,
-                        4));
-            }
-
-            flag = true;
-        }
-        // face 5
-        if (this.renderAllFaces || RenderPass.shouldSideBeRendered(block, this.blockAccess, x + 1, y, z, 5)) {
-            tessellator.setBrightness(
-                this.renderMaxX < 1.0D ? l : block.getMixedBrightnessForBlock(this.blockAccess, x + 1, y, z));
-            tessellator.setColorOpaque_F(
-                RenderBlocksUtils.getColorMultiplierRed(5),
-                RenderBlocksUtils.getColorMultiplierGreen(5),
-                RenderBlocksUtils.getColorMultiplierBlue(5));
-            iicon = this.getBlockIcon(block, this.blockAccess, x, y, z, 5);
-            this.renderFaceXPos(block, x, y, z, iicon);
-
-            if (fancyGrass && iicon.getIconName()
-                .equals("grass_side") && !this.hasOverrideBlockTexture()) {
-                tessellator.setColorOpaque_F(n10 * red, n12 * green, n14 * blue);
-                this.renderFaceXPos(
-                    block,
-                    x,
-                    y,
-                    z,
-                    CTMUtils.getBlockIcon(
-                        BlockGrass.getIconSideOverlay(),
-                        (RenderBlocks) (Object) this,
-                        block,
-                        this.blockAccess,
-                        x,
-                        y,
-                        z,
-                        5));
-            }
-
-            flag = true;
-        }
-
-        return flag;
+    @Redirect(
+        method = "renderStandardBlockWithColorMultiplier(Lnet/minecraft/block/Block;IIIFFF)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/block/BlockGrass;getIconSideOverlay()Lnet/minecraft/util/IIcon;",
+            ordinal = 3))
+    private IIcon redirectGrassSideOverLay4(Block block, int x, int y, int z, float red, float green, float blue) {
+        return CTMUtils.getBlockIcon(
+            BlockGrass.getIconSideOverlay(),
+            (RenderBlocks) (Object) this,
+            block,
+            this.blockAccess,
+            x,
+            y,
+            z,
+            5);
     }
 
     @Redirect(
