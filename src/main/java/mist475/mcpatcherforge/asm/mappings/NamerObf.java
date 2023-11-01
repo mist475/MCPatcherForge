@@ -21,6 +21,11 @@ public class NamerObf extends Namer {
             "a",
             "(" + Names.block_.desc + "IIIFFF)Z");
 
+        Names.renderBlocks_renderStandardBlockWithAmbientOcclusionPartial = m(
+            Names.renderBlocks_,
+            "b",
+            "(" + Names.block_.desc + "IIIFFF)Z");
+
         Names.worldRenderer_updateRenderer = m(Names.worldRenderer_, "a", "(" + Names.entityLivingBase_.desc + ")V");
 
         Names.block_getRenderBlockPass = m(Names.block_, "w", "()I");

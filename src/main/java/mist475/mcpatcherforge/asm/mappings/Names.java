@@ -86,6 +86,8 @@ public class Names {
 
     public static Meth renderBlocks_renderStandardBlockWithAmbientOcclusion;
 
+    public static Meth renderBlocks_renderStandardBlockWithAmbientOcclusionPartial;
+
     public static Meth worldRenderer_updateRenderer;
 
     public static Meth block_getRenderBlockPass;

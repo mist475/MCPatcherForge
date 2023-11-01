@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.prupe.mcpatcher.cc.ColorizeBlock;
-import com.prupe.mcpatcher.renderpass.RenderPass;
 
 @Mixin(RenderBlocks.class)
 public abstract class MixinRenderBlocksRenderBlockLiquid {
@@ -77,16 +76,6 @@ public abstract class MixinRenderBlocksRenderBlockLiquid {
             tessellator.setColorOpaque_F(red, green, blue);
         }
         tessellator.addVertexWithUV(x, y, z, u, v);
-    }
-
-    @Redirect(
-        method = "renderBlockLiquid(Lnet/minecraft/block/Block;III)Z",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/block/Block;shouldSideBeRendered(Lnet/minecraft/world/IBlockAccess;IIII)Z"))
-    private boolean mcpatcherforge$redirectShouldSideBeRendered(Block block, IBlockAccess worldIn, int x, int y, int z,
-        int side) {
-        return RenderPass.shouldSideBeRendered(block, worldIn, x, y, z, side);
     }
 
     // Redirect calls to this.getBlockIcon when possible

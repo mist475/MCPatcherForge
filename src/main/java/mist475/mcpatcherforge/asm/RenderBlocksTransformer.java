@@ -51,6 +51,10 @@ public class RenderBlocksTransformer implements IClassTransformer {
         int ifEndsHandled = 0;
         boolean secondWrappedIfHandled = false;
 
+        int ifStartsHandledPartial = 0;
+        int ifEndsHandledPartial = 0;
+        boolean secondWrappedIfHandledPartial = false;
+
         // search sequences
 
         AbstractInsnNode ifSequence1 = new VarInsnNode(Opcodes.ILOAD, 13);
@@ -58,12 +62,19 @@ public class RenderBlocksTransformer implements IClassTransformer {
         AbstractInsnNode[] endIfSequence = getEndIfSequence();
 
         // code to inject
-        Pair<InsnList, InsnList> ifWrapper1 = getRenderBlocksIfWrapper(0, 4601, 4626);
-        Pair<InsnList, InsnList> ifWrapper2 = getRenderBlocksIfWrapper2();
-        Pair<InsnList, InsnList> ifWrapper3 = getRenderBlocksIfWrapper(2, 4822, 4847);
-        Pair<InsnList, InsnList> ifWrapper4 = getRenderBlocksIfWrapper(3, 4956, 4981);
-        Pair<InsnList, InsnList> ifWrapper5 = getRenderBlocksIfWrapper(4, 5090, 5115);
-        Pair<InsnList, InsnList> ifWrapper6 = getRenderBlocksIfWrapper(5, 5224, 5249);
+        Pair<InsnList, InsnList> ifWrapper1 = getRenderBlocksIfWrapper(0, 4601, 4626, false);
+        Pair<InsnList, InsnList> ifWrapper2 = getRenderBlocksIfWrapper(1, 4715, 4730, true);
+        Pair<InsnList, InsnList> ifWrapper3 = getRenderBlocksIfWrapper(2, 4822, 4847, false);
+        Pair<InsnList, InsnList> ifWrapper4 = getRenderBlocksIfWrapper(3, 4956, 4981, false);
+        Pair<InsnList, InsnList> ifWrapper5 = getRenderBlocksIfWrapper(4, 5090, 5115, false);
+        Pair<InsnList, InsnList> ifWrapper6 = getRenderBlocksIfWrapper(5, 5224, 5249, false);
+
+        Pair<InsnList, InsnList> ifWrapper7 = getRenderBlocksIfWrapper(0, 5405, 5419, false);
+        Pair<InsnList, InsnList> ifWrapper8 = getRenderBlocksIfWrapper(1, 5519, 5523, true);
+        Pair<InsnList, InsnList> ifWrapper9 = getRenderBlocksIfWrapper(2, 5509, 5523, false);
+        Pair<InsnList, InsnList> ifWrapper10 = getRenderBlocksIfWrapper(3, 5642, 5655, false);
+        Pair<InsnList, InsnList> ifWrapper11 = getRenderBlocksIfWrapper(4, 5784, 5798, false);
+        Pair<InsnList, InsnList> ifWrapper12 = getRenderBlocksIfWrapper(5, 5926, 5940, false);
 
         for (MethodNode methodNode : classNode.methods) {
             if (isRenderStandardBlockWithAmbientOcclusion(methodNode)) {
@@ -189,6 +200,131 @@ public class RenderBlocksTransformer implements IClassTransformer {
                     }
                 }
             }
+
+            else if (isRenderStandardBlockWithAmbientOcclusionPartial(methodNode)) {
+                logger.debug("found renderStandardBlockWithAmbientOcclusionPartial");
+                for (AbstractInsnNode node : methodNode.instructions.toArray()) {
+
+                    // start if-statements
+
+                    if (ifStartsHandledPartial == 0 && matchesNodeSequence(node, ifSequence1)) {
+                        methodNode.instructions.insertBefore(node, ifWrapper7.getLeft());
+                        ifStartsHandledPartial++;
+                        continue;
+                    }
+
+                    if (!secondWrappedIfHandledPartial && matchesNodeSequence(node, ifSequence2)) {
+                        methodNode.instructions.insertBefore(node, ifWrapper8.getLeft());
+                        secondWrappedIfHandledPartial = true;
+                        continue;
+                    }
+
+                    if (ifStartsHandledPartial == 1 && matchesNodeSequence(node, ifSequence1)) {
+                        methodNode.instructions.insertBefore(node, ifWrapper9.getLeft());
+                        ifStartsHandledPartial++;
+                        continue;
+                    }
+
+                    if (ifStartsHandledPartial == 2 && matchesNodeSequence(node, ifSequence1)) {
+                        methodNode.instructions.insertBefore(node, ifWrapper10.getLeft());
+                        ifStartsHandledPartial++;
+                        continue;
+                    }
+
+                    if (ifStartsHandledPartial == 3 && matchesNodeSequence(node, ifSequence1)) {
+                        methodNode.instructions.insertBefore(node, ifWrapper11.getLeft());
+                        ifStartsHandledPartial++;
+                        continue;
+                    }
+
+                    if (ifStartsHandledPartial == 4 && matchesNodeSequence(node, ifSequence1)) {
+                        methodNode.instructions.insertBefore(node, ifWrapper12.getLeft());
+                        ifStartsHandledPartial++;
+                        continue;
+                    }
+
+                    // end if-statements
+
+                    if (ifEndsHandledPartial == 0 && matchesNodeSequence(node, endIfSequence)) {
+                        methodNode.instructions.remove(
+                            node.getNext()
+                                .getNext()
+                                .getNext());
+                        methodNode.instructions.insert(
+                            node.getNext()
+                                .getNext(),
+                            ifWrapper7.getRight());
+                        ifEndsHandledPartial++;
+                        continue;
+                    }
+
+                    if (ifEndsHandledPartial == 1 && matchesNodeSequence(node, endIfSequence)) {
+                        methodNode.instructions.remove(
+                            node.getNext()
+                                .getNext()
+                                .getNext());
+                        methodNode.instructions.insert(
+                            node.getNext()
+                                .getNext(),
+                            ifWrapper8.getRight());
+                        ifEndsHandledPartial++;
+                        continue;
+                    }
+
+                    if (ifEndsHandledPartial == 2 && matchesNodeSequence(node, endIfSequence)) {
+                        methodNode.instructions.remove(
+                            node.getNext()
+                                .getNext()
+                                .getNext());
+                        methodNode.instructions.insert(
+                            node.getNext()
+                                .getNext(),
+                            ifWrapper9.getRight());
+                        ifEndsHandledPartial++;
+                        continue;
+                    }
+
+                    if (ifEndsHandledPartial == 3 && matchesNodeSequence(node, endIfSequence)) {
+                        methodNode.instructions.remove(
+                            node.getNext()
+                                .getNext()
+                                .getNext());
+                        methodNode.instructions.insert(
+                            node.getNext()
+                                .getNext(),
+                            ifWrapper10.getRight());
+                        ifEndsHandledPartial++;
+                        continue;
+                    }
+
+                    if (ifEndsHandledPartial == 4 && matchesNodeSequence(node, endIfSequence)) {
+                        methodNode.instructions.remove(
+                            node.getNext()
+                                .getNext()
+                                .getNext());
+                        methodNode.instructions.insert(
+                            node.getNext()
+                                .getNext(),
+                            ifWrapper11.getRight());
+                        ifEndsHandledPartial++;
+                        continue;
+                    }
+
+                    if (ifEndsHandledPartial == 5 && matchesNodeSequence(node, endIfSequence)) {
+                        methodNode.instructions.remove(
+                            node.getNext()
+                                .getNext()
+                                .getNext());
+                        methodNode.instructions.insert(
+                            node.getNext()
+                                .getNext(),
+                            ifWrapper12.getRight());
+                        ifEndsHandledPartial++;
+                        break;
+                    }
+                }
+            }
+
         }
         final ClassWriter classWriter = new ClassWriter(0);
         classNode.accept(classWriter);
@@ -196,7 +332,8 @@ public class RenderBlocksTransformer implements IClassTransformer {
     }
 
     // faces 1, 3-6 only differ on a single node
-    private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper(int face, int lineNumber1, int lineNumber2) {
+    private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper(int face, int lineNumber1, int lineNumber2,
+        boolean second) {
         int iConst = switch (face) {
             case 0 -> Opcodes.ICONST_0;
             case 1 -> Opcodes.ICONST_1;
@@ -241,47 +378,11 @@ public class RenderBlocksTransformer implements IClassTransformer {
         final InsnList ifEnd = new InsnList();
         ifEnd.add(new LabelNode(label1));
         ifEnd.add(new LineNumberNode(lineNumber2, new LabelNode(label1)));
-        ifEnd.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
-
-        return Pair.of(ifStart, ifEnd);
-    }
-
-    private static Pair<InsnList, InsnList> getRenderBlocksIfWrapper2() {
-        final InsnList ifStart = new InsnList();
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 1));
-        ifStart.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        ifStart.add(
-            new FieldInsnNode(
-                Opcodes.GETFIELD,
-                Names.renderBlocks_blockAccess.clas,
-                Names.renderBlocks_blockAccess.name,
-                Names.renderBlocks_blockAccess.desc));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 2));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 3));
-        ifStart.add(new VarInsnNode(Opcodes.ILOAD, 4));
-        ifStart.add(new InsnNode(Opcodes.ICONST_1));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 9));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 10));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 11));
-        ifStart.add(new VarInsnNode(Opcodes.FLOAD, 12));
-        ifStart.add(
-            new MethodInsnNode(
-                Opcodes.INVOKESTATIC,
-                "com/prupe/mcpatcher/cc/ColorizeBlock",
-                "setupBlockSmoothing",
-                "(" + Names.renderBlocks_.desc + Names.block_.desc + Names.iBlockAccess_.desc + "IIIIFFFF)Z",
-                false));
-        Label label176 = new Label();
-        ifStart.add(new JumpInsnNode(Opcodes.IFNE, new LabelNode(label176)));
-        Label label177 = new Label();
-        ifStart.add(new LabelNode(label177));
-        ifStart.add(new LineNumberNode(4715, new LabelNode(label177)));
-
-        final InsnList ifEnd = new InsnList();
-        ifEnd.add(new LabelNode(label176));
-        ifEnd.add(new LineNumberNode(4730, new LabelNode(label176)));
-        ifEnd.add(new FrameNode(Opcodes.F_APPEND, 1, new Object[] { Opcodes.FLOAT }, 0, null));
+        if (second) {
+            ifEnd.add(new FrameNode(Opcodes.F_APPEND, 1, new Object[] { Opcodes.FLOAT }, 0, null));
+        } else {
+            ifEnd.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+        }
 
         return Pair.of(ifStart, ifEnd);
     }
@@ -310,6 +411,11 @@ public class RenderBlocksTransformer implements IClassTransformer {
 
     private static boolean isRenderStandardBlockWithAmbientOcclusion(MethodNode methodNode) {
         return Names.renderBlocks_renderStandardBlockWithAmbientOcclusion
+            .equalsNameDesc(methodNode.name, methodNode.desc);
+    }
+
+    private static boolean isRenderStandardBlockWithAmbientOcclusionPartial(MethodNode methodNode) {
+        return Names.renderBlocks_renderStandardBlockWithAmbientOcclusionPartial
             .equalsNameDesc(methodNode.name, methodNode.desc);
     }
 }
