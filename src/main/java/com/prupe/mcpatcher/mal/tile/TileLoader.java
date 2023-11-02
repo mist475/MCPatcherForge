@@ -71,7 +71,7 @@ public class TileLoader {
                 for (TileLoader loader : loaders) {
                     if (!loader.tilesToRegister.isEmpty()) {
                         loader.subLogger.warning(
-                            "could not load all %s tiles (%d remaining): %s",
+                            "could not load all %s tiles (%d remaining)",
                             loader.mapName,
                             loader.tilesToRegister.size());
                         loader.tilesToRegister.clear();

@@ -24,7 +24,6 @@ public class MCLogger {
     private long lastFloodReport;
     private int floodCount;
     private long lastMessage = System.currentTimeMillis();
-    private long lastLogEvery = lastMessage;
 
     public static MCLogger getLogger(String category) {
         return getLogger(category, category);
@@ -60,7 +59,7 @@ public class MCLogger {
                             prefix.append("\n");
                             message = message.substring(1);
                         }
-                        return prefix + "[" + MCLogger.this.logPrefix + "] " + level + ": " + message;
+                        return prefix + "[" + MCLogger.this.logPrefix + "] " + level.toString() + ": " + message;
                     }
                 }
             };
@@ -116,16 +115,12 @@ public class MCLogger {
         return logger.isLoggable(level);
     }
 
-    public void setLevel(Level level) {
-        logger.setLevel(level);
-    }
-
     public void log(Level level, String format, Object... params) {
         if (isLoggable(level)) {
             if (level.intValue() >= FLOOD_LEVEL && !checkFlood()) {
                 return;
             }
-            logger.log(level, format, params);
+            logger.log(level, String.format(format, params));
         }
     }
 
@@ -159,16 +154,6 @@ public class MCLogger {
 
     public void finest(String format, Object... params) {
         log(Level.FINEST, format, params);
-    }
-
-    public boolean logEvery(long milliseconds) {
-        long now = System.currentTimeMillis();
-        if (now - lastLogEvery > milliseconds) {
-            lastLogEvery = now;
-            return true;
-        } else {
-            return false;
-        }
     }
 
     private static class ErrorLevel extends Level {
