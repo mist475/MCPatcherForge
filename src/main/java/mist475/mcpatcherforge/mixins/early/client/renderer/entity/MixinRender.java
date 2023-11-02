@@ -15,7 +15,7 @@ import com.prupe.mcpatcher.mob.MobRandomizer;
 public abstract class MixinRender {
 
     @Shadow
-    protected abstract ResourceLocation getEntityTexture(Entity p_110775_1_);
+    protected abstract ResourceLocation getEntityTexture(Entity entity);
 
     @Redirect(
         method = "bindEntityTexture(Lnet/minecraft/entity/Entity;)V",

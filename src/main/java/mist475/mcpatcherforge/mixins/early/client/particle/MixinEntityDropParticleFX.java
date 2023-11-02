@@ -26,16 +26,15 @@ public abstract class MixinEntityDropParticleFX extends EntityFX {
     @Shadow
     private int bobTimer;
 
-    protected MixinEntityDropParticleFX(World p_i1218_1_, double p_i1218_2_, double p_i1218_4_, double p_i1218_6_) {
-        super(p_i1218_1_, p_i1218_2_, p_i1218_4_, p_i1218_6_);
+    protected MixinEntityDropParticleFX(World world, double x, double y, double z) {
+        super(world, x, y, z);
     }
 
     @Inject(
         method = "<init>(Lnet/minecraft/world/World;DDDLnet/minecraft/block/material/Material;)V",
         at = @At("RETURN"))
-    private void modifyConstructor(World worldIn, double p_i1203_2_, double p_i1203_4_, double p_i1203_6_,
-        Material p_i1203_8_, CallbackInfo ci) {
-        if (p_i1203_8_ == Material.water) {
+    private void modifyConstructor(World worldIn, double x, double y, double z, Material material, CallbackInfo ci) {
+        if (material == Material.water) {
             if (ColorizeBlock.computeWaterColor(true, (int) this.posX, (int) this.posY, (int) this.posZ)) {
                 this.particleRed = Colorizer.setColor[0];
                 this.particleGreen = Colorizer.setColor[1];

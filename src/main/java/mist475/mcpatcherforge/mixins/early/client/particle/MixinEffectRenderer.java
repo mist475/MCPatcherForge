@@ -35,7 +35,7 @@ public abstract class MixinEffectRenderer {
     @Inject(
         method = "<init>(Lnet/minecraft/world/World;Lnet/minecraft/client/renderer/texture/TextureManager;)V",
         at = @At("RETURN"))
-    private void modifyConstructor(World p_i1220_1_, TextureManager p_i1220_2_, CallbackInfo ci) {
+    private void modifyConstructor(World world, TextureManager manager, CallbackInfo ci) {
         this.fxLayers = new List[5];
         for (int i = 0; i < this.fxLayers.length; ++i) {
             this.fxLayers[i] = new ArrayList();

@@ -18,13 +18,13 @@ public abstract class MixinEntityPortalFX extends EntityFX {
     @Shadow
     private float portalParticleScale;
 
-    protected MixinEntityPortalFX(World p_i1218_1_, double p_i1218_2_, double p_i1218_4_, double p_i1218_6_) {
-        super(p_i1218_1_, p_i1218_2_, p_i1218_4_, p_i1218_6_);
+    protected MixinEntityPortalFX(World world, double x, double y, double z) {
+        super(world, x, y, z);
     }
 
     @Inject(method = "<init>(Lnet/minecraft/world/World;DDDDDD)V", at = @At("RETURN"))
-    private void modifyConstructor(World p_i1222_1_, double p_i1222_2_, double p_i1222_4_, double p_i1222_6_,
-        double p_i1222_8_, double p_i1222_10_, double p_i1222_12_, CallbackInfo ci) {
+    private void modifyConstructor(World world, double x, double y, double z, double motionX, double motionY,
+        double motionZ, CallbackInfo ci) {
         // green & red get multiplied in constructor, blue doesn't
         this.particleGreen = this.portalParticleScale / 0.3f;
         this.particleGreen *= ColorizeEntity.portalColor[1];

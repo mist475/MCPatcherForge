@@ -56,8 +56,8 @@ public abstract class MixinRenderItem extends Render {
         method = "renderItemIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IIZ)V",
         at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glColorMask(ZZZZ)V", remap = false, ordinal = 0),
         remap = false)
-    private void modifyRenderItemIntoGUI1(FontRenderer p_77015_1_, TextureManager p_77015_2_, ItemStack p_77015_3_,
-        int p_77015_4_, int p_77015_5_, boolean renderEffect, CallbackInfo ci) {
+    private void modifyRenderItemIntoGUI1(FontRenderer fontRenderer, TextureManager manager, ItemStack itemStack, int x,
+        int y, boolean renderEffect, CallbackInfo ci) {
         GL11.glDepthMask(false);
     }
 
@@ -65,8 +65,8 @@ public abstract class MixinRenderItem extends Render {
         method = "renderItemIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IIZ)V",
         at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glEnable(I)V", remap = false, ordinal = 4),
         remap = false)
-    private void modifyRenderItemIntoGUI2(FontRenderer p_77015_1_, TextureManager p_77015_2_, ItemStack p_77015_3_,
-        int p_77015_4_, int p_77015_5_, boolean renderEffect, CallbackInfo ci) {
+    private void modifyRenderItemIntoGUI2(FontRenderer fontRenderer, TextureManager manager, ItemStack itemStack, int x,
+        int y, boolean renderEffect, CallbackInfo ci) {
         GL11.glDepthMask(true);
     }
 
@@ -87,8 +87,8 @@ public abstract class MixinRenderItem extends Render {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/entity/RenderItem;renderItemIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IIZ)V",
             remap = false))
-    private void modifyRenderItemAndEffectIntoGUI1(FontRenderer p_82406_1_, TextureManager p_82406_2_,
-        ItemStack p_82406_3_, int p_82406_4_, int p_82406_5_, CallbackInfo ci) {
+    private void modifyRenderItemAndEffectIntoGUI1(FontRenderer fontRenderer, TextureManager manager,
+        ItemStack itemStack, int x, int y, CallbackInfo ci) {
         // Moved to before call, will not trigger with forge event
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.01f);
@@ -96,24 +96,23 @@ public abstract class MixinRenderItem extends Render {
 
     /**
      * Forge added a false && to the targeted if statement, this adds the entire statement back
-     * TODO: target forges event render class instead & check compatability
+     * TODO: target forges event render class instead & check compatibility
      */
     @SuppressWarnings("DuplicatedCode")
     @Inject(
         method = "renderItemAndEffectIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;II)V",
         at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/entity/RenderItem;zLevel:F", ordinal = 2))
-    private void modifyRenderItemAndEffectIntoGUI2(FontRenderer p_82406_1_, TextureManager p_82406_2_,
-        ItemStack p_82406_3_, int p_82406_4_, int p_82406_5_, CallbackInfo ci) {
-        if (!CITUtils.renderEnchantmentGUI(p_82406_3_, p_82406_4_, p_82406_5_, this.zLevel)
-            && p_82406_3_.hasEffect(0)) {
+    private void modifyRenderItemAndEffectIntoGUI2(FontRenderer fontRenderer, TextureManager manager,
+        ItemStack itemStack, int x, int y, CallbackInfo ci) {
+        if (!CITUtils.renderEnchantmentGUI(itemStack, x, y, this.zLevel) && itemStack.hasEffect(0)) {
             GL11.glDepthFunc(GL11.GL_EQUAL);
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glDepthMask(false);
-            p_82406_2_.bindTexture(RES_ITEM_GLINT);
+            manager.bindTexture(RES_ITEM_GLINT);
             GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glColor4f(0.5F, 0.25F, 0.8F, 1.0F);
-            this.renderGlint(p_82406_4_ * 431278612 + p_82406_5_ * 32178161, p_82406_4_ - 2, p_82406_5_ - 2, 20, 20);
+            this.renderGlint(x * 431278612 + y * 32178161, x - 2, y - 2, 20, 20);
             OpenGlHelper.glBlendFunc(770, 771, 1, 0);
             GL11.glDepthMask(true);
             GL11.glEnable(GL11.GL_LIGHTING);

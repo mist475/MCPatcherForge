@@ -17,8 +17,8 @@ public abstract class MixinMapColor implements MapColorExpansion {
     private int mcpatcher_forge$origColorValue;
 
     @Inject(method = "<init>(II)V", at = @At("RETURN"))
-    private void modifyConstructor(int p_i2117_1_, int p_i2117_2_, CallbackInfo ci) {
-        this.setOriginalColorValue(p_i2117_2_);
+    private void modifyConstructor(int colorIndex, int colorValue, CallbackInfo ci) {
+        this.setOriginalColorValue(colorValue);
     }
 
     public int getOriginalColorValue() {

@@ -40,12 +40,6 @@ public abstract class MixinFontRenderer implements FontRendererExpansion {
     @Final
     protected ResourceLocation locationFontTexture;
 
-    @Shadow
-    protected float posX;
-
-    @Shadow
-    protected float posY;
-
     @Shadow(remap = false)
     protected abstract void bindTexture(ResourceLocation location);
 
@@ -151,8 +145,8 @@ public abstract class MixinFontRenderer implements FontRendererExpansion {
         method = "getUnicodePageLocation(I)Lnet/minecraft/util/ResourceLocation;",
         at = @At("RETURN"),
         cancellable = true)
-    private void modifyGetUnicodePageLocation(int p_111271_1_, CallbackInfoReturnable<ResourceLocation> cir) {
-        cir.setReturnValue(FontUtils.getUnicodePage(unicodePageLocations[p_111271_1_]));
+    private void modifyGetUnicodePageLocation(int index, CallbackInfoReturnable<ResourceLocation> cir) {
+        cir.setReturnValue(FontUtils.getUnicodePage(unicodePageLocations[index]));
     }
 
     @Inject(

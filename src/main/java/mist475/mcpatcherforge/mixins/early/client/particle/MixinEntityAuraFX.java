@@ -14,8 +14,8 @@ import mist475.mcpatcherforge.mixins.interfaces.EntityAuraFXExpansion;
 @Mixin(EntityAuraFX.class)
 public abstract class MixinEntityAuraFX extends EntityFX implements EntityAuraFXExpansion {
 
-    protected MixinEntityAuraFX(World p_i1218_1_, double p_i1218_2_, double p_i1218_4_, double p_i1218_6_) {
-        super(p_i1218_1_, p_i1218_2_, p_i1218_4_, p_i1218_6_);
+    protected MixinEntityAuraFX(World world, double x, double y, double z) {
+        super(world, x, y, z);
     }
 
     @SuppressWarnings("DataFlowIssue")

@@ -15,13 +15,12 @@ import com.prupe.mcpatcher.cc.Colorizer;
 @Mixin(EntityRainFX.class)
 public abstract class MixinEntityRainFX extends EntityFX {
 
-    protected MixinEntityRainFX(World p_i1218_1_, double p_i1218_2_, double p_i1218_4_, double p_i1218_6_) {
-        super(p_i1218_1_, p_i1218_2_, p_i1218_4_, p_i1218_6_);
+    protected MixinEntityRainFX(World world, double x, double y, double z) {
+        super(world, x, y, z);
     }
 
     @Inject(method = "<init>(Lnet/minecraft/world/World;DDD)V", at = @At("RETURN"))
-    private void modifyConstructor(World p_i1235_1_, double p_i1235_2_, double p_i1235_4_, double p_i1235_6_,
-        CallbackInfo ci) {
+    private void modifyConstructor(World world, double x, double y, double z, CallbackInfo ci) {
         if (ColorizeBlock.computeWaterColor(false, (int) this.posX, (int) this.posY, (int) this.posZ)) {
             this.particleRed = Colorizer.setColor[0];
             this.particleGreen = Colorizer.setColor[1];
