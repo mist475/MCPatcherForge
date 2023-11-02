@@ -25,9 +25,9 @@ public abstract class MixinGameSettings {
     @Inject(
         method = "<init>(Lnet/minecraft/client/Minecraft;Ljava/io/File;)V",
         at = @At(value = "RETURN", target = "Lnet/minecraft/client/settings/GameSettings;loadOptions()V"))
-    private void modifyConstructor(Minecraft p_i1016_1_, File p_i1016_2_, CallbackInfo ci) {
+    private void modifyConstructor(Minecraft minecraft, File gameDir, CallbackInfo ci) {
         // Wasteful, can't inject into anything earlier unfortunately
-        optionsFile = Config.getOptionsTxt(p_i1016_2_, "options.txt");
+        optionsFile = Config.getOptionsTxt(gameDir, "options.txt");
         loadOptions();
     }
 }

@@ -24,9 +24,9 @@ public abstract class MixinItemRenderer {
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/entity/EntityLivingBase;getItemIcon(Lnet/minecraft/item/ItemStack;I)Lnet/minecraft/util/IIcon;"))
-    private IIcon modifyRenderItem1(EntityLivingBase instance, ItemStack item, int p_70620_2_, EntityLivingBase entity,
-        ItemStack item2, int p_78443_3_) {
-        return CITUtils.getIcon(entity.getItemIcon(item2, p_78443_3_), item2, p_78443_3_);
+    private IIcon modifyRenderItem1(EntityLivingBase instance, ItemStack item, int renderPass, EntityLivingBase entity,
+        ItemStack item2, int renderPass1) {
+        return CITUtils.getIcon(entity.getItemIcon(item2, renderPass1), item2, renderPass1);
     }
 
     @Inject(
@@ -35,17 +35,17 @@ public abstract class MixinItemRenderer {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/ItemRenderer;renderItemIn2D(Lnet/minecraft/client/renderer/Tessellator;FFFFIIF)V",
             ordinal = 0))
-    private void modifyRenderItem2(EntityLivingBase p_78443_1_, ItemStack p_78443_2_, int p_78443_3_,
+    private void modifyRenderItem2(EntityLivingBase entity, ItemStack itemStack, int renderPass,
         IItemRenderer.ItemRenderType type, CallbackInfo ci) {
-        ColorizeBlock.colorizeWaterBlockGL(Block.getBlockFromItem(p_78443_2_.getItem()));
+        ColorizeBlock.colorizeWaterBlockGL(Block.getBlockFromItem(itemStack.getItem()));
     }
 
     @Redirect(
         method = "renderItem(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/item/ItemStack;ILnet/minecraftforge/client/IItemRenderer$ItemRenderType;)V",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;hasEffect(I)Z"),
         remap = false)
-    private boolean modifyRenderItem3(ItemStack item, int pass, EntityLivingBase p_78443_1_, ItemStack p_78443_2_,
-        int p_78443_3_) {
-        return !CITUtils.renderEnchantmentHeld(item, p_78443_3_) && item.hasEffect(pass);
+    private boolean modifyRenderItem3(ItemStack item, int pass, EntityLivingBase entity, ItemStack itemStack,
+        int renderPass) {
+        return !CITUtils.renderEnchantmentHeld(item, renderPass) && item.hasEffect(pass);
     }
 }

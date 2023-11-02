@@ -89,9 +89,9 @@ public abstract class MixinEntityRenderer {
     @Inject(
         method = "renderWorld(FJ)V",
         at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glDepthMask(Z)V", ordinal = 3, remap = false))
-    private void modifyRenderWorld4(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
-        this.mc.renderGlobal.sortAndRender(this.mc.renderViewEntity, 5, p_78471_1_);
-        this.renderRainSnow(p_78471_1_);
+    private void modifyRenderWorld4(float partialTickTime, long p_78471_2_, CallbackInfo ci) {
+        this.mc.renderGlobal.sortAndRender(this.mc.renderViewEntity, 5, partialTickTime);
+        this.renderRainSnow(partialTickTime);
     }
 
     @Inject(

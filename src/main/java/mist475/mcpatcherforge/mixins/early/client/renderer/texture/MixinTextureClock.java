@@ -13,7 +13,7 @@ import com.prupe.mcpatcher.hd.FancyDial;
 public abstract class MixinTextureClock {
 
     @Inject(method = "<init>(Ljava/lang/String;)V", at = @At("RETURN"))
-    private void modifyConstructor(String p_i1285_1_, CallbackInfo ci) {
+    private void modifyConstructor(String iconName, CallbackInfo ci) {
         FancyDial.setup((TextureClock) (Object) this);
     }
 

@@ -22,7 +22,7 @@ public abstract class MixinRecipesArmorDyes {
      */
     @SuppressWarnings("DuplicatedCode")
     @Overwrite
-    public ItemStack getCraftingResult(InventoryCrafting p_77572_1_) {
+    public ItemStack getCraftingResult(InventoryCrafting inventoryCrafting) {
         ItemStack itemstack = null;
         int[] aint = new int[3];
         int i = 0;
@@ -34,8 +34,8 @@ public abstract class MixinRecipesArmorDyes {
         float f1;
         int l1;
 
-        for (k = 0; k < p_77572_1_.getSizeInventory(); ++k) {
-            ItemStack itemstack1 = p_77572_1_.getStackInSlot(k);
+        for (k = 0; k < inventoryCrafting.getSizeInventory(); ++k) {
+            ItemStack itemstack1 = inventoryCrafting.getStackInSlot(k);
 
             if (itemstack1 != null) {
                 if (itemstack1.getItem() instanceof ItemArmor) {

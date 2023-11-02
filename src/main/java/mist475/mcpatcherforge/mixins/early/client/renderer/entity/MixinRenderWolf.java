@@ -18,8 +18,8 @@ import com.prupe.mcpatcher.mob.MobRandomizer;
 @Mixin(RenderWolf.class)
 public abstract class MixinRenderWolf extends RenderLiving {
 
-    public MixinRenderWolf(ModelBase p_i1262_1_, float p_i1262_2_) {
-        super(p_i1262_1_, p_i1262_2_);
+    public MixinRenderWolf(ModelBase modelBase, float shadowSize) {
+        super(modelBase, shadowSize);
     }
 
     @Redirect(

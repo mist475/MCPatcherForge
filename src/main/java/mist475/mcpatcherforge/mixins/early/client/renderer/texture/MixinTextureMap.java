@@ -34,7 +34,7 @@ public abstract class MixinTextureMap extends AbstractTexture {
     @Inject(
         method = "loadTextureAtlas(Lnet/minecraft/client/resources/IResourceManager;)V",
         at = @At(value = "INVOKE", target = "Ljava/util/List;clear()V", remap = false, shift = At.Shift.AFTER))
-    private void modifyLoadTextureAtlas(IResourceManager p_110571_1_, CallbackInfo ci) {
+    private void modifyLoadTextureAtlas(IResourceManager manager, CallbackInfo ci) {
         this.registerIcons();
         TileLoader.registerIcons((TextureMap) (Object) this, this.basePath, this.mapRegisteredSprites);
     }
@@ -46,9 +46,9 @@ public abstract class MixinTextureMap extends AbstractTexture {
             target = "Ljava/lang/String;format(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;",
             ordinal = 0,
             remap = false))
-    private String modifyCompleteResourceLocation(String format, Object[] args, ResourceLocation p_147634_1_,
+    private String modifyCompleteResourceLocation(String format, Object[] args, ResourceLocation location,
         int p_147634_2_) {
-        return TileLoader.getOverridePath("", this.basePath, p_147634_1_.getResourcePath(), ".png");
+        return TileLoader.getOverridePath("", this.basePath, location.getResourcePath(), ".png");
     }
 
     // Base game has s.indexOf(47) != -1 || s.indexOf(92) != -1

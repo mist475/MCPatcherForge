@@ -195,10 +195,10 @@ public abstract class MixinRenderBlocks {
     }
 
     @Inject(method = "renderBlockRedstoneWire(Lnet/minecraft/block/Block;III)Z", at = @At("HEAD"))
-    private void calculateComputeRedstoneWireColor(Block p_147788_1_, int p_147788_2_, int p_147788_3_, int p_147788_4_,
+    private void calculateComputeRedstoneWireColor(Block block, int x, int y, int z,
         CallbackInfoReturnable<Boolean> cir) {
         this.mcpatcherforge$computeRedstoneWireColor = ColorizeBlock
-            .computeRedstoneWireColor(this.blockAccess.getBlockMetadata(p_147788_2_, p_147788_3_, p_147788_4_));
+            .computeRedstoneWireColor(this.blockAccess.getBlockMetadata(x, y, z));
         this.mcpatcherforge$redstoneWireColorRed = Math.max(Colorizer.setColor[0], 0.0f);
         this.mcpatcherforge$redstoneWireColorGreen = Math.max(Colorizer.setColor[1], 0.0f);
         this.mcpatcherforge$redstoneWireColorBlue = Math.max(Colorizer.setColor[2], 0.0f);

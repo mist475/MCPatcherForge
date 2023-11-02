@@ -15,8 +15,8 @@ import com.prupe.mcpatcher.mob.MobRandomizer;
 @Mixin(RenderSheep.class)
 public abstract class MixinRenderSheep extends RenderLiving {
 
-    public MixinRenderSheep(ModelBase p_i1262_1_, float p_i1262_2_) {
-        super(p_i1262_1_, p_i1262_2_);
+    public MixinRenderSheep(ModelBase modelBase, float shadowSize) {
+        super(modelBase, shadowSize);
     }
 
     @Redirect(

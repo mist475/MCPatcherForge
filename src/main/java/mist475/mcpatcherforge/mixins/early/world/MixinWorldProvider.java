@@ -21,8 +21,9 @@ public abstract class MixinWorldProvider {
     private boolean mcpatcher_forge$computeFogColor;
 
     @Inject(method = "getFogColor(FF)Lnet/minecraft/util/Vec3;", at = @At("HEAD"))
-    private void modifyGetFogColor1(float p_76562_1_, float p_76562_2_, CallbackInfoReturnable<Vec3> cir) {
-        this.mcpatcher_forge$computeFogColor = ColorizeWorld.computeFogColor((WorldProvider) (Object) this, p_76562_1_);
+    private void modifyGetFogColor1(float celestialAngle, float renderPartialTicks, CallbackInfoReturnable<Vec3> cir) {
+        this.mcpatcher_forge$computeFogColor = ColorizeWorld
+            .computeFogColor((WorldProvider) (Object) this, celestialAngle);
     }
 
     @ModifyConstant(method = "getFogColor(FF)Lnet/minecraft/util/Vec3;", constant = @Constant(floatValue = 0.7529412F))

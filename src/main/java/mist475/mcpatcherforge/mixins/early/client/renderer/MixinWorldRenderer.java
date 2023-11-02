@@ -40,7 +40,7 @@ public abstract class MixinWorldRenderer {
     private boolean isInitialized;
 
     @Shadow
-    public abstract void setPosition(int p_78913_1_, int p_78913_2_, int p_78913_3_);
+    public abstract void setPosition(int x, int y, int z);
 
     @Inject(method = "<init>(Lnet/minecraft/world/World;Ljava/util/List;IIII)V", at = @At("RETURN"))
     private void modifyWorldRendererConstructor1(World world, List<TileEntity> tileEntities, int x, int y, int z,
@@ -85,8 +85,8 @@ public abstract class MixinWorldRenderer {
         method = "updateRenderer(Lnet/minecraft/entity/EntityLivingBase;)V",
         at = @At(value = "JUMP", ordinal = 4, shift = At.Shift.AFTER),
         locals = LocalCapture.CAPTURE_FAILHARD)
-    private void injectRenderPassStartUpdateRenderer(EntityLivingBase p_147892_1_, CallbackInfo ci, int i, int j, int k,
-        int l, int i1, int j1, HashSet hashset, Minecraft minecraft, EntityLivingBase entity, int l1, int i2, int j2,
+    private void injectRenderPassStartUpdateRenderer(EntityLivingBase entity, CallbackInfo ci, int i, int j, int k,
+        int l, int i1, int j1, HashSet hashset, Minecraft minecraft, EntityLivingBase entity1, int l1, int i2, int j2,
         byte b0, ChunkCache chunkcache, RenderBlocks renderblocks, int k2) {
         RenderPass.start(k2);
     }

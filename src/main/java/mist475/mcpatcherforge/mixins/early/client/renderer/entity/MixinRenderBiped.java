@@ -15,8 +15,8 @@ import com.prupe.mcpatcher.cit.CITUtils;
 @Mixin(RenderBiped.class)
 public abstract class MixinRenderBiped extends RenderLiving {
 
-    public MixinRenderBiped(ModelBase p_i1262_1_, float p_i1262_2_) {
-        super(p_i1262_1_, p_i1262_2_);
+    public MixinRenderBiped(ModelBase modelBase, float shadowSize) {
+        super(modelBase, shadowSize);
     }
 
     @Redirect(
@@ -25,9 +25,9 @@ public abstract class MixinRenderBiped extends RenderLiving {
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/entity/RenderBiped;bindTexture(Lnet/minecraft/util/ResourceLocation;)V"))
     private void modifyShouldRenderPass(RenderBiped instance, ResourceLocation resourceLocation,
-        EntityLiving entityLiving, int p_77032_2_, float p_77032_3_) {
+        EntityLiving entityLiving, int slotId, float p_77032_3_) {
         this.bindTexture(
-            CITUtils.getArmorTexture(resourceLocation, entityLiving, entityLiving.func_130225_q(3 - p_77032_2_)));
+            CITUtils.getArmorTexture(resourceLocation, entityLiving, entityLiving.func_130225_q(3 - slotId)));
     }
 
     @Redirect(
@@ -37,8 +37,8 @@ public abstract class MixinRenderBiped extends RenderLiving {
             target = "Lnet/minecraft/client/renderer/entity/RenderBiped;bindTexture(Lnet/minecraft/util/ResourceLocation;)V"))
 
     private void modifyFunc_82408_c(RenderBiped instance, ResourceLocation resourceLocation, EntityLiving entityLiving,
-        int p_82408_2_, float p_82408_3_) {
+        int slotId, float p_82408_3_) {
         this.bindTexture(
-            CITUtils.getArmorTexture(resourceLocation, entityLiving, entityLiving.func_130225_q(3 - p_82408_2_)));
+            CITUtils.getArmorTexture(resourceLocation, entityLiving, entityLiving.func_130225_q(3 - slotId)));
     }
 }

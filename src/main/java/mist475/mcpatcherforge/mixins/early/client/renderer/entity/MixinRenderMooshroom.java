@@ -20,12 +20,12 @@ import com.prupe.mcpatcher.mob.MobOverlay;
 @Mixin(RenderMooshroom.class)
 public abstract class MixinRenderMooshroom extends RenderLiving {
 
-    public MixinRenderMooshroom(ModelBase p_i1262_1_, float p_i1262_2_) {
-        super(p_i1262_1_, p_i1262_2_);
+    public MixinRenderMooshroom(ModelBase modelBase, float shadowSize) {
+        super(modelBase, shadowSize);
     }
 
     @Inject(method = "renderEquippedItems(Lnet/minecraft/entity/passive/EntityMooshroom;F)V", at = @At("RETURN"))
-    private void modifyRenderEquippedItems1(EntityMooshroom p_77029_1_, float p_77029_2_, CallbackInfo ci) {
+    private void modifyRenderEquippedItems1(EntityMooshroom entity, float p_77029_2_, CallbackInfo ci) {
         MobOverlay.finishMooshroom();
     }
 

@@ -16,10 +16,9 @@ public abstract class MixinRenderXPOrb {
     @Redirect(
         method = "doRender(Lnet/minecraft/entity/item/EntityXPOrb;DDDFF)V",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/Tessellator;setColorRGBA_I(II)V"))
-    private void modifyDoRender(Tessellator instance, int p_78384_1_, int p_78384_2_, EntityXPOrb p_76986_1_,
-        double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
-        instance.setColorRGBA_I(
-            ColorizeEntity.colorizeXPOrb(p_78384_1_, ((float) p_76986_1_.xpColor + p_76986_9_) / 2.0F),
-            p_78384_2_);
+    private void modifyDoRender(Tessellator instance, int color, int alpha, EntityXPOrb entity, double x, double y,
+        double z, float p_76986_8_, float p_76986_9_) {
+        instance
+            .setColorRGBA_I(ColorizeEntity.colorizeXPOrb(color, ((float) entity.xpColor + p_76986_9_) / 2.0F), alpha);
     }
 }

@@ -58,7 +58,7 @@ public abstract class MixinRenderGlobal implements IWorldAccess {
         method = "sortAndRender(Lnet/minecraft/entity/EntityLivingBase;ID)I",
         at = @At(value = "HEAD"),
         cancellable = true)
-    private void modifySortAndRender1(EntityLivingBase p_72719_1_, int map18To17, double p_72719_3_,
+    private void modifySortAndRender1(EntityLivingBase entity, int map18To17, double partialTickTime,
         CallbackInfoReturnable<Integer> cir) {
         if (!RenderPass.preRenderPass(RenderPassMap.map17To18(map18To17))) {
             cir.setReturnValue(RenderPass.postRenderPass(0));
@@ -78,7 +78,7 @@ public abstract class MixinRenderGlobal implements IWorldAccess {
         method = "sortAndRender(Lnet/minecraft/entity/EntityLivingBase;ID)I",
         at = @At(value = "RETURN"),
         cancellable = true)
-    private void modifySortAndRender3(EntityLivingBase p_72719_1_, int p_72719_2_, double p_72719_3_,
+    private void modifySortAndRender3(EntityLivingBase entity, int renderPass, double partialTickTime,
         CallbackInfoReturnable<Integer> cir) {
         cir.setReturnValue(RenderPass.postRenderPass(cir.getReturnValue()));
     }

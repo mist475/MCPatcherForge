@@ -35,46 +35,46 @@ public abstract class MixinRenderEntityLiving extends Render {
     protected ModelBase renderPassModel;
 
     @Shadow
-    protected abstract float interpolateRotation(float p_77034_1_, float p_77034_2_, float p_77034_3_);
+    protected abstract float interpolateRotation(float angle1, float angle2, float p_77034_3_);
 
     @Shadow
-    protected abstract void renderModel(EntityLivingBase p_77036_1_, float p_77036_2_, float p_77036_3_,
+    protected abstract void renderModel(EntityLivingBase entityLivingBase, float p_77036_2_, float p_77036_3_,
         float p_77036_4_, float p_77036_5_, float p_77036_6_, float p_77036_7_);
 
     @Shadow
-    protected abstract void renderLivingAt(EntityLivingBase p_77039_1_, double p_77039_2_, double p_77039_4_,
+    protected abstract void renderLivingAt(EntityLivingBase entityLivingBase, double p_77039_2_, double p_77039_4_,
         double p_77039_6_);
 
     @Shadow
-    protected abstract void rotateCorpse(EntityLivingBase p_77043_1_, float p_77043_2_, float p_77043_3_,
+    protected abstract void rotateCorpse(EntityLivingBase entityLivingBase, float p_77043_2_, float p_77043_3_,
         float p_77043_4_);
 
     @Shadow
-    protected abstract float renderSwingProgress(EntityLivingBase p_77040_1_, float p_77040_2_);
+    protected abstract float renderSwingProgress(EntityLivingBase entityLivingBase, float p_77040_2_);
 
     @Shadow
-    protected abstract float handleRotationFloat(EntityLivingBase p_77044_1_, float p_77044_2_);
+    protected abstract float handleRotationFloat(EntityLivingBase entityLivingBase, float p_77044_2_);
 
     @Shadow
-    protected abstract void renderEquippedItems(EntityLivingBase p_77029_1_, float p_77029_2_);
+    protected abstract void renderEquippedItems(EntityLivingBase entityLivingBase, float p_77029_2_);
 
     @Shadow
-    protected abstract int inheritRenderPass(EntityLivingBase p_77035_1_, int p_77035_2_, float p_77035_3_);
+    protected abstract int inheritRenderPass(EntityLivingBase entityLivingBase, int p_77035_2_, float p_77035_3_);
 
     @Shadow
-    protected abstract int shouldRenderPass(EntityLivingBase p_77032_1_, int p_77032_2_, float p_77032_3_);
+    protected abstract int shouldRenderPass(EntityLivingBase entityLivingBase, int p_77032_2_, float p_77032_3_);
 
     @Shadow
-    protected abstract void func_82408_c(EntityLivingBase p_82408_1_, int p_82408_2_, float p_82408_3_);
+    protected abstract void func_82408_c(EntityLivingBase entityLivingBase, int p_82408_2_, float p_82408_3_);
 
     @Shadow
-    protected abstract int getColorMultiplier(EntityLivingBase p_77030_1_, float p_77030_2_, float p_77030_3_);
+    protected abstract int getColorMultiplier(EntityLivingBase entityLivingBase, float p_77030_2_, float p_77030_3_);
 
     @Shadow
-    protected abstract void preRenderCallback(EntityLivingBase p_77041_1_, float p_77041_2_);
+    protected abstract void preRenderCallback(EntityLivingBase entityLivingBase, float p_77041_2_);
 
     @Shadow
-    protected abstract void passSpecialRender(EntityLivingBase p_77033_1_, double p_77033_2_, double p_77033_4_,
+    protected abstract void passSpecialRender(EntityLivingBase entityLivingBase, double p_77033_2_, double p_77033_4_,
         double p_77033_6_);
 
     /**

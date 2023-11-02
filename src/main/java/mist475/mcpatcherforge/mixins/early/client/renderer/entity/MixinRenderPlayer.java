@@ -19,8 +19,8 @@ import com.prupe.mcpatcher.cit.CITUtils;
 @Mixin(RenderPlayer.class)
 public abstract class MixinRenderPlayer extends RendererLivingEntity {
 
-    public MixinRenderPlayer(ModelBase p_i1261_1_, float p_i1261_2_) {
-        super(p_i1261_1_, p_i1261_2_);
+    public MixinRenderPlayer(ModelBase modelBase, float shadowSize) {
+        super(modelBase, shadowSize);
     }
 
     @Redirect(

@@ -18,8 +18,8 @@ import com.prupe.mcpatcher.mob.LineRenderer;
 @Mixin(RenderLiving.class)
 public abstract class MixinRenderLiving extends RendererLivingEntity {
 
-    public MixinRenderLiving(ModelBase p_i1261_1_, float p_i1261_2_) {
-        super(p_i1261_1_, p_i1261_2_);
+    public MixinRenderLiving(ModelBase modelBase, float shadowSize) {
+        super(modelBase, shadowSize);
     }
 
     @Shadow

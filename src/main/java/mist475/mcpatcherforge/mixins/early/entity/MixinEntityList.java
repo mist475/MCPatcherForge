@@ -14,8 +14,8 @@ import com.prupe.mcpatcher.cc.ColorizeItem;
 public abstract class MixinEntityList {
 
     @Inject(method = "addMapping(Ljava/lang/Class;Ljava/lang/String;III)V", at = @At("HEAD"))
-    private static void modifyAddMapping(Class<? extends Entity> p_75614_0_, String p_75614_1_, int p_75614_2_,
-        int p_75614_3_, int p_75614_4_, CallbackInfo ci) {
-        ColorizeItem.setupSpawnerEgg(p_75614_1_, p_75614_2_, p_75614_3_, p_75614_4_);
+    private static void modifyAddMapping(Class<? extends Entity> entityClass, String entityName, int entityId,
+        int shellColor, int spotColor, CallbackInfo ci) {
+        ColorizeItem.setupSpawnerEgg(entityName, entityId, shellColor, spotColor);
     }
 }

@@ -24,7 +24,7 @@ public abstract class MixinWorld {
         method = "getSkyColorBody(Lnet/minecraft/entity/Entity;F)Lnet/minecraft/util/Vec3;",
         at = @At("HEAD"),
         remap = false)
-    private void modifyGetSkyColorBody1(Entity p_72833_1_, float p_72833_2_, CallbackInfoReturnable<Vec3> cir) {
+    private void modifyGetSkyColorBody1(Entity entity, float p_72833_2_, CallbackInfoReturnable<Vec3> cir) {
         this.mcpatcher_forge$computeSkyColor = ColorizeWorld.computeSkyColor((World) (Object) this, p_72833_2_);
     }
 

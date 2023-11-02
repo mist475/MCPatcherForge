@@ -19,7 +19,7 @@ public abstract class MixinPotion implements PotionExpansion {
     private int mcpatcher_forge$origColor;
 
     @Inject(method = "setPotionName(Ljava/lang/String;)Lnet/minecraft/potion/Potion;", at = @At("RETURN"))
-    private void modifySetPotionName(String p_76390_1_, CallbackInfoReturnable<Potion> cir) {
+    private void modifySetPotionName(String name, CallbackInfoReturnable<Potion> cir) {
         ColorizeItem.setupPotion((Potion) (Object) this);
     }
 

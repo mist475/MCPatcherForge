@@ -20,7 +20,7 @@ public abstract class MixinWorldProviderEnd {
      */
     @SideOnly(Side.CLIENT)
     @Overwrite
-    public Vec3 getFogColor(float p_76562_1_, float p_76562_2_) {
+    public Vec3 getFogColor(float celestialAngle, float renderPartialTicks) {
         return Vec3.createVectorHelper(
             ColorizeWorld.endFogColor[0],
             ColorizeWorld.endFogColor[1],
