@@ -78,8 +78,6 @@ public enum Mixins {
 
             "client.resources.MixinSimpleReloadableResourceManager",
 
-            "client.settings.MixinGameSettings",
-
             "client.MixinMinecraft",
 
             "entity.MixinEntityList",
