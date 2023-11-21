@@ -6,6 +6,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,7 +21,7 @@ import com.prupe.mcpatcher.mal.resource.TexturePackChangeHandler;
 public class MobRandomizer {
 
     private static final MCLogger logger = MCLogger.getLogger(MCPatcherUtils.RANDOM_MOBS);
-    private static final LinkedHashMap<String, ResourceLocation> cache = new LinkedHashMap<>();
+    private static final Map<String, ResourceLocation> cache = new LinkedHashMap<>();
 
     static {
         TexturePackChangeHandler.register(new TexturePackChangeHandler(MCPatcherUtils.RANDOM_MOBS, 2) {
@@ -85,8 +86,8 @@ public class MobRandomizer {
         private static final long ADDEND = 0xbL;
         private static final long MASK = (1L << 48) - 1;
 
-        private static final HashMap<Integer, ExtraInfo> allInfo = new HashMap<>();
-        private static final HashMap<WeakReference<EntityLivingBase>, ExtraInfo> allRefs = new HashMap<>();
+        private static final Map<Integer, ExtraInfo> allInfo = new HashMap<>();
+        private static final Map<WeakReference<EntityLivingBase>, ExtraInfo> allRefs = new HashMap<>();
         private static final ReferenceQueue<EntityLivingBase> refQueue = new ReferenceQueue<>();
 
         private final int entityId;

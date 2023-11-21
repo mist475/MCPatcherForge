@@ -36,7 +36,7 @@ public class SkyRenderer {
     private static float celestialAngle;
     private static float rainStrength;
 
-    private static final HashMap<Integer, WorldEntry> worldSkies = new HashMap<>();
+    private static final Map<Integer, WorldEntry> worldSkies = new HashMap<>();
     private static WorldEntry currentWorld;
 
     public static boolean active;

@@ -2,6 +2,7 @@ package com.prupe.mcpatcher.cc;
 
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -25,7 +26,7 @@ public final class Lightmap {
 
     private static final boolean useLightmaps = Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "lightmaps", true);
 
-    private static final HashMap<Integer, Lightmap> lightmaps = new HashMap<>();
+    private static final Map<Integer, Lightmap> lightmaps = new HashMap<>();
 
     private final int width;
     private final boolean customNightvision;

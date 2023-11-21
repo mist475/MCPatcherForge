@@ -1,6 +1,7 @@
 package com.prupe.mcpatcher;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -9,7 +10,7 @@ import java.util.logging.Logger;
 
 public class MCLogger {
 
-    private static final HashMap<String, MCLogger> allLoggers = new HashMap<>();
+    private static final Map<String, MCLogger> allLoggers = new HashMap<>();
 
     public static final Level ERROR = new ErrorLevel();
 
