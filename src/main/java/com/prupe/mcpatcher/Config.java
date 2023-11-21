@@ -1,23 +1,40 @@
 package com.prupe.mcpatcher;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import net.minecraft.launchwrapper.Launch;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class Config {
 
-    private static final Config instance = new Config();
+    private static Config instance;
 
-    LinkedHashMap<String, String> logging = new LinkedHashMap<>();
-    LinkedHashMap<String, LinkedHashMap<String, String>> profile = new LinkedHashMap<>();
+    private static final File configFile = new File(Launch.minecraftHome, "config" + File.separator + "mcpatcher.json");
+
+    private Map<String, String> logging;
+
+    Map<String, Map<String, String>> profile;
 
     public static Config getInstance() {
+        if (instance == null) {
+            loadConfig();
+        }
         return instance;
     }
 
     static Level getLogLevel(String category) {
         Level level = Level.INFO;
-        String value = instance.logging.get(category);
+        String value = getInstance().logging.get(category);
         if (value != null) {
             try {
                 level = Level.parse(
@@ -30,10 +47,40 @@ public class Config {
     }
 
     static void setLogLevel(String category, Level level) {
-        instance.logging.put(
+        getInstance().logging.put(
             category,
             level.toString()
                 .toUpperCase());
+    }
+
+    static void loadConfig() {
+        Gson gson = new Gson();
+        try (Reader reader = Files.newBufferedReader(configFile.toPath())) {
+            instance = gson.fromJson(reader, Config.class);
+        } catch (IOException e) {
+            Logger.getLogger("mcpatcher")
+                .warning("Failed to read mcpatcher json config file, using defaults");
+            instance = new Config();
+            if (instance.logging == null) {
+                instance.logging = new LinkedHashMap<>();
+            }
+            if (instance.profile == null) {
+                instance.profile = new LinkedHashMap<>();
+            }
+            saveConfig();
+        }
+
+    }
+
+    static void saveConfig() {
+        Gson gsonBuilder = new GsonBuilder().setPrettyPrinting()
+            .create();
+        try (FileWriter writer = new FileWriter(configFile)) {
+            gsonBuilder.toJson(instance, writer);
+        } catch (IOException e) {
+            Logger.getLogger("mcpatcher")
+                .warning("Failed to save mc patcher config, settings not saved");
+        }
     }
 
     /**
@@ -44,10 +91,11 @@ public class Config {
      * @return String value
      */
     public static String getString(String mod, String tag, Object defaultValue) {
-        LinkedHashMap<String, String> modConfig = instance.getModConfig(mod);
+        Map<String, String> modConfig = getInstance().getModConfig(mod);
         String value = modConfig.get(tag);
         if (value == null) {
             modConfig.put(tag, defaultValue.toString());
+            saveConfig();
             return defaultValue.toString();
         } else {
             return value;
@@ -103,8 +151,9 @@ public class Config {
             remove(mod, tag);
             return;
         }
-        instance.getModConfig(mod)
+        getInstance().getModConfig(mod)
             .put(tag, value.toString());
+        saveConfig();
     }
 
     /**
@@ -113,35 +162,12 @@ public class Config {
      * @param mod name of mod
      * @param tag property name
      */
-    public static void remove(String mod, String tag) {
-        instance.getModConfig(mod)
+    private static void remove(String mod, String tag) {
+        getInstance().getModConfig(mod)
             .remove(tag);
     }
 
-    public static File getOptionsTxt(File dir, String name) {
-        File origFile = new File(dir, name);
-        if (name.endsWith(".txt")) {
-            String version = MCPatcherUtils.getMinecraftVersion();
-            while (!MCPatcherUtils.isNullOrEmpty(version)) {
-                File newFile = new File(dir, name.replace(".txt", "." + version + ".txt"));
-                if (newFile.isFile()) {
-                    System.out.printf("Using %s instead of %s\n", newFile.getName(), name);
-                    return newFile;
-                }
-                int dot = version.lastIndexOf('.');
-                if (dot > 0) {
-                    version = version.substring(0, dot);
-                } else if (version.matches("\\d+w\\d+[a-z]")) {
-                    version = version.substring(0, version.length() - 1);
-                } else {
-                    break;
-                }
-            }
-        }
-        return origFile;
-    }
-
-    private LinkedHashMap<String, String> getModConfig(String mod) {
+    private Map<String, String> getModConfig(String mod) {
         return this.profile.computeIfAbsent(mod, k -> new LinkedHashMap<>());
     }
 
