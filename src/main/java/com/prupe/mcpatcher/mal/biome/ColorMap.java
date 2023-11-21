@@ -239,8 +239,8 @@ abstract public class ColorMap implements IColorMap {
     }
 
     protected int getRGB(float x, float y) {
-        x = clamp(x, 0.0f, maxX);
-        y = clamp(y, 0.0f, maxY);
+        x = MathHelper.clamp_float(x, 0.0f, maxX);
+        y = MathHelper.clamp_float(y, 0.0f, maxY);
 
         int x0 = (int) x;
         int dx = (int) (256.0f * (x - (float) x0));
@@ -295,14 +295,6 @@ abstract public class ColorMap implements IColorMap {
     protected static float noiseMinus1to1(int i, int j, int k, int l) {
         int hash = (int) WeightedIndex.hash128To64(i, j, k, l);
         return (float) ((double) hash / (double) Integer.MIN_VALUE);
-    }
-
-    protected static float clamp(float i, float min, float max) {
-        return MathHelper.clamp_float(i, min, max);
-    }
-
-    protected static int clamp(int i, int min, int max) {
-        return MathHelper.clamp_int(i, min, max);
     }
 
     public static final class Fixed implements IColorMap {
@@ -729,8 +721,8 @@ abstract public class ColorMap implements IColorMap {
         }
 
         private int getRGB(int x, int y) {
-            x = clamp(x, 0, COLORMAP_WIDTH - 1) % width;
-            y = clamp(y - yOffset, 0, maxHeight);
+            x = MathHelper.clamp_int(x, 0, COLORMAP_WIDTH - 1) % width;
+            y = MathHelper.clamp_int(y - yOffset, 0, maxHeight);
             return map[y * width + x];
         }
     }
