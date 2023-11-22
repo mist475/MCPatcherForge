@@ -11,21 +11,11 @@ import com.prupe.mcpatcher.MCPatcherUtils;
 
 final public class PropertiesFile {
 
-    private static final MCLogger staticLogger = MCLogger.getLogger("Texture Pack");
-
     private final MCLogger logger;
     private final ResourceLocation resource;
     private final String prefix;
     private final Properties properties;
     private int errorCount;
-
-    public static PropertiesFile get(ResourceLocation resource) {
-        return get(staticLogger, resource);
-    }
-
-    public static PropertiesFile getNonNull(ResourceLocation resource) {
-        return getNonNull(staticLogger, resource);
-    }
 
     public static PropertiesFile get(MCLogger logger, ResourceLocation resource) {
         Properties properties = TexturePackAPI.getProperties(resource);
