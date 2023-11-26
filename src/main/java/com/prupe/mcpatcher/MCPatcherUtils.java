@@ -257,7 +257,7 @@ public class MCPatcherUtils {
         return m == null || m.isEmpty();
     }
 
-    public static void setMinecraft(File gameDir, String minecraftVersion) {
+    public static void setMinecraft(File gameDir) {
 
         minecraftDir = Launch.minecraftHome;
         if (gameDir == null || !gameDir.isDirectory()) {
@@ -265,7 +265,7 @@ public class MCPatcherUtils {
         } else {
             MCPatcherUtils.gameDir = gameDir.getAbsoluteFile();
         }
-        MCPatcherUtils.minecraftVersion = minecraftVersion;
+        MCPatcherUtils.minecraftVersion = "1.7.10";
         log.info("MCPatcherUtils initialized:");
     }
 

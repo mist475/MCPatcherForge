@@ -47,7 +47,7 @@ public abstract class MixinMinecraft {
     private void modifyConstructor(Session sessionIn, int displayWidth, int displayHeight, boolean fullscreen,
         boolean isDemo, File dataDir, File assetsDir, File resourcePackDir, Proxy proxy, String version,
         Multimap<String, String> twitchDetails, String assetsJsonVersion, CallbackInfo ci) {
-        MCPatcherUtils.setMinecraft(dataDir, "1.7.10");
+        MCPatcherUtils.setMinecraft(dataDir);
     }
 
     @Inject(
