@@ -2,6 +2,7 @@ package mist475.mcpatcherforge.mixins.early.client.renderer;
 
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
@@ -37,7 +38,7 @@ public abstract class MixinRenderGlobal implements IWorldAccess {
             target = "Lnet/minecraft/client/renderer/GLAllocation;generateDisplayLists(I)I",
             ordinal = 0))
     private int modifyRenderGlobal(int n) {
-        return n / 3 * 5;
+        return GLAllocation.generateDisplayLists(n / 3 * 5);
     }
 
     @ModifyVariable(
