@@ -447,6 +447,8 @@ public class ColorizeBlock {
         }
     }
 
+    // Called by asm
+    @SuppressWarnings("unused")
     public static boolean setupBlockSmoothing(RenderBlocks renderBlocks, Block block, IBlockAccess blockAccess, int i,
         int j, int k, int face, float topLeft, float bottomLeft, float bottomRight, float topRight) {
         return RenderBlocksUtils.useColorMultiplier(face) && setupBiomeSmoothing(
