@@ -92,7 +92,7 @@ public final class Lightmap {
 
     private boolean compute(EntityRenderer renderer, World world, int[] mapRGB, float partialTick) {
         float sun = ColorUtils.clamp(
-            world.lastLightningBolt > 0 ? 1.0f : 7.0f / 6.0f * (world.getCelestialAngle(1.0f) - 0.2f)) * (width - 1);
+            world.lastLightningBolt > 0 ? 1.0f : 7.0f / 6.0f * (world.getSunBrightness(1.0f) - 0.2f)) * (width - 1);
         float torch = ColorUtils.clamp(renderer.torchFlickerX + 0.5f) * (width - 1);
         float nightVisionStrength = getNightVisionStrength(renderer, partialTick);
         float gamma = ColorUtils.clamp(Minecraft.getMinecraft().gameSettings.gammaSetting);
