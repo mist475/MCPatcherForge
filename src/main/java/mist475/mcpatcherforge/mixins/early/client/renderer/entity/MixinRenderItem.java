@@ -5,12 +5,9 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -37,10 +34,6 @@ public abstract class MixinRenderItem extends Render {
     @Shadow
     protected abstract void renderGlint(int p_77018_1_, int p_77018_2_, int p_77018_3_, int p_77018_4_, int p_77018_5_);
 
-    @Shadow
-    public abstract void renderItemIntoGUI(FontRenderer fontRenderer, TextureManager textureManager,
-        ItemStack itemStack, int p_77015_4_, int p_77015_5_);
-
     // TODO: figure out if ForgeHooksClient#renderEntityItem also needs work
 
     @Redirect(
@@ -58,7 +51,7 @@ public abstract class MixinRenderItem extends Render {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;hasEffect(I)Z", remap = false),
         remap = false)
     private boolean modifyRenderDroppedItem(ItemStack instance, int pass) {
-        return !(instance.hasEffect(pass) && !CITUtils.renderEnchantmentDropped(instance));
+        return !CITUtils.renderEnchantmentDropped(instance) && instance.hasEffect(pass);
     }
 
     @Inject(
