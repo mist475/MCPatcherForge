@@ -5,9 +5,12 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -34,6 +37,12 @@ public abstract class MixinRenderItem extends Render {
     @Shadow
     protected abstract void renderGlint(int p_77018_1_, int p_77018_2_, int p_77018_3_, int p_77018_4_, int p_77018_5_);
 
+    @Shadow
+    public abstract void renderItemIntoGUI(FontRenderer fontRenderer, TextureManager textureManager,
+        ItemStack itemStack, int p_77015_4_, int p_77015_5_);
+
+    // TODO: figure out if ForgeHooksClient#renderEntityItem also needs work
+
     @Redirect(
         method = "doRender(Lnet/minecraft/entity/item/EntityItem;DDDFF)V",
         at = @At(
@@ -49,7 +58,7 @@ public abstract class MixinRenderItem extends Render {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;hasEffect(I)Z", remap = false),
         remap = false)
     private boolean modifyRenderDroppedItem(ItemStack instance, int pass) {
-        return !CITUtils.renderEnchantmentDropped(instance) && instance.hasEffect(pass);
+        return !(instance.hasEffect(pass) && !CITUtils.renderEnchantmentDropped(instance));
     }
 
     @Inject(
@@ -79,6 +88,41 @@ public abstract class MixinRenderItem extends Render {
         remap = false)
     private IIcon modifyRenderItemIntoGUI3(Item item, ItemStack itemStack, int pass) {
         return CITUtils.getIcon(item.getIcon(itemStack, pass), itemStack, pass);
+    }
+
+    // if I don't do this the transparency in the inventory breaks, I'm sure there's a much better way of doing it but
+    // my open gl knowledge is pretty much none-existent atm
+
+    @Redirect(
+        method = "renderItemIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IIZ)V",
+        at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glEnable(I)V", remap = false, ordinal = 6),
+        remap = false)
+    private void cancelAlpha1(int cap) {
+
+    }
+
+    @Redirect(
+        method = "renderItemIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IIZ)V",
+        at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glDisable(I)V", remap = false, ordinal = 5),
+        remap = false)
+    private void cancelAlpha2(int cap) {
+
+    }
+
+    @Redirect(
+        method = "renderItemIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IIZ)V",
+        at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glEnable(I)V", remap = false, ordinal = 10),
+        remap = false)
+    private void cancelAlpha3(int cap) {
+
+    }
+
+    @Redirect(
+        method = "renderItemIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IIZ)V",
+        at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glDisable(I)V", remap = false, ordinal = 8),
+        remap = false)
+    private void cancelAlpha4(int cap) {
+
     }
 
     @Inject(
