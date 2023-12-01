@@ -4,6 +4,4 @@ public interface AbstractTextureExpansion {
 
     void unloadGLTexture();
 
-    void finalize();
-
 }

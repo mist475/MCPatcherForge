@@ -12,17 +12,13 @@ import mist475.mcpatcherforge.mixins.interfaces.AbstractTextureExpansion;
 public abstract class MixinAbstractTexture implements AbstractTextureExpansion {
 
     @Shadow
-    protected int glTextureId = -1;
+    protected int glTextureId;
 
     public void unloadGLTexture() {
         if (this.glTextureId >= 0) {
             GL11.glDeleteTextures(this.glTextureId);
             this.glTextureId = -1;
         }
-    }
-
-    public void finalize() {
-        this.unloadGLTexture();
     }
 
 }
