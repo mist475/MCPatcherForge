@@ -97,7 +97,7 @@ public class ResourceList {
 
     private ResourceList(DefaultResourcePack resourcePack) {
         this.resourcePack = resourcePack;
-        String version = MCPatcherUtils.getMinecraftVersion();
+        String version = "1.7.10";
         File jar = MCPatcherUtils.getMinecraftPath("versions", version, version + ".jar");
         if (jar.isFile()) {
             ZipFile zipFile = null;

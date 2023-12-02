@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -25,7 +24,6 @@ public class MCPatcherUtils {
 
     private static File minecraftDir;
     private static File gameDir;
-    private static String minecraftVersion;
 
     public static final String EXTENDED_HD = "Extended HD";
     public static final String HD_FONT = "HD Font";
@@ -265,38 +263,7 @@ public class MCPatcherUtils {
         } else {
             MCPatcherUtils.gameDir = gameDir.getAbsoluteFile();
         }
-        MCPatcherUtils.minecraftVersion = "1.7.10";
         log.info("MCPatcherUtils initialized:");
-    }
-
-    /**
-     * Get shortened version of currently running Minecraft, e.g., 1.9pre4.
-     *
-     * @return string
-     */
-    public static String getMinecraftVersion() {
-        return minecraftVersion;
-    }
-
-    /**
-     * Attempts to read a properties file. Closes input stream regardless of success or failure.
-     *
-     * @param input      open input stream
-     * @param properties initial properties object
-     * @return true if properties were successfully read
-     */
-    public static boolean readProperties(InputStream input, Properties properties) {
-        if (input != null && properties != null) {
-            try {
-                properties.load(input);
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                close(input);
-            }
-        }
-        return false;
     }
 
     /**
