@@ -5,6 +5,8 @@ MCPatcher as a 1.7.10 forge mod using Mixins.
 
 Original source code is under MIT, my changes are lgpl 3.0
 
+Includes default glass & bookshelves connected textures by DarkBum under CC-BY-SA
+
 End goal is to support any resource pack for 1.7.10 that used Optifines version of MCPatcher features
 # Disclaimer
 

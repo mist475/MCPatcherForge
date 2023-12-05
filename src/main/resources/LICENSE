@@ -1,4 +1,4 @@
-Original code licensed under MIT, changes by mist475 licensed under LGPL 3.0
+Original code licensed under MIT, changes by mist475 licensed under LGPL 3.0 (+ CC-BY-SA for default ctm assets)
 Original MCPatcher license, retrieved from https://bitbucket.org/prupe/mcpatcher/src/master/LICENSE
 
 Copyright (c) 2013
@@ -23,6 +23,8 @@ SOFTWARE.
 
 
 New license:
+
+Everything under the assets/minecraft/mcpatcher folder is available under https://creativecommons.org/licenses/by-sa/4.0/
 
                    GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
