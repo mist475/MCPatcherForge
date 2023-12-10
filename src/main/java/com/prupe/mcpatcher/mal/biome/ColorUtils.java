@@ -1,5 +1,7 @@
 package com.prupe.mcpatcher.mal.biome;
 
+import net.minecraft.util.MathHelper;
+
 public class ColorUtils {
 
     public static void intToFloat3(int rgb, float[] f, int offset) {
@@ -26,8 +28,6 @@ public class ColorUtils {
     }
 
     public static float clamp(float f) {
-        if (f < 0.0f) {
-            return 0.0f;
-        } else return Math.min(f, 1.0f);
+        return MathHelper.clamp_float(f, 0.0f, 1.0f);
     }
 }
