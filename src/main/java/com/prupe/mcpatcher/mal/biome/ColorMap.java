@@ -11,7 +11,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenSwamp;
 
 import com.prupe.mcpatcher.Config;
 import com.prupe.mcpatcher.MCLogger;
@@ -225,9 +224,6 @@ abstract public class ColorMap implements IColorMap {
     public final int getColorMultiplier(IBlockAccess blockAccess, int i, int j, int k) {
         // TODO: implement this neatly
         BiomeGenBase base = BiomeAPI.getBiomeGenAt(blockAccess, i, j, k);
-        if (base instanceof BiomeGenSwamp || base.biomeID == BiomeGenBase.roofedForest.biomeID) {
-            return base.getBiomeGrassColor(i, j, k);
-        }
 
         computeXY(base, i, j, k, xy);
         return getRGB(xy[0], xy[1]);

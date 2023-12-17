@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,8 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
+
+import org.apache.commons.io.IOUtils;
 
 import com.prupe.mcpatcher.MCLogger;
 import com.prupe.mcpatcher.MCPatcherUtils;
@@ -115,30 +118,13 @@ public class TexturePackAPI {
         InputStream jar = null;
         InputStream pack = null;
         try {
-            String path = ASSETS + resource.getResourceDomain() + "/" + resource.getResourcePath();
             pack = getInputStream(resource);
-            if (pack == null) {
+            jar = Minecraft.getMinecraft().mcDefaultResourcePack.getInputStream(resource);
+
+            if (pack == null || jar == null) {
                 return false;
             }
-            jar = Minecraft.class.getResourceAsStream(path);
-            if (jar == null) {
-                return true;
-            }
-            byte[] buffer1 = new byte[4096];
-            byte[] buffer2 = new byte[4096];
-            int read1;
-            int read2;
-            while ((read1 = pack.read(buffer1)) > 0) {
-                read2 = jar.read(buffer2);
-                if (read1 != read2) {
-                    return true;
-                }
-                for (int i = 0; i < read1; i++) {
-                    if (buffer1[i] != buffer2[i]) {
-                        return true;
-                    }
-                }
-            }
+            return !Arrays.equals(IOUtils.toByteArray(jar), IOUtils.toByteArray(pack));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -338,7 +324,7 @@ public class TexturePackAPI {
                 unloadTexture(resource);
             }
         }
-    };
+    }
 
     private static IResourceManager getResourceManager() {
         return Minecraft.getMinecraft()
