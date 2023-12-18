@@ -352,10 +352,10 @@ public class ColorizeBlock {
     public static boolean colorizeBlock(Block block, int metadata) {
         IColorMap colorMap = findColorMap(block, metadata);
         if (colorMap == null) {
-            RenderBlocksUtils.setupColorMultiplier(block, metadata, false);
+            RenderBlocksUtils.setupColorMultiplier(block, false);
             return false;
         } else {
-            RenderBlocksUtils.setupColorMultiplier(block, metadata, true);
+            RenderBlocksUtils.setupColorMultiplier(block, true);
             blockColor = colorMap.getColorMultiplier();
             return true;
         }

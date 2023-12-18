@@ -5,101 +5,158 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import com.prupe.mcpatcher.Config;
+import com.prupe.mcpatcher.MCPatcherUtils;
 
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 
 // Adapted from Hodgepodge
 public enum Mixins {
 
-    BASE_MOD(new Builder("All the default mixins!").setSide(Side.CLIENT)
+    BASE_MOD(new Builder("Base mod (can't be disabled, sorry)").setSide(Side.CLIENT)
         .setPhase(Phase.EARLY)
         .setApplyIf(() -> true)
         .addTargetedMod(TargetedMod.VANILLA)
         .addMixinClasses(
-            "block.material.MixinMapColor",
+            "base.MixinBlockGrass",
+            "base.MixinBlockMycelium",
 
-            "block.MixinBlock",
-            "block.MixinBlockDoublePlant",
-            "block.MixinBlockGrass",
-            "block.MixinBlockLeaves",
-            "block.MixinBlockLilyPad",
-            "block.MixinBlockLiquid",
-            "block.MixinBlockMycelium",
-            "block.MixinBlockOldLeaf",
-            "block.MixinBlockRedstoneWire",
-            "block.MixinBlockReed",
-            "block.MixinBlockStem",
-            "block.MixinBlockTallGrass",
-            "block.MixinBlockVine",
+            "base.MixinAbstractTexture",
+            "base.MixinTextureAtlasSprite",
 
-            "client.gui.MixinFontRenderer",
+            "base.MixinSimpleReloadableResourceManager",
 
-            "client.particle.MixinEffectRenderer",
-            "client.particle.MixinEntityAuraFX",
-            "client.particle.MixinEntityBubbleFX",
-            "client.particle.MixinEntityDropParticleFX",
-            "client.particle.MixinEntityPortalFX",
-            "client.particle.MixinEntityRainFX",
-            "client.particle.MixinEntityRedDustFX",
-            "client.particle.MixinEntitySplashFX",
-            "client.particle.MixinEntitySuspendFX",
+            "base.MixinMinecraft",
 
-            "client.renderer.entity.MixinRender",
-            "client.renderer.entity.MixinRenderBiped",
-            "client.renderer.entity.MixinRenderEnderman",
-            "client.renderer.entity.MixinRenderEntityLiving",
-            "client.renderer.entity.MixinRenderFish",
-            "client.renderer.entity.MixinRenderItem",
-            "client.renderer.entity.MixinRenderLiving",
-            "client.renderer.entity.MixinRenderMooshroom",
-            "client.renderer.entity.MixinRenderPlayer",
-            "client.renderer.entity.MixinRenderSheep",
-            "client.renderer.entity.MixinRenderSnowball",
-            "client.renderer.entity.MixinRenderSnowMan",
-            "client.renderer.entity.MixinRenderSpider",
-            "client.renderer.entity.MixinRenderWolf",
-            "client.renderer.entity.MixinRenderXPOrb",
+            "renderpass.MixinEntityRenderer",
+            "renderpass.MixinRenderBlocks",
+            "renderpass.MixinRenderGlobal",
+            "renderpass.MixinWorldRenderer")
 
-            "client.renderer.texture.MixinAbstractTexture",
-            "client.renderer.texture.MixinTextureAtlasSprite",
-            "client.renderer.texture.MixinTextureClock",
-            "client.renderer.texture.MixinTextureCompass",
-            "client.renderer.texture.MixinTextureManager",
-            "client.renderer.texture.MixinTextureMap",
+    ),
 
-            "client.renderer.tileentity.MixinTileEntitySignRenderer",
+    CUSTOM_COLOURS(new Builder("Custom colors").setSide(Side.CLIENT)
+        .setPhase(Phase.EARLY)
+        .setApplyIf(() -> Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "enabled", true))
+        .addTargetedMod(TargetedMod.VANILLA)
+        .addMixinClasses(
+            addPrefix(
+                "cc.",
+                "block.material.MixinMapColor",
 
-            "client.renderer.MixinEntityRenderer",
-            "client.renderer.MixinItemRenderer",
-            "client.renderer.renderblocks.MixinRenderBlocks",
-            "client.renderer.renderblocks.MixinRenderBlocksRenderBlockLiquid",
-            "client.renderer.MixinRenderGlobal",
-            "client.renderer.MixinWorldRenderer",
+                "block.MixinBlock",
+                "block.MixinBlockDoublePlant",
+                "block.MixinBlockGrass",
+                "block.MixinBlockLeaves",
+                "block.MixinBlockLilyPad",
+                "block.MixinBlockLiquid",
+                "block.MixinBlockOldLeaf",
+                "block.MixinBlockRedstoneWire",
+                "block.MixinBlockReed",
+                "block.MixinBlockStem",
+                "block.MixinBlockTallGrass",
+                "block.MixinBlockVine",
 
-            "client.resources.MixinSimpleReloadableResourceManager",
+                "client.particle.MixinEntityAuraFX",
+                "client.particle.MixinEntityBubbleFX",
+                "client.particle.MixinEntityDropParticleFX",
+                "client.particle.MixinEntityPortalFX",
+                "client.particle.MixinEntityRainFX",
+                "client.particle.MixinEntityRedDustFX",
+                "client.particle.MixinEntitySplashFX",
+                "client.particle.MixinEntitySuspendFX",
 
-            "client.MixinMinecraft",
+                "client.renderer.entity.MixinRenderWolf",
+                "client.renderer.entity.MixinRenderXPOrb",
 
-            "entity.MixinEntityList",
-            "entity.MixinEntityLivingBase",
+                "client.renderer.tileentity.MixinTileEntitySignRenderer",
 
-            "item.crafting.MixinRecipesArmorDyes",
+                "client.renderer.MixinEntityRenderer",
+                "client.renderer.MixinItemRenderer",
+                "client.renderer.MixinRenderBlocks",
+                "client.renderer.MixinRenderGlobal",
 
-            "item.MixinItem",
-            "item.MixinItemArmor",
-            "item.MixinItemBlock",
-            "item.MixinItemMonsterPlacer",
+                "entity.MixinEntityList",
 
-            "nbt.MixinNBTTagCompound",
-            "nbt.MixinNBTTagList",
+                "item.crafting.MixinRecipesArmorDyes",
 
-            "potion.MixinPotion",
-            "potion.MixinPotionHelper",
+                "item.MixinItemArmor",
+                "item.MixinItemBlock",
+                "item.MixinItemMonsterPlacer",
 
-            "world.MixinWorld",
-            "world.MixinWorldProvider",
-            "world.MixinWorldProviderEnd",
-            "world.MixinWorldProviderHell"));
+                "potion.MixinPotion",
+                "potion.MixinPotionHelper",
+
+                "world.MixinWorld",
+                "world.MixinWorldProvider",
+                "world.MixinWorldProviderEnd",
+                "world.MixinWorldProviderHell"))),
+
+    CUSTOM_ITEM_TEXTURES(new Builder("Custom Item Textures").setSide(Side.CLIENT)
+        .setPhase(Phase.EARLY)
+        .setApplyIf(() -> Config.getBoolean(MCPatcherUtils.CUSTOM_ITEM_TEXTURES, "enabled", true))
+        .addTargetedMod(TargetedMod.VANILLA)
+        .addMixinClasses(
+            addPrefix(
+                "cit.",
+                "client.renderer.entity.MixinRenderBiped",
+                "client.renderer.entity.MixinRenderEntityLiving",
+                "client.renderer.entity.MixinRenderItem",
+                "client.renderer.entity.MixinRenderPlayer",
+                "client.renderer.entity.MixinRenderSnowball",
+                "client.renderer.MixinItemRenderer",
+                "item.MixinItem",
+                "nbt.MixinNBTTagCompound",
+                "nbt.MixinNBTTagList"))),
+
+    CONNECTED_TEXTURES(new Builder("Connected Textures").setSide(Side.CLIENT)
+        .setPhase(Phase.EARLY)
+        .setApplyIf(() -> Config.getBoolean(MCPatcherUtils.CONNECTED_TEXTURES, "enabled", true))
+        .addTargetedMod(TargetedMod.VANILLA)
+        .addMixinClasses("ctm.MixinRenderBlocks")),
+
+    EXTENDED_HD(new Builder("Extended hd").setSide(Side.CLIENT)
+        .setPhase(Phase.EARLY)
+        .setApplyIf(() -> Config.getBoolean(MCPatcherUtils.EXTENDED_HD, "enabled", true))
+        .addTargetedMod(TargetedMod.VANILLA)
+        .addMixinClasses(
+            addPrefix("hd.", "MixinFontRenderer", "MixinTextureClock", "MixinTextureCompass", "MixinTextureManager"))),
+
+    RANDOM_MOBS(new Builder("Random Mobs").setSide(Side.CLIENT)
+        .setPhase(Phase.EARLY)
+        .setApplyIf(() -> Config.getBoolean(MCPatcherUtils.RANDOM_MOBS, "enabled", true))
+        .addTargetedMod(TargetedMod.VANILLA)
+        .addMixinClasses(
+            addPrefix(
+                "mob.",
+                "MixinRender",
+                "MixinRenderEnderman",
+                "MixinRenderFish",
+                "MixinRenderLiving",
+                "MixinRenderMooshroom",
+                "MixinRenderSheep",
+                "MixinRenderSnowMan",
+                "MixinRenderSpider",
+                "MixinRenderWolf",
+                "MixinEntityLivingBase"))),
+
+    SKY(new Builder("Sky").setSide(Side.CLIENT)
+        .setPhase(Phase.EARLY)
+        .setApplyIf(() -> Config.getBoolean(MCPatcherUtils.BETTER_SKIES, "enabled", true))
+        .addTargetedMod(TargetedMod.VANILLA)
+        .addMixinClasses(addPrefix("sky.", "MixinEffectRenderer", "MixinRenderGlobal"))),
+
+    CTM_OR_CC(new Builder("Connected textures or Custom Colors enabled").setSide(Side.CLIENT)
+        .setPhase(Phase.EARLY)
+        .setApplyIf(
+            () -> Config.getBoolean(MCPatcherUtils.CUSTOM_ITEM_TEXTURES, "enabled", true)
+                || Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "enabled", true))
+        .addTargetedMod(TargetedMod.VANILLA)
+        .addMixinClasses(addPrefix("ctm_cc.", "MixinRenderBlocks", "MixinTextureMap")))
+
+    ;
 
     public final String name;
     public final List<String> mixinClasses;
@@ -211,6 +268,14 @@ public enum Mixins {
         return (shouldLoadSide() && applyIf.get()
             && allModsLoaded(targetedMods, loadedCoreMods, loadedMods)
             && noModsLoaded(excludedMods, loadedCoreMods, loadedMods));
+    }
+
+    @SuppressWarnings("SimplifyStreamApiCallChains")
+    private static String[] addPrefix(String prefix, String... values) {
+        return Arrays.stream(values)
+            .map(s -> prefix + s)
+            .collect(Collectors.toList())
+            .toArray(new String[values.length]);
     }
 
     enum Side {

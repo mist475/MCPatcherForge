@@ -80,7 +80,7 @@ public class RenderBlocksUtils {
         }
     }
 
-    public static void setupColorMultiplier(Block block, int metadata, boolean useColor) {
+    public static void setupColorMultiplier(Block block, boolean useColor) {
         if (block == grassBlock || !useColor) {
             colorMultiplierType[0] = NONCOLOR;
             colorMultiplierType[2] = NONCOLOR;
