@@ -7,10 +7,8 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.prupe.mcpatcher.Config;
-import com.prupe.mcpatcher.MCPatcherUtils;
-
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
+import mist475.mcpatcherforge.config.MCPatcherForgeConfig;
 
 // Adapted from Hodgepodge
 public enum Mixins {
@@ -39,7 +37,7 @@ public enum Mixins {
 
     CUSTOM_COLOURS(new Builder("Custom colors").setSide(Side.CLIENT)
         .setPhase(Phase.EARLY)
-        .setApplyIf(() -> Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "enabled", true))
+        .setApplyIf(() -> MCPatcherForgeConfig.instance().customColorsEnabled)
         .addTargetedMod(TargetedMod.VANILLA)
         .addMixinClasses(
             addPrefix(
@@ -96,7 +94,7 @@ public enum Mixins {
 
     CUSTOM_ITEM_TEXTURES(new Builder("Custom Item Textures").setSide(Side.CLIENT)
         .setPhase(Phase.EARLY)
-        .setApplyIf(() -> Config.getBoolean(MCPatcherUtils.CUSTOM_ITEM_TEXTURES, "enabled", true))
+        .setApplyIf(() -> MCPatcherForgeConfig.instance().customItemTexturesEnabled)
         .addTargetedMod(TargetedMod.VANILLA)
         .addMixinClasses(
             addPrefix(
@@ -113,20 +111,20 @@ public enum Mixins {
 
     CONNECTED_TEXTURES(new Builder("Connected Textures").setSide(Side.CLIENT)
         .setPhase(Phase.EARLY)
-        .setApplyIf(() -> Config.getBoolean(MCPatcherUtils.CONNECTED_TEXTURES, "enabled", true))
+        .setApplyIf(() -> MCPatcherForgeConfig.instance().connectedTexturesEnabled)
         .addTargetedMod(TargetedMod.VANILLA)
         .addMixinClasses("ctm.MixinRenderBlocks")),
 
     EXTENDED_HD(new Builder("Extended hd").setSide(Side.CLIENT)
         .setPhase(Phase.EARLY)
-        .setApplyIf(() -> Config.getBoolean(MCPatcherUtils.EXTENDED_HD, "enabled", true))
+        .setApplyIf(() -> MCPatcherForgeConfig.instance().extendedHDEnabled)
         .addTargetedMod(TargetedMod.VANILLA)
         .addMixinClasses(
             addPrefix("hd.", "MixinFontRenderer", "MixinTextureClock", "MixinTextureCompass", "MixinTextureManager"))),
 
     RANDOM_MOBS(new Builder("Random Mobs").setSide(Side.CLIENT)
         .setPhase(Phase.EARLY)
-        .setApplyIf(() -> Config.getBoolean(MCPatcherUtils.RANDOM_MOBS, "enabled", true))
+        .setApplyIf(() -> MCPatcherForgeConfig.instance().randomMobsEnabled)
         .addTargetedMod(TargetedMod.VANILLA)
         .addMixinClasses(
             addPrefix(
@@ -144,39 +142,39 @@ public enum Mixins {
 
     SKY(new Builder("Sky").setSide(Side.CLIENT)
         .setPhase(Phase.EARLY)
-        .setApplyIf(() -> Config.getBoolean(MCPatcherUtils.BETTER_SKIES, "enabled", true))
+        .setApplyIf(() -> MCPatcherForgeConfig.instance().betterSkiesEnabled)
         .addTargetedMod(TargetedMod.VANILLA)
         .addMixinClasses(addPrefix("sky.", "MixinEffectRenderer", "MixinRenderGlobal"))),
 
     CC_NO_CTM(new Builder("Custom colors, no connected textures").setSide(Side.CLIENT)
         .setPhase(Phase.EARLY)
         .setApplyIf(
-            () -> !Config.getBoolean(MCPatcherUtils.CONNECTED_TEXTURES, "enabled", true)
-                && Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "enabled", true))
+            () -> !MCPatcherForgeConfig.instance().connectedTexturesEnabled
+                && MCPatcherForgeConfig.instance().customColorsEnabled)
         .addTargetedMod(TargetedMod.VANILLA)
         .addMixinClasses("cc_ctm.MixinRenderBlocksNoCTM")),
 
     CTM_AND_CC(new Builder("Connected textures and Custom Colors enabled").setSide(Side.CLIENT)
         .setPhase(Phase.EARLY)
         .setApplyIf(
-            () -> Config.getBoolean(MCPatcherUtils.CONNECTED_TEXTURES, "enabled", true)
-                && Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "enabled", true))
+            () -> MCPatcherForgeConfig.instance().connectedTexturesEnabled
+                && MCPatcherForgeConfig.instance().customColorsEnabled)
         .addTargetedMod(TargetedMod.VANILLA)
         .addMixinClasses("ctm_cc.MixinRenderBlocks")),
 
     CTM_NO_CC(new Builder("Connected textures, no custom colours").setSide(Side.CLIENT)
         .setPhase(Phase.EARLY)
         .setApplyIf(
-            () -> Config.getBoolean(MCPatcherUtils.CONNECTED_TEXTURES, "enabled", true)
-                && !Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "enabled", true))
+            () -> MCPatcherForgeConfig.instance().connectedTexturesEnabled
+                && !MCPatcherForgeConfig.instance().customColorsEnabled)
         .addTargetedMod(TargetedMod.VANILLA)
         .addMixinClasses("ctm_cc.MixinRenderBlocksNoCC")),
 
     CTM_OR_CC(new Builder("Connected textures or Custom Colors enabled").setSide(Side.CLIENT)
         .setPhase(Phase.EARLY)
         .setApplyIf(
-            () -> Config.getBoolean(MCPatcherUtils.CONNECTED_TEXTURES, "enabled", true)
-                || Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "enabled", true))
+            () -> MCPatcherForgeConfig.instance().connectedTexturesEnabled
+                || MCPatcherForgeConfig.instance().customColorsEnabled)
         .addTargetedMod(TargetedMod.VANILLA)
         .addMixinClasses("ctm_cc.MixinTextureMap")),
 

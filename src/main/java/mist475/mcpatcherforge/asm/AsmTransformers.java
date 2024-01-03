@@ -5,10 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.prupe.mcpatcher.Config;
-import com.prupe.mcpatcher.MCPatcherUtils;
-
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
+import mist475.mcpatcherforge.config.MCPatcherForgeConfig;
 import mist475.mcpatcherforge.core.MCPatcherForgeCore;
 
 /**
@@ -16,8 +14,8 @@ import mist475.mcpatcherforge.core.MCPatcherForgeCore;
  */
 public enum AsmTransformers {
 
-    RENDERBLOCKS("RenderBlocks transformer", () -> Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "enabled", true),
-        Side.CLIENT, "mist475.mcpatcherforge.asm.RenderBlocksTransformer"),
+    RENDERBLOCKS("RenderBlocks transformer", () -> MCPatcherForgeConfig.instance().customColorsEnabled, Side.CLIENT,
+        "mist475.mcpatcherforge.asm.RenderBlocksTransformer"),
     WORLDRENDERER("WorldRenderer transformer", () -> true, Side.CLIENT,
         "mist475.mcpatcherforge.asm.WorldRendererTransformer");
 
