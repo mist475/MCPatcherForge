@@ -16,3 +16,4 @@ Known incompatibilities:
 - FastCraft, causes weird chunk flickering on loading (no fix planned)
 - Future commands, something happens between its asm and my asm/mixins. No fix planned as I can't find the source code
 - Optifine: Implements the same features, resulting in a crash on startup (no fix planned)
+- FalseTweaks: Will need looking into
