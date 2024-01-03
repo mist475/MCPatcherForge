@@ -148,13 +148,37 @@ public enum Mixins {
         .addTargetedMod(TargetedMod.VANILLA)
         .addMixinClasses(addPrefix("sky.", "MixinEffectRenderer", "MixinRenderGlobal"))),
 
+    CC_NO_CTM(new Builder("Custom colors, no connected textures").setSide(Side.CLIENT)
+        .setPhase(Phase.EARLY)
+        .setApplyIf(
+            () -> !Config.getBoolean(MCPatcherUtils.CONNECTED_TEXTURES, "enabled", true)
+                && Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "enabled", true))
+        .addTargetedMod(TargetedMod.VANILLA)
+        .addMixinClasses("cc_ctm.MixinRenderBlocksNoCTM")),
+
+    CTM_AND_CC(new Builder("Connected textures and Custom Colors enabled").setSide(Side.CLIENT)
+        .setPhase(Phase.EARLY)
+        .setApplyIf(
+            () -> Config.getBoolean(MCPatcherUtils.CONNECTED_TEXTURES, "enabled", true)
+                && Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "enabled", true))
+        .addTargetedMod(TargetedMod.VANILLA)
+        .addMixinClasses("ctm_cc.MixinRenderBlocks")),
+
+    CTM_NO_CC(new Builder("Connected textures, no custom colours").setSide(Side.CLIENT)
+        .setPhase(Phase.EARLY)
+        .setApplyIf(
+            () -> Config.getBoolean(MCPatcherUtils.CONNECTED_TEXTURES, "enabled", true)
+                && !Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "enabled", true))
+        .addTargetedMod(TargetedMod.VANILLA)
+        .addMixinClasses("ctm_cc.MixinRenderBlocksNoCC")),
+
     CTM_OR_CC(new Builder("Connected textures or Custom Colors enabled").setSide(Side.CLIENT)
         .setPhase(Phase.EARLY)
         .setApplyIf(
-            () -> Config.getBoolean(MCPatcherUtils.CUSTOM_ITEM_TEXTURES, "enabled", true)
+            () -> Config.getBoolean(MCPatcherUtils.CONNECTED_TEXTURES, "enabled", true)
                 || Config.getBoolean(MCPatcherUtils.CUSTOM_COLORS, "enabled", true))
         .addTargetedMod(TargetedMod.VANILLA)
-        .addMixinClasses(addPrefix("ctm_cc.", "MixinRenderBlocks", "MixinTextureMap")))
+        .addMixinClasses("ctm_cc.MixinTextureMap")),
 
     ;
 
