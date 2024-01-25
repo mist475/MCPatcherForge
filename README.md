@@ -1,3 +1,9 @@
+# Archived, use NotFine or Angelica instead
+This project is archived.
+This project is included in both [NotFine](https://github.com/jss2a98aj/NotFine) and [Angelica](https://github.com/GTNewHorizons/Angelica).
+For both integration is still wip, I will update this README a final time once integration is stable.
+If you only want the CIT features while still being able to use fastcraft and optifine use [HowardZHY's CIT only fork](https://github.com/HowardZHY/MCPatcherForge)
+
 MCPatcher as a 1.7.10 forge mod using Mixins.
 [Original repo](https://bitbucket.org/prupe/mcpatcher/src/master/)
 
